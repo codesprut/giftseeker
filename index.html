@@ -1,13 +1,61 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GiftSeeker</title>
-    <link rel="stylesheet" href="./css/styles.css">
-</head>
-<body style="-webkit-app-region: drag">
-    <script>window.$ = window.jQuery = require('./js/jquery.min.js');</script>
-    <script src="./js/seeker.js"></script>
-</body>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>GiftSeeker</title>
+		<link rel="stylesheet" href="./css/styles.css">
+	</head>
+	<body>
+		<div id="head">
+			<div id="head_decor"></div>
+			<div class="logo">
+			</div>
+			<ul class="menu">
+				<li class="active" data-id="services">
+					<span>
+						Сервисы
+					</span>
+				</li>
+				<li data-id="profile">
+					<span>
+						Профиль
+					</span>
+				</li>
+			</ul>
+			<div class="window-buttons">
+				<span class="minimizer">
+				</span>
+				<span class="closer">
+				</span>
+			</div>
+		</div>
+		<div id="content">
+			<div class="content-item active" data-id="services">
+				<div class="services_switcher">
+					<div class="list_type"></div>
+					<div class="services-icons">
+					</div>
+				</div>
+				<div class="services-panels">
+				</div>
+			</div>
+			<div class="content-item" data-id="profile">
+
+			</div>
+		</div>
+		<script>window.$ = window.jQuery = require('./js/libs/jquery.min.js');</script>
+		<script src="./js/ui.js"></script>
+		<script src="./js/services/core.js"></script>
+		<script src="./js/services/follx.js"></script>
+		<script>
+			window.services = {
+				Follx: new Follx(),
+				Follx1: new Follx(),
+				Follx2: new Follx(),
+			};
+
+			window.services.Follx.setActive();
+		</script>
+	</body>
 </html>
