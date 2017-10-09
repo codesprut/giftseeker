@@ -3,13 +3,18 @@
 class Seeker {
 
 	constructor() {
-		const _this = this;
-		this.Browser = require('electron').remote.getGlobal('Browser');
+		this.intervalVar = undefined;
+		this.doInterval  = 300;
+		this.totalTickes = 0;
+
+		this.Browser     = require('electron').remote.getGlobal('Browser');
 
 		this.started     = false;
+		this.waitAuth    = false;
 
 		this.websiteUrl  = 'http://giftseeker.ru';
 		this.authLink    = 'http://giftseeker.ru';
+		this.wonsUrl     = 'http://giftseeker.ru';
 		this.authContent = '';
 		this.pointsLabel = 'Points';
 
@@ -22,6 +27,18 @@ class Seeker {
 	init(){
 		this.addIcon();
 		this.addPanel();
+
+		this.Browser.webContents.on('did-finish-load', () => {
+			if( this.waitAuth && this.Browser.getURL().indexOf(this.websiteUrl) >= 0 ){
+				this.Browser.webContents.executeJavaScript('document.querySelector("body").innerHTML', (body) => {
+					if( body.indexOf(this.authContent) >= 0 ){
+						this.Browser.close();
+						this.waitAuth = false;
+					}
+				});
+			}
+		});
+
 	}
 
 	addIcon(){
@@ -65,8 +82,26 @@ class Seeker {
 			.addClass('service-user-panel')
 			.appendTo(this.panel);
 
+		this.openWebsiteLink = $(document.createElement('button'))
+			.addClass('open-website')
+			.text('На сайт')
+			.click(() => {
+				this.Browser.loadURL(this.websiteUrl);
+				this.Browser.show();
+				this.Browser.setTitle('GS Browser - загрузка');
+			}).appendTo(this.userPanel);
+
 		this.mainButton = $('<button>Старт</button>')
 			.addClass('seeker-button')
+			.hover(() => {
+				this.mainButton.addClass('hovered');
+				if( this.started )
+					this.buttonState('Стоп');
+			}, () => {
+				this.mainButton.removeClass('hovered');
+				if( this.started )
+					this.buttonState(window.timeToStr(this.doInterval - this.totalTickes % this.doInterval));
+			})
 			.click(() => {
 				if(this.mainButton.hasClass('disabled'))
 					return;
@@ -87,48 +122,53 @@ class Seeker {
 	}
 
 
-	authCheck(){
-		let response = -1; // timeout
-		let _this = this;
+	authCheck(callback){
+		let authContent = this.authContent;
 
 		$.ajax({
 			url: this.websiteUrl,
 			timeout: this.getTimeout,
-			async: false,
 			success: function (html) {
-				response = 0;
-
-				if( html.indexOf(_this.authContent) > 0 )
-					response = 1;
+				if( html.indexOf( authContent ) >= 0 )
+					callback(1);
+				else
+					callback(0);
+			},
+			error: function () {
+				callback(-1);
 			}
 		});
-
-		return response;
 	}
 
-	async startSeeker(){
+	startSeeker(){
 		if( this.started )
 			return false;
 
 		this.buttonState('Проверка...', 'disabled');
 
-		let authState = await this.authCheck();
+		this.authCheck( (authState) => {
+			if ( authState === 1)
+				this.runTimer();
+			else if( authState === -1 ){
+				this.log('Ошибка соединения с сервисом...', true);
+				this.buttonState('Старт');
+			}
+			else {
+				this.waitAuth = true;
 
-		this.buttonState('Старт');
-
-		if ( authState === 1){
-			this.log('started');
-			this.started = true;
-			this.buttonState('Стоп');
-		}
-		else if( authState === -1 ){
-			this.log('Ошибка соединения с сервисом...', true);
-		}
-		else {
-			this.Browser.loadURL(this.authLink);
-			this.Browser.webContents.openDevTools();
-			this.Browser.show();
-		}
+				this.Browser.loadURL(this.authLink);
+				this.Browser.once('close', () => {
+					this.waitAuth = false;
+					this.authCheck((authState) => {
+						if ( authState === 1)
+							this.runTimer();
+						else
+							this.buttonState('Старт');
+					});
+				});
+				this.Browser.show();
+			}
+		});
 
 	}
 
@@ -137,7 +177,32 @@ class Seeker {
 			return false;
 
 		this.started = false;
+		clearInterval(this.intervalVar);
+
+		this.log('Бот остановлен');
 		this.buttonState('Старт');
+	}
+
+	runTimer(){
+		this.totalTickes = 0;
+		this.started = true;
+		this.log('Бот запущен');
+
+		if( this.intervalVar )
+			clearInterval(this.intervalVar);
+
+		this.intervalVar = setInterval(() => {
+			if( !this.started )
+				clearInterval(this.intervalVar);
+
+			if( this.totalTickes % this.doInterval == 0 )
+				this.seekService();
+
+			if( !this.mainButton.hasClass('hovered') )
+				this.buttonState(window.timeToStr(this.doInterval - this.totalTickes % this.doInterval));
+
+			this.totalTickes++;
+		}, 1000);
 	}
 
 	buttonState(text, className){
@@ -153,4 +218,7 @@ class Seeker {
 	log(text, logType){
 		this.logField.append('<div class="' + (logType ? 'warn' : 'normal') + '"><span class="time">' + timeStr() + ':</span>' + text + '</div>');
 	}
+
+	// Виртуальные функции - всегда будут определены в потомках
+	seekService(){}
 }

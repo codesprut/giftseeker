@@ -8,9 +8,10 @@
   "devDependencies": {
     "electron": "^1.7.8"
   },
-  "scripts": {
-    "start": "electron giftseeker.js"
-  },
   "author": "Alexandr Pinashin",
-  "license": "ISC"
+  "license": "ISC",
+  "scripts": {
+    "start": "electron giftseeker.js",
+    "build": "electron-packager . GiftSeeker --platform=win32 --arch=x64 --version=1.7.8 --app-version=0.1.0 --out=dist --ignore=dist --prune --asar --icon=icon.ico --overwrite"
+  }
 }
