@@ -219,6 +219,6 @@ class Seeker {
 		this.logField.append('<div class="' + (logType ? 'warn' : 'normal') + '"><span class="time">' + timeStr() + ':</span>' + text + '</div>');
 	}
 
-	// Виртуальные функции - всегда будут определены в потомках
+	// Виртуальные функции - реализуются в потомках
 	seekService(){}
 }

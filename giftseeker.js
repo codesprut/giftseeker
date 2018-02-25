@@ -29,7 +29,7 @@ app.on('ready', function() {
 
 	mainWindow.webContents.openDevTools();
 
-	//### Работа над окном браузера для сайтов
+	//### Browser for websites
 
 	Browser =  new BrowserWindow({
 		parent: mainWindow,
@@ -58,7 +58,7 @@ app.on('ready', function() {
 	// Линк на браузер в глобальное пространство
 	global.Browser = Browser;
 
-	//### Конец работы с браузером для сайтов
+	//### end browser for websites
 
 
 	mainWindow.on('ready-to-show', function() {

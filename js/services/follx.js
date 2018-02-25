@@ -12,7 +12,7 @@ class Follx extends Seeker {
 		this.authContent = '/account';
 		this.pointsLabel = 'Energy';
 
-		this.neededCookies.push('Follx');
+		this.neededCookies.push('follx_session');
 
 		super.init();
 	}
@@ -21,20 +21,21 @@ class Follx extends Seeker {
 		let _this = this;
 		let page  = 1;
 
-		$.get('https://follx.com/?page=' + page, function (html) {
+		$.get('https://follx.com/giveaways?page=' + page, function (html) {
+			console.log(html);
 
-			$(html).find('.giveawayCard').each(function () {
-				let id = $(this).find('a.link').attr('href').replace('https://follx.com/giveaway/', ''),
-					name = $(this).find('a.link span+span').text(),
-					have = $(this).find('.fa-bars').length > 0,
-					entered = $(this).hasClass('entered');
+			$(html).find('.giveaway_card').each(function () {
+				let link = $(this).find('a.game_name').attr('href'),
+					name = $(this).find('a.game_name > span').text(),
+					have = $(this).find('.giveaway-indicators > .have').length > 0,
+					entered = $(this).find('entered').length > 0;
 
 				if( !have && !entered ){
-					$.get('https://follx.com/giveaway/' + id, function (html) {
+					$.get(link, function (html) {
 						if( html.indexOf('data-action="enter"') > 0 ){
 							$.ajax({
 								method: 'post',
-								url: 'https://follx.com/giveaways/' + id + '/action',
+								url: link + '/action',
 								data: 'action=enter',
 								dataType: 'json',
 								headers: {'X-Requested-With': 'XMLHttpRequest'},
