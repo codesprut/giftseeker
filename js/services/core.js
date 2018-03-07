@@ -28,6 +28,7 @@ class Seeker {
 		this.addIcon();
 		this.addPanel();
 
+		// Нужно удостовериться что ивент не навешивается каждый раз
 		this.Browser.webContents.on('did-finish-load', () => {
 			if( this.waitAuth && this.Browser.getURL().indexOf(this.websiteUrl) >= 0 ){
 				this.Browser.webContents.executeJavaScript('document.querySelector("body").innerHTML', (body) => {
@@ -38,7 +39,6 @@ class Seeker {
 				});
 			}
 		});
-
 	}
 
 	addIcon(){

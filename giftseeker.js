@@ -1,6 +1,7 @@
 'use strict';
 const {app, BrowserWindow} = require('electron');
 
+let authWindow;
 let mainWindow;
 let Browser;
 
@@ -12,6 +13,23 @@ app.on('window-all-closed', function() {
 
 
 app.on('ready', function() {
+	authWindow = new BrowserWindow({
+		width: 280,
+		height: 340,
+		title: 'GiftSeeker',
+		//icon: '',
+		show: false,
+		center: true,
+		resizable: false,
+		frame: false
+	});
+
+	authWindow.setMenu(null);
+
+	authWindow.loadURL('file://' + __dirname + '/auth.html');
+
+
+
 	mainWindow = new BrowserWindow({
 		width: 730,
 		height: 500,
@@ -25,9 +43,8 @@ app.on('ready', function() {
 
 	mainWindow.setMenu(null);
 
-	mainWindow.loadURL('file://' + __dirname + '/index.html');
+	authWindow.webContents.openDevTools();
 
-	mainWindow.webContents.openDevTools();
 
 	//### Browser for websites
 
@@ -51,22 +68,47 @@ app.on('ready', function() {
 		e.preventDefault();
 		Browser.hide();
 
-		mainWindow.focus();
+		if(mainWindow.hidden)
+			authWindow.focus();
+		else
+			mainWindow.focus();
 	});
-
-
-	// Линк на браузер в глобальное пространство
-	global.Browser = Browser;
 
 	//### end browser for websites
 
 
+
+	authWindow.on('ready-to-show', function() {
+		authWindow.show();
+		authWindow.focus();
+	});
+
 	mainWindow.on('ready-to-show', function() {
+		authWindow.hide();
 		mainWindow.show();
 		mainWindow.focus();
+	});
+
+	authWindow.on('close', function(e){
+		authWindow.removeAllListeners('close');
+		mainWindow.close();
+	});
+
+	mainWindow.on('close', function(e){
+		mainWindow.removeAllListeners('close');
+		authWindow.close();
+	});
+
+	authWindow.on('closed', function(e) {
+		authWindow = null;
 	});
 
 	mainWindow.on('closed', function(e) {
 		mainWindow = null;
 	});
+
+	// Ссылки в глобальное пространство
+	global.mainWindow = mainWindow;
+	global.authWindow = authWindow;
+	global.Browser = Browser;
 });

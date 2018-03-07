@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>GiftSeeker</title>
+		<link rel="stylesheet" href="./css/styles.css">
+		<link rel="stylesheet" href="./css/auth.css">
+	</head>
+	<body id="auth_window">
+		<div id="head_decor"></div>
+		<div id="head">
+			<div class="window-buttons">
+				<span class="minimizer">
+				</span>
+				<span class="closer">
+				</span>
+			</div>
+			<div class="logo">
+				GiftSeeker
+			</div>
+		</div>
+		<div id="content">
+			<div class="status-text no-selectable">
+			</div>
+			<button id="auth_button" class="seeker-button">
+				Вход через Steam
+			</button>
+			<div class="delimeter-or no-selectable">
+				<span>или</span>
+			</div>
+			<button id="cookies_button" class="seeker-button">
+				Указать Cookies
+			</button>
+		</div>
+		<script>window.$ = window.jQuery = require('./js/libs/jquery.min.js');</script>
+		<script src="./js/auth.js"></script>
+	</body>
+</html>

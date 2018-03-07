@@ -4,6 +4,8 @@ body{ -webkit-user-select: none; overflow: hidden; font-family: 'Arial', sans-se
 
 *{ font-family: inherit; margin:0; padding:0; outline: none; box-sizing: inherit; }
 
+.no-selectable {  -webkit-user-select: none; cursor: default; }
+
 a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 
 .styled-scrollbar::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); border-radius: 10px; background-color: transparent; }
@@ -71,9 +73,9 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .service-logs { -webkit-user-select: text; }
 .service-settings {  }
 
-.seeker-button { color: #fff; cursor: pointer; width: 125px; height: 30px; font-size: 14px; font-weight: bold; background-color: #0e99d9; border: none; border-radius: 3px; }
+.seeker-button { color: #fff; cursor: pointer; width: 125px; height: 30px; text-align: center; line-height: 26px; font-size: 14px; font-weight: bold; background-color: #0e86ca; border: 2px solid #10a1de; box-sizing: border-box; }
 .seeker-button:not(.disabled):hover { background-color: #03a9f7; }
-.seeker-button.disabled { cursor: default; color: lightgray }
+.seeker-button.disabled { cursor: default; color: lightgray; opacity: 0.8; pointer-events: none; }
 
 .service-user-panel { position: relative; padding-top: 10px; height: 52px; }
 .service-user-panel .seeker-button { position: absolute; right: 0; bottom: 10px; }
