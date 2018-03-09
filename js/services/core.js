@@ -4,10 +4,8 @@ class Seeker {
 
 	constructor() {
 		this.intervalVar = undefined;
-		this.doInterval  = 300;
-		this.totalTickes = 0;
-
-		this.Browser     = require('electron').remote.getGlobal('Browser');
+		this.doInterval  = this.getConfig('interval', 300);
+		this.totalTicks = 0;
 
 		this.started     = false;
 		this.waitAuth    = false;
@@ -28,17 +26,8 @@ class Seeker {
 		this.addIcon();
 		this.addPanel();
 
-		// Нужно удостовериться что ивент не навешивается каждый раз
-		this.Browser.webContents.on('did-finish-load', () => {
-			if( this.waitAuth && this.Browser.getURL().indexOf(this.websiteUrl) >= 0 ){
-				this.Browser.webContents.executeJavaScript('document.querySelector("body").innerHTML', (body) => {
-					if( body.indexOf(this.authContent) >= 0 ){
-						this.Browser.close();
-						this.waitAuth = false;
-					}
-				});
-			}
-		});
+		if( Config.get('autostart') )
+			this.startSeeker();
 	}
 
 	addIcon(){
@@ -65,7 +54,7 @@ class Seeker {
 			.addClass('service-panel')
 			.appendTo('.services-panels');
 
-		$('<ul><li class="active" data-id="logs">Лог действий</li><li data-id="settings">Настройки</li></ul>')
+		$('<ul><li class="active" data-id="logs" data-lang="service.logs">' + Lang.get('service.logs') +'</li><li data-id="settings" data-lang="service.settings">' + Lang.get('service.settings') + '</li></ul>')
 			.appendTo(this.panel);
 
 		this.logField = $(document.createElement('div'))
@@ -84,23 +73,24 @@ class Seeker {
 
 		this.openWebsiteLink = $(document.createElement('button'))
 			.addClass('open-website')
-			.text('На сайт')
+			.attr('data-lang', 'service.open_website')
+			.text(Lang.get("service.open_website"))
 			.click(() => {
-				this.Browser.loadURL(this.websiteUrl);
-				this.Browser.show();
-				this.Browser.setTitle('GS Browser - загрузка');
+				Browser.loadURL(this.websiteUrl);
+				Browser.show();
+				Browser.setTitle('GS Browser - ' + Lang.get('auth.browser_loading'));
 			}).appendTo(this.userPanel);
 
-		this.mainButton = $('<button>Старт</button>')
-			.addClass('seeker-button')
+		this.mainButton = $('<button>' + Lang.get('service.btn_start') + '</button>')
+			.addClass('seeker-button start-button')
 			.hover(() => {
 				this.mainButton.addClass('hovered');
 				if( this.started )
-					this.buttonState('Стоп');
+					this.buttonState(Lang.get('service.btn_stop'));
 			}, () => {
 				this.mainButton.removeClass('hovered');
 				if( this.started )
-					this.buttonState(window.timeToStr(this.doInterval - this.totalTickes % this.doInterval));
+					this.buttonState(window.timeToStr(this.doInterval - this.totalTicks % this.doInterval));
 			})
 			.click(() => {
 				if(this.mainButton.hasClass('disabled'))
@@ -144,29 +134,43 @@ class Seeker {
 		if( this.started )
 			return false;
 
-		this.buttonState('Проверка...', 'disabled');
+		this.buttonState(Lang.get('service.btn_checking'), 'disabled');
 
 		this.authCheck( (authState) => {
 			if ( authState === 1)
 				this.runTimer();
 			else if( authState === -1 ){
-				this.log('Ошибка соединения с сервисом...', true);
-				this.buttonState('Старт');
+				this.log(Lang.get('service.connection_error'), true);
+				this.buttonState(Lang.get('service.btn_start'));
 			}
 			else {
 				this.waitAuth = true;
 
-				this.Browser.loadURL(this.authLink);
-				this.Browser.once('close', () => {
+				Browser.webContents.on('did-finish-load', () => {
+					if( this.waitAuth && Browser.getURL().indexOf(this.websiteUrl) >= 0 ){
+						Browser.webContents.executeJavaScript('document.querySelector("body").innerHTML', (body) => {
+							if( body.indexOf(this.authContent) >= 0 ){
+								Browser.close();
+								this.waitAuth = false;
+							}
+						});
+					}
+				});
+
+				Browser.loadURL(this.authLink);
+
+				Browser.once('close', () => {
+					Browser.webContents.removeAllListeners('did-finish-load');
+
 					this.waitAuth = false;
 					this.authCheck((authState) => {
 						if ( authState === 1)
 							this.runTimer();
 						else
-							this.buttonState('Старт');
+							this.buttonState(Lang.get('service.btn_start'));
 					});
 				});
-				this.Browser.show();
+				Browser.show();
 			}
 		});
 
@@ -179,14 +183,14 @@ class Seeker {
 		this.started = false;
 		clearInterval(this.intervalVar);
 
-		this.log('Бот остановлен');
-		this.buttonState('Старт');
+		this.log(Lang.get('service.stopped'));
+		this.buttonState(Lang.get('service.btn_start'));
 	}
 
 	runTimer(){
-		this.totalTickes = 0;
+		this.totalTicks = 0;
 		this.started = true;
-		this.log('Бот запущен');
+		this.log(Lang.get('service.started'));
 
 		if( this.intervalVar )
 			clearInterval(this.intervalVar);
@@ -195,13 +199,13 @@ class Seeker {
 			if( !this.started )
 				clearInterval(this.intervalVar);
 
-			if( this.totalTickes % this.doInterval == 0 )
+			if( this.totalTicks % this.doInterval === 0 )
 				this.seekService();
 
 			if( !this.mainButton.hasClass('hovered') )
-				this.buttonState(window.timeToStr(this.doInterval - this.totalTickes % this.doInterval));
+				this.buttonState(window.timeToStr(this.doInterval - this.totalTicks % this.doInterval));
 
-			this.totalTickes++;
+			this.totalTicks++;
 		}, 1000);
 	}
 
@@ -209,6 +213,14 @@ class Seeker {
 		this.mainButton.removeClass('disabled').text(text);
 		if( className )
 			this.mainButton.addClass(className);
+	}
+
+	getConfig(key, def){
+		return Config.get(this.constructor.name + '_' + key, def);
+	}
+
+	setConfig(key, val){
+		return Config.set(this.constructor.name + '_' + key, val);
 	}
 
 	clearLog(){

@@ -20,11 +20,20 @@ class Follx extends Seeker {
 	seekService(){
 		let _this = this;
 		let page  = 1;
+		let CSRF  = '';
 
 		$.get('https://follx.com/giveaways?page=' + page, function (html) {
-			console.log(html);
+			html = $('<div>' + html + '</div>');
 
-			$(html).find('.giveaway_card').each(function () {
+			CSRF = html.find('meta[name="csrf-token"]').attr('content');
+
+			if( CSRF.length < 10 ){
+				_this.log('Ошибка получение токена', true);
+				_this.stopSeeker();
+				return;
+			}
+
+			html.find('.giveaway_card').each(function () {
 				let link = $(this).find('a.game_name').attr('href'),
 					name = $(this).find('a.game_name > span').text(),
 					have = $(this).find('.giveaway-indicators > .have').length > 0,
@@ -36,9 +45,12 @@ class Follx extends Seeker {
 							$.ajax({
 								method: 'post',
 								url: link + '/action',
-								data: 'action=enter',
+								data: "action=enter",
 								dataType: 'json',
-								headers: {'X-Requested-With': 'XMLHttpRequest'},
+								headers: {
+									'X-Requested-With': 'XMLHttpRequest',
+									'X-CSRF-TOKEN': CSRF
+								},
 								success: function (data) {
 									if(data.response)
 										_this.log('Вступил в ' + name);

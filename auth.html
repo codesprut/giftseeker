@@ -20,17 +20,17 @@
 				GiftSeeker
 			</div>
 		</div>
-		<div id="content">
-			<div class="status-text no-selectable">
+		<div id="content" class="no-selectable">
+			<div class="status-text">
 			</div>
-			<button id="auth_button" class="seeker-button">
-				Вход через Steam
+			<button id="auth_button" class="seeker-button" data-lang="auth.steam_login">
+				Login via Steam
 			</button>
-			<div class="delimeter-or no-selectable">
-				<span>или</span>
+			<div class="delimeter-or">
+				<span data-lang="auth.or">or</span>
 			</div>
-			<button id="cookies_button" class="seeker-button">
-				Указать Cookies
+			<button id="cookies_button" class="seeker-button" data-lang="auth.enter_cookies">
+				Enter Cookies
 			</button>
 		</div>
 		<script>window.$ = window.jQuery = require('./js/libs/jquery.min.js');</script>

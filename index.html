@@ -13,13 +13,13 @@
 			</div>
 			<ul class="menu">
 				<li class="active" data-id="services">
-					<span>
-						Сервисы
+					<span data-lang="ui.menu1">
+						Services
 					</span>
 				</li>
 				<li data-id="profile">
-					<span>
-						Профиль
+					<span data-lang="ui.menu2">
+						Profile
 					</span>
 				</li>
 			</ul>
@@ -33,7 +33,7 @@
 		<div id="content">
 			<div class="content-item active" data-id="services">
 				<div class="services_switcher">
-					<div class="list_type"></div>
+					<div class="list_type" data-lang-title="ui.list_type_sw"></div>
 					<div class="services-icons">
 					</div>
 				</div>
@@ -41,18 +41,47 @@
 				</div>
 			</div>
 			<div class="content-item" data-id="profile">
-
+				<div class="info no-selectable">
+					<button class="seeker-button logout" data-lang="profile.logout_btn">
+						Logout
+					</button>
+				</div>
+				<div class="settings">
+					<div class="input-wrap select">
+						<select class="setter" id="lang">
+						</select>
+					</div>
+					<div class="input-wrap checkbox">
+						<input id="start_with_os" class="setter" type="checkbox"/>
+						<label for="start_with_os" data-lang="profile.start_with_os">
+							Start with Windows
+						</label>
+					</div>
+					<div class="input-wrap checkbox">
+						<input id="start_minimized" class="setter" type="checkbox"/>
+						<label for="start_minimized" data-lang="profile.start_minimized">
+							Start minimized
+						</label>
+					</div>
+					<div class="input-wrap checkbox">
+						<input id="autostart" class="setter" type="checkbox"/>
+						<label for="autostart" data-lang="profile.autostart">
+							Autostart Services
+						</label>
+					</div>
+				</div>
 			</div>
 		</div>
 		<script>window.$ = window.jQuery = require('./js/libs/jquery.min.js');</script>
+		<script src="./js/functions.js"></script>
 		<script src="./js/ui.js"></script>
 		<script src="./js/services/core.js"></script>
 		<script src="./js/services/follx.js"></script>
 		<script src="./js/services/steamgifts.js"></script>
 		<script>
 			window.services = {
-				Follx: new Follx(),
-				SteamGifts: new SteamGifts(),
+				Follx: new Follx()//,
+				//SteamGifts: new SteamGifts(),
 			};
 
 			window.services.Follx.setActive();

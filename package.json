@@ -4,14 +4,31 @@
   "version": "1.0.0",
   "description": "Steam raffles autojoiner",
   "main": "giftseeker.js",
-  "dependencies": {},
   "devDependencies": {
-    "electron": "^1.7.8"
+    "electron": "^1.7.8",
+    "electron-builder": "^20.4.0"
   },
-  "author": "Alexandr Pinashin",
+  "dependencies": {
+	"electron-json-storage": "^4.0.2"
+  },
+  "author": "ES Soft",
   "license": "ISC",
   "scripts": {
     "start": "electron giftseeker.js",
-    "build": "electron-packager . GiftSeeker --platform=win32 --arch=x64 --version=1.7.8 --app-version=0.1.0 --out=dist --ignore=dist --prune --asar --icon=icon.ico --overwrite"
+    "pack": "build --dir",
+    "dist": "build"
+  },
+  "build": {
+    "appId": "com.giftseeker.app",
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "artifactName": "${productName}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}.${ext}"
+    }
   }
 }
