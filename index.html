@@ -5,6 +5,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>GiftSeeker</title>
 		<link rel="stylesheet" href="./css/styles.css">
+        <script>
+            const currentBuild = '1.0.0';
+        </script>
 	</head>
 	<body>
 		<div id="head">
@@ -42,6 +45,8 @@
 			</div>
 			<div class="content-item" data-id="profile">
 				<div class="info no-selectable">
+					<div class="info-links">
+                    </div>
 					<button class="seeker-button logout" data-lang="profile.logout_btn">
 						Logout
 					</button>
@@ -69,6 +74,9 @@
 							Autostart Services
 						</label>
 					</div>
+                    <div class="build no-selectable">
+                        <span data-lang="profile.build_version"></span> <span class="version"></span>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -80,8 +88,8 @@
 		<script src="./js/services/steamgifts.js"></script>
 		<script>
 			window.services = {
-				Follx: new Follx()//,
-				//SteamGifts: new SteamGifts(),
+				Follx: new Follx(),
+				SteamGifts: new SteamGifts(),
 			};
 
 			window.services.Follx.setActive();

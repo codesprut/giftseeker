@@ -1,5 +1,6 @@
 'use strict';
 const remote = require('electron').remote;
+const ipc    = require("electron").ipcRenderer;
 
 let Config = remote.getGlobal('Config');
 let Lang   = remote.getGlobal('Lang');
@@ -15,10 +16,10 @@ $(function(){
 
 	// UI LOAD
 	reloadLangStrings();
-	loadUser();
+	profileSection();
 
 	// Восстановление сохранённых настроек
-	let setters = $('.setter').each(function(){
+	let setters = $('.settings .setter').each(function(){
 		let item = $(this);
 
 		switch(item.attr('type')){
@@ -28,17 +29,6 @@ $(function(){
 		}
 	});
 
-	let lang_select = $('select#lang');
-	for(let lang in Lang.list()){
-		let option = $(document.createElement('option'))
-			.val(lang).text('[' + Lang.list()[lang].lang_culture + '] ' + Lang.list()[lang].lang_name);
-
-		if( Config.get('lang') === lang )
-			option.prop('selected', true);
-
-		lang_select.append(option);
-	}
-
 	// Переключение типа отображения иконок сервисов
 	let menu_switcher = $('.list_type');
 	if( Config.get("menu_as_list") )
@@ -47,7 +37,12 @@ $(function(){
 
 	// Смена окон по окончании рендеринга
 	authWindow.hide();
-	mainWindow.show();
+    mainWindow.show();
+
+	if( Config.get('start_minimized') )
+        mainWindow.hide();
+    else
+        mainWindow.focus();
 
 
 	// EVENTS
@@ -55,7 +50,7 @@ $(function(){
 	// Управление окном
 	$('.window-buttons span').click(function () {
 		if($(this).hasClass('minimizer'))
-			remote.BrowserWindow.getFocusedWindow().minimize();
+			remote.BrowserWindow.getFocusedWindow().hide();
 		else
 			window.close();
 	});
@@ -92,6 +87,7 @@ $(function(){
 				mainWindow.hide();
 				mainWindow.loadURL(__dirname + '/blank.html');
 
+                ipc.send('save-user', null);
 				authWindow.show();
 			},
 			error: function () {
@@ -134,7 +130,8 @@ function reloadLangStrings() {
 	})
 }
 
-function loadUser() {
+function profileSection() {
+    // Отрисовка пользователя
 	let block = $('.content-item .info');
 	let avatar = $(document.createElement('div'))
 		.addClass('avatar').css({'background-image': 'url("' + user.avatar + '")'});
@@ -143,4 +140,74 @@ function loadUser() {
 
 	block.append(avatar)
 		.append(username);
+
+    let lang_select = $('select#lang');
+    let lang_list	= Lang.list();
+
+    $('.build .version').text(currentBuild);
+
+    // Наполняем языковой селект, либо удаляем его
+    if( Lang.count() <= 1 )
+        lang_select.remove();
+    else{
+        for(let lang in lang_list){
+            let option = $(document.createElement('option'))
+                .val(lang).text('[' + lang_list[lang].lang_culture + '] ' + lang_list[lang].lang_name);
+
+            if( Config.get('lang') === lang )
+                option.prop('selected', true);
+
+            lang_select.append(option);
+        }
+    }
+
+
+    // Ссылки внизу
+    let info_links = $('.content-item .info-links');
+
+    $(document.createElement('button'))
+        .addClass('open-website')
+        .text('GiftSeeker.RU')
+        .click(() => {
+            openWebsite('http://giftseeker.ru/');
+        }).appendTo(info_links);
+
+    $(document.createElement('button'))
+        .addClass('open-website')
+        .attr('data-lang', 'profile.donation')
+        .text(Lang.get('profile.donation'))
+        .css('margin-left', '7px')
+        .click(() => {
+            openWebsite('http://giftseeker.ru/donation');
+        }).appendTo(info_links);
+
+    $(document.createElement('button'))
+        .addClass('open-website')
+        .attr('data-lang', 'profile.forum')
+        .text(Lang.get('profile.forum'))
+        .css('margin-left', '7px')
+        .click(() => {
+            openWebsite('http://iknows.ru/forums/gs/');
+        }).appendTo(info_links);
+
+    $(document.createElement('br')).appendTo(info_links);
+    $(document.createElement('span'))
+        .attr('data-lang', 'profile.translated_by')
+        .text(Lang.get('profile.translated_by'))
+        .appendTo(info_links);
+
+    $(document.createElement('button'))
+        .addClass('open-website')
+        .attr('data-lang', 'translator')
+        .text(Lang.get('translator'))
+        .css('margin-left', '7px')
+        .click(() => {
+            openWebsite(Lang.get('feedback_url'));
+        }).appendTo(info_links);
+}
+
+function openWebsite(url){
+    Browser.loadURL(url);
+    Browser.show();
+    Browser.setTitle('GS Browser - ' + Lang.get('auth.browser_loading'));
 }

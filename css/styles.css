@@ -1,6 +1,6 @@
 html { position: absolute; top:0; left:0; width:100%; height:100%; }
 
-body { -webkit-user-select: none; overflow: hidden; font-family: 'Arial', sans-serif; font-size: 14px; color:#fff; position: relative; width: 100%; height: 100%; border: 1px solid #28313e; border-top: none; box-sizing: border-box; }
+body { -webkit-user-select: none; overflow: hidden; font-family: 'Arial', sans-serif; font-size: 12px; color:#fff; position: relative; width: 100%; height: 100%; border: 1px solid #28313e; border-top: none; box-sizing: border-box; }
 
 * { font-family: inherit; margin:0; padding:0; outline: none; box-sizing: inherit; }
 
@@ -19,7 +19,7 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 #head_decor:after { content: ''; display: block; background-color: inherit; height: 20px; width: 30px; position: absolute; left: -22px; bottom: 7px; transform: rotate(30deg); }
 #head_decor:after { left: auto; right: -22px; bottom: 7px; transform: rotate(-30deg); }
 
-#head .logo { background: url('../icon.ico') 20px center/55% no-repeat; width: 100px; position: absolute; z-index: 5; cursor: pointer; left: 0; top: 0; height: 80px; -webkit-app-region: no-drag; }
+#head .logo { background: url('../icon.ico') 20px center/55% no-repeat; width: 100px; position: absolute; z-index: 5; left: 0; top: 0; height: 80px; -webkit-app-region: no-drag; }
 
 #head .menu { position: relative; z-index: 1; list-style: none; display: block; width: 630px; margin-left: 100px; height: 80px; }
 #head .menu li { line-height: 80px; display: inline-block; padding: 0 10px; text-transform: uppercase; font-size: 18px; }
@@ -44,11 +44,25 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .content-item[data-id=profile] .info .avatar { position: absolute; left: 10px; top: 10px; width: 150px; height: 150px; border-radius: 3px; background: center/contain no-repeat; }
 .content-item[data-id=profile] .info .username { position: absolute; left: 170px; top: 10px; color: #9EC5EA; font-size: 20px; font-weight: bold; }
 
+.content-item[data-id=profile] .info-links { position: absolute; left: 10px; bottom: 10px; line-height: 16px; }
 .content-item[data-id=profile] .settings { position: absolute; right: 0; top: 0; height: 100%; width: 250px; background: rgba(0, 0, 0, 0.2); border-left: 1px solid #28313e; padding: 10px; }
-.content-item[data-id=profile] .settings .setter#lang { width: 100%; cursor: pointer; margin-bottom: 5px; height: 24px; font-size: 12px; }
+.content-item[data-id=profile] .settings .setter#lang { width: 100%; cursor: pointer; margin-bottom: 5px; height: 24px; }
+.content-item[data-id=profile] .settings .build { width: 100%; position: absolute; bottom: 10px; left: 0; text-align: center; }
 .content-item[data-id=profile] .seeker-button.logout { position: absolute; right: 10px; bottom: 10px; }
 
 .services_switcher { background-color: #030b15; width: 100px; height: 100%; position: absolute; left: 0; top: 0; border-right: 1px solid #28313e; }
+
+.services-icons { padding-top: 10px; }
+
+.service-icon { border: 1px solid transparent; cursor: pointer; position: relative; width: 80px; height: 80px; margin: 0 auto 15px; font-size: 12px; }
+.service-icon.active { border-color: #1a62a1; background: rgba(26, 98, 160, 0.3); }
+.service-icon:hover:not(.active) {  background: rgba(255, 255, 255, 0.3); border-color: #fff; }
+.service-icon .bg { margin: 10px auto 0; width: 42px; height: 42px; background: center center/contain no-repeat; }
+.service-icon .service-name { display: block; text-align: center; }
+.service-icon .service-status { width: 16px; height: 16px; position: absolute; right: 2px; bottom: 2px; background: center/contain no-repeat; }
+.service-icon .service-status[data-status=good] { height: 14px; width: 14px; background-image: url('../images/statuses/green.png'); }
+.service-icon .service-status[data-status=bad] { background-image: url('../images/statuses/red.png'); }
+.service-icon .service-status[data-status=normal] { background-image: url('../images/statuses/gray.png'); }
 
 .list_type { background: url('../images/list_style.png') -5px -44px no-repeat; cursor: pointer; width: 98px; height: 29px; margin: 1px auto 0; }
 .list_type.state { background-position: -5px -5px; }
@@ -59,14 +73,11 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .list_type.state + .services-icons .service-icon .service-name { left: 22px; top: 0; line-height: 20px; display: inline-block; vertical-align: middle; }
 .list_type.state + .services-icons .service-icon:hover,
 .list_type.state + .services-icons .service-icon.active { color: #9EC5EA;  border-color: transparent; background: transparent; }
+.list_type.state + .services-icons .service-icon .service-status { width: 16px; height: 16px; position: absolute; right: 2px; bottom: 2px; background: center/contain no-repeat; }
+.list_type.state + .services-icons .service-icon .service-status[data-status=good] { background-image: url('images/statuses/green.png'); }
+.list_type.state + .services-icons .service-icon .service-status[data-status=bad] { background-image: url('images/statuses/red.png'); }
+.list_type.state + .services-icons .service-icon .service-status[data-status=neutral] { background-image: url('images/statuses/gray.png'); }
 
-.services-icons { padding-top: 10px; }
-
-.service-icon { border: 1px solid transparent; cursor: pointer; position: relative; width: 80px; height: 80px; margin: 0 auto 15px; font-size: 12px; }
-.service-icon.active { border-color: #1a62a1; background: rgba(26, 98, 160, 0.3); }
-.service-icon:hover:not(.active) {  background: rgba(255, 255, 255, 0.3); border-color: #fff; }
-.service-icon .bg { margin: 10px auto 0; width: 42px; height: 42px; background: center center/contain no-repeat; }
-.service-icon .service-name { display: block; text-align: center; }
 
 
 .services-panels { padding: 6px 15px 10px; position: absolute; left: 100px; top: 0; width: 630px; height: 100%; overflow: hidden; }
@@ -96,8 +107,9 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .service-user-panel { position: relative; padding-top: 10px; height: 52px; }
 .service-user-panel .seeker-button { position: absolute; right: 0; bottom: 10px; }
 
-.service-user-panel button.open-website { position: absolute; right: 140px; bottom: 10px; background: transparent; cursor: pointer; border: none; text-decoration: underline; color: #fff; }
-.service-user-panel button.open-website:hover { color: #9EC5EA; }
+button.open-website { font-size: inherit; font-weight: inherit; background: transparent; cursor: pointer; border: none; text-decoration: underline; color: #fff; }
+button.open-website:hover { color: #9EC5EA; }
+.service-user-panel button.open-website { position: absolute; right: 140px; bottom: 10px; }
 
 
 .input-wrap { position: relative; line-height: 20px; }

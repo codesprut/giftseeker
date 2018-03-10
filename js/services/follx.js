@@ -5,6 +5,7 @@ class Follx extends Seeker {
 	constructor() {
 		super();
 
+		this.doTimer  = 15;
 		this.websiteUrl  = 'https://follx.com';
 		this.authLink    = 'https://follx.com/logIn';
 		this.wonsUrl     = 'https://follx.com/giveaways/won';
@@ -28,8 +29,8 @@ class Follx extends Seeker {
 			CSRF = html.find('meta[name="csrf-token"]').attr('content');
 
 			if( CSRF.length < 10 ){
-				_this.log('Ошибка получение токена', true);
-				_this.stopSeeker();
+				_this.log(this.trans('token_error'), true);
+				_this.stopSeeker(true);
 				return;
 			}
 

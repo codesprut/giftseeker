@@ -16,7 +16,7 @@ $(function(){
 	// Управление окном
 	$('.window-buttons span').click(function () {
 		if($(this).hasClass('minimizer'))
-			require('electron').remote.BrowserWindow.getFocusedWindow().minimize();
+			require('electron').remote.BrowserWindow.getFocusedWindow().hide();
 		else
 			window.close();
 	});

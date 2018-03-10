@@ -3,9 +3,11 @@
 class Seeker {
 
 	constructor() {
+        this.doTimer     = this.getConfig('timer', 300);
+        this.interval    = this.getConfig('interval', 5);
+
 		this.intervalVar = undefined;
-		this.doInterval  = this.getConfig('interval', 300);
-		this.totalTicks = 0;
+		this.totalTicks  = 0;
 
 		this.started     = false;
 		this.waitAuth    = false;
@@ -27,7 +29,7 @@ class Seeker {
 		this.addPanel();
 
 		if( Config.get('autostart') )
-			this.startSeeker();
+			this.startSeeker(true);
 	}
 
 	addIcon(){
@@ -38,6 +40,11 @@ class Seeker {
 		$(document.createElement('div')).addClass('bg')
 			.css({'background-image': "url('images/services/" + this.constructor.name + ".png')"})
 			.appendTo(this.icon);
+
+        this.statusIcon = $(document.createElement('div'))
+            .addClass('service-status')
+            .attr('data-status', 'normal')
+            .appendTo(this.icon);
 
 		$(document.createElement('span'))
 			.addClass('service-name')
@@ -52,6 +59,7 @@ class Seeker {
 	addPanel(){
 		this.panel = $(document.createElement('div'))
 			.addClass('service-panel')
+            .attr('id', this.constructor.name.toLowerCase())
 			.appendTo('.services-panels');
 
 		$('<ul><li class="active" data-id="logs" data-lang="service.logs">' + Lang.get('service.logs') +'</li><li data-id="settings" data-lang="service.settings">' + Lang.get('service.settings') + '</li></ul>')
@@ -76,9 +84,7 @@ class Seeker {
 			.attr('data-lang', 'service.open_website')
 			.text(Lang.get("service.open_website"))
 			.click(() => {
-				Browser.loadURL(this.websiteUrl);
-				Browser.show();
-				Browser.setTitle('GS Browser - ' + Lang.get('auth.browser_loading'));
+				openWebsite(this.websiteUrl);
 			}).appendTo(this.userPanel);
 
 		this.mainButton = $('<button>' + Lang.get('service.btn_start') + '</button>')
@@ -90,7 +96,7 @@ class Seeker {
 			}, () => {
 				this.mainButton.removeClass('hovered');
 				if( this.started )
-					this.buttonState(window.timeToStr(this.doInterval - this.totalTicks % this.doInterval));
+					this.buttonState(window.timeToStr(this.doTimer - this.totalTicks % this.doTimer));
 			})
 			.click(() => {
 				if(this.mainButton.hasClass('disabled'))
@@ -130,57 +136,66 @@ class Seeker {
 		});
 	}
 
-	startSeeker(){
+	startSeeker(autostart){
 		if( this.started )
 			return false;
 
 		this.buttonState(Lang.get('service.btn_checking'), 'disabled');
 
 		this.authCheck( (authState) => {
-			if ( authState === 1)
-				this.runTimer();
+			if ( authState === 1) {
+                this.runTimer();
+            }
 			else if( authState === -1 ){
 				this.log(Lang.get('service.connection_error'), true);
 				this.buttonState(Lang.get('service.btn_start'));
 			}
 			else {
-				this.waitAuth = true;
+                if( autostart ){
+                    this.setStatus('bad');
+                    this.buttonState(Lang.get('service.btn_start'));
+                    this.log(Lang.get('service.cant_start'), true);
+                }
+                else{
+                    this.waitAuth = true;
 
-				Browser.webContents.on('did-finish-load', () => {
-					if( this.waitAuth && Browser.getURL().indexOf(this.websiteUrl) >= 0 ){
-						Browser.webContents.executeJavaScript('document.querySelector("body").innerHTML', (body) => {
-							if( body.indexOf(this.authContent) >= 0 ){
-								Browser.close();
-								this.waitAuth = false;
-							}
-						});
-					}
-				});
+                    Browser.webContents.on('did-finish-load', () => {
+                        if( this.waitAuth && Browser.getURL().indexOf(this.websiteUrl) >= 0 ){
+                            Browser.webContents.executeJavaScript('document.querySelector("body").innerHTML', (body) => {
+                                if( body.indexOf(this.authContent) >= 0 ){
+                                    Browser.close();
+                                    this.waitAuth = false;
+                                }
+                            });
+                        }
+                    });
 
-				Browser.loadURL(this.authLink);
+                    Browser.loadURL(this.authLink);
 
-				Browser.once('close', () => {
-					Browser.webContents.removeAllListeners('did-finish-load');
+                    Browser.once('close', () => {
+                        Browser.webContents.removeAllListeners('did-finish-load');
 
-					this.waitAuth = false;
-					this.authCheck((authState) => {
-						if ( authState === 1)
-							this.runTimer();
-						else
-							this.buttonState(Lang.get('service.btn_start'));
-					});
-				});
-				Browser.show();
+                        this.waitAuth = false;
+                        this.authCheck((authState) => {
+                            if ( authState === 1)
+                                this.runTimer();
+                            else
+                                this.buttonState(Lang.get('service.btn_start'));
+                        });
+                    });
+                    Browser.show();
+                }
 			}
 		});
-
 	}
 
-	stopSeeker(){
+	stopSeeker(bad){
+        let status = bad ? 'bad' : 'normal';
 		if( !this.started )
 			return false;
 
 		this.started = false;
+        this.setStatus(status);
 		clearInterval(this.intervalVar);
 
 		this.log(Lang.get('service.stopped'));
@@ -190,7 +205,8 @@ class Seeker {
 	runTimer(){
 		this.totalTicks = 0;
 		this.started = true;
-		this.log(Lang.get('service.started'));
+        this.setStatus('good');
+		this.log( Lang.get('service.started') );
 
 		if( this.intervalVar )
 			clearInterval(this.intervalVar);
@@ -199,15 +215,31 @@ class Seeker {
 			if( !this.started )
 				clearInterval(this.intervalVar);
 
-			if( this.totalTicks % this.doInterval === 0 )
-				this.seekService();
+			if( this.totalTicks % this.doTimer === 0 ) {
+                this.authCheck((authState) => {
+                    if(authState == 1)
+                        this.seekService();
+                    else if(authState == 0) {
+                        this.log(Lang.get('service.session_expired'), true);
+                        this.stopSeeker(true);
+                    }
+                    else{
+                        this.log(Lang.get('service.connection_lost'), true);
+                        this.stopSeeker(true);
+                    }
+                });
+            }
 
 			if( !this.mainButton.hasClass('hovered') )
-				this.buttonState(window.timeToStr(this.doInterval - this.totalTicks % this.doInterval));
+				this.buttonState(window.timeToStr(this.doTimer - this.totalTicks % this.doTimer));
 
 			this.totalTicks++;
 		}, 1000);
 	}
+
+    setStatus(status){
+        this.statusIcon.attr('data-status', status);
+    }
 
 	buttonState(text, className){
 		this.mainButton.removeClass('disabled').text(text);
@@ -223,8 +255,12 @@ class Seeker {
 		return Config.set(this.constructor.name + '_' + key, val);
 	}
 
+    trans(key){
+        return Lang.get('service.' + this.constructor.name + '.' + key);
+    }
+
 	clearLog(){
-		this.logField.html('<div><span class="time">' + timeStr() + ':</span>Лог очищен</div>');
+		this.logField.html('<div><span class="time">' + timeStr() + ':</span>' + Lang.get('service.log_cleared') + '</div>');
 	}
 
 	log(text, logType){

@@ -9,7 +9,7 @@
     "electron-builder": "^20.4.0"
   },
   "dependencies": {
-	"electron-json-storage": "^4.0.2"
+    "electron-json-storage": "^4.0.2"
   },
   "author": "ES Soft",
   "license": "ISC",
@@ -20,12 +20,13 @@
   },
   "build": {
     "appId": "com.giftseeker.app",
+    "linux": {
+      "target": "deb",
+      "icon": "icon.ico"
+    },
     "win": {
       "target": "portable",
       "icon": "icon.ico"
-    },
-    "nsis": {
-      "artifactName": "${productName}.${ext}"
     },
     "portable": {
       "artifactName": "${productName}.${ext}"

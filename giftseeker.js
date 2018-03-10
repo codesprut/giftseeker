@@ -1,5 +1,5 @@
 'use strict';
-const {app, session, BrowserWindow, ipcMain} = require('electron');
+const {app, nativeImage, Menu, session, Tray, BrowserWindow, ipcMain} = require('electron');
 const storage = require('electron-json-storage');
 const fs = require('fs');
 
@@ -10,6 +10,8 @@ let _session = null;
 let Config   = null;
 let Lang     = null;
 let execPath = process.execPath.match(/.*\\/i)[0];
+let tray     = null;
+let user     = null;
 
 // for windows portable
 if( process.env.PORTABLE_EXECUTABLE_DIR !== undefined )
@@ -18,6 +20,7 @@ if( process.env.PORTABLE_EXECUTABLE_DIR !== undefined )
 storage.setDataPath(execPath + 'data');
 
 ipcMain.on('save-user', function(event, data) {
+    user = data;
 	global.user = data;
 });
 
@@ -52,7 +55,6 @@ app.on('ready', function() {
 	authWindow.loadURL('file://' + __dirname + '/auth.html');
 
 	mainWindow = new BrowserWindow({
-		parent: authWindow,
 		width: 730,
 		height: 500,
 		title: 'GiftSeeker',
@@ -106,8 +108,12 @@ app.on('ready', function() {
 
 
 	authWindow.on('ready-to-show', function() {
-		authWindow.show();
-		authWindow.focus();
+        authWindow.show();
+
+        if( Config.get('start_minimized') )
+            authWindow.hide();
+        else
+            authWindow.focus();
 	});
 
 	authWindow.on('close', function(e){
@@ -128,6 +134,29 @@ app.on('ready', function() {
 		mainWindow = null;
 	});
 
+
+    // Работа с треем
+    tray = new Tray(nativeImage.createFromPath(__dirname + '/icon.ico'));
+    const trayMenu = Menu.buildFromTemplate([
+        {
+            label: "Open Website", click: (item, window, event) => {
+                Browser.loadURL("http://giftseeker.ru/");
+                Browser.show();
+            }
+        },
+        { type: "separator" },
+        { role: "quit" }
+    ]);
+
+    tray.setToolTip("GiftSeeker");
+    tray.setContextMenu(trayMenu);
+    tray.on('click', () => {
+       if( user == null )
+           authWindow.isVisible() ? authWindow.hide() : authWindow.show();
+       else
+           mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+    });
+
 	// Ссылки в глобальное пространство
 	global.mainWindow = mainWindow;
 	global.authWindow = authWindow;
@@ -140,27 +169,51 @@ app.on('ready', function() {
 
 class LanguageClass {
 	constructor(){
-		let _this = this;
-		this.languages = {};
-		let lng_to_load = [];
-		let dir = fs.readdirSync(storage.getDataPath());
+        this.default    = 'ru_RU';
+		this.languages  = {};
+        this.langsCount = 0;
 
-		for(let x = 0; x < dir.length; x++){
-			if( dir[x].indexOf('lang.') >= 0 ){
-				lng_to_load.push(dir[x].replace('.json', ''));
-			}
-		}
-
-		storage.getMany(lng_to_load, function(error, langs){
-			if(error) throw error;
-
-			_this.languages = langs.lang;
-		});
+        this.loadLangs();
 	}
 
+    loadLangs(){
+        let _this = this;
+
+        if( fs.existsSync(storage.getDataPath()) ){
+            let lng_to_load = [];
+            let dir = fs.readdirSync(storage.getDataPath());
+
+            for(let x = 0; x < dir.length; x++){
+                if( dir[x].indexOf('lang.') >= 0 ){
+                    lng_to_load.push(dir[x].replace('.json', ''));
+                }
+            }
+
+            if( !lng_to_load.length )
+                return;
+
+            storage.getMany(lng_to_load, function(error, langs){
+                if(error) throw error;
+
+                let lng;
+
+                for(lng in langs.lang ){
+                    _this.langsCount++;
+                }
+
+                if( langs.lang[Config.get('lang', _this.default)] === undefined ){
+                    _this.default = lng;
+                    Config.set('lang', _this.default);
+                }
+
+                _this.languages = langs.lang;
+            });
+        }
+    }
+
 	get(key){
-		let response = this.languages[Config.get('lang', 'ru_RU')];
-		let splited  = key.split('.');
+		let response = this.languages;
+		let splited  = (Config.get('lang', this.default) + '.' + key).split('.');
 
 		for(let i = 0; i < splited.length; i++){
 			if( response[splited[i]] !== undefined ){
@@ -174,6 +227,15 @@ class LanguageClass {
 
 		return response;
 	}
+
+    changeLang(setLang){
+        //Config.set('lang', setLang);
+
+    }
+
+    count(){
+        return this.langsCount;
+    }
 
 	list(){
 		return this.languages;
