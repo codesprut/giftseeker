@@ -23,7 +23,7 @@ $(function(){
 
 	// -------------------------------
 
-	remote.getGlobal('ipc').on('change-lang', function() {
+	remote.getGlobal('ipcMain').on('change-lang', function() {
 		reloadLangStrings();
 	});
 

@@ -74,8 +74,8 @@ app.on('ready', function() {
 
 	mainWindow.setMenu(null);
 
-	authWindow.webContents.openDevTools();
-	//mainWindow.webContents.openDevTools();
+	//authWindow.webContents.openDevTools();
+	mainWindow.webContents.openDevTools();
 
 	//### Browser for websites
 
@@ -168,7 +168,7 @@ app.on('ready', function() {
 	global.storage    = storage;
 	global.Config     = Config;
 	global.Lang       = Lang;
-	global.ipc        = ipcMain;
+	global.ipcMain    = ipcMain;
 });
 
 class LanguageClass {

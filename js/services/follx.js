@@ -5,17 +5,37 @@ class Follx extends Seeker {
 	constructor() {
 		super();
 
-		this.doTimer  = 15;
 		this.websiteUrl  = 'https://follx.com';
 		this.authLink    = 'https://follx.com/logIn';
 		this.wonsUrl     = 'https://follx.com/giveaways/won';
 
 		this.authContent = '/account';
-		this.pointsLabel = 'Energy';
 
-		this.neededCookies.push('follx_session');
+		this.keepCookies.push('follx_session');
 
 		super.init();
+	}
+
+	getUserInfo(callback){
+		let userData = {
+			avatar: 'https://follx.com/favicon.ico',
+			username: 'Follx User',
+			value: 0
+		};
+
+		$.ajax({
+			url: 'https://follx.com/users/' + GSuser.steamid,
+			success: function(data){
+				let html = $(data);
+
+				userData.avatar     = html.find('.card-cover img').attr('src');
+				userData.username   = html.find('.username').first().text();
+				userData.value      = html.find('.user .energy span').first().text();
+			},
+			complete: function(){
+				callback(userData);
+			}
+		});
 	}
 
 	seekService(){

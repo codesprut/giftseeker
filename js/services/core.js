@@ -3,11 +3,10 @@
 class Seeker {
 
 	constructor() {
-        this.doTimer     = this.getConfig('timer', 300);
-        this.interval    = this.getConfig('interval', 5);
-
 		this.intervalVar = undefined;
 		this.totalTicks  = 0;
+
+		this.usrUpdTimer = 60;
 
 		this.started     = false;
 		this.waitAuth    = false;
@@ -16,17 +15,24 @@ class Seeker {
 		this.authLink    = 'http://giftseeker.ru';
 		this.wonsUrl     = 'http://giftseeker.ru';
 		this.authContent = '';
-		this.pointsLabel = 'Points';
 
-		this.points      = 0;
+		this.withValue   = true;
+		this.curr_value  = 0;
+
 		this.getTimeout  = 15000;
-
-		this.neededCookies = [];
+		this.keepCookies = [];
+		this.settings    = {
+			timer:      { type: 'number', trans: 'service.timer', min: 1, max: 60, default: this.getConfig('timer', 10) },
+			interval:   { type: 'number', trans: 'service.interval', min: 1, max: 30, default: this.getConfig('interval', 5) }
+			// turn_off_notifications
+			// random_interval - from 1 to 30
+		};
 	}
 
 	init(){
 		this.addIcon();
 		this.addPanel();
+		this.renderSettings();
 
 		if( Config.get('autostart') )
 			this.startSeeker(true);
@@ -62,7 +68,10 @@ class Seeker {
             .attr('id', this.constructor.name.toLowerCase())
 			.appendTo('.services-panels');
 
-		$('<ul><li class="active" data-id="logs" data-lang="service.logs">' + Lang.get('service.logs') +'</li><li data-id="settings" data-lang="service.settings">' + Lang.get('service.settings') + '</li></ul>')
+		$('<ul>' +
+			'<li class="active" data-id="logs" data-lang="service.logs">' + Lang.get('service.logs') +'</li>' +
+			'<li data-id="settings" data-lang="service.settings">' + Lang.get('service.settings') + '</li>' +
+			'</ul>')
 			.appendTo(this.panel);
 
 		this.logField = $(document.createElement('div'))
@@ -73,13 +82,36 @@ class Seeker {
 		this.settingsPanel = $(document.createElement('div'))
 			.addClass('service-settings in-service-panel')
 			.attr('data-id', 'settings')
-			.appendTo(this.panel);
+			.appendTo(this.panel).append(
+				$(document.createElement('div'))
+					.addClass('settings-numbers')
+			).append(
+				$(document.createElement('div'))
+					.addClass('settings-checkbox')
+			);
 
 		this.userPanel = $(document.createElement('div'))
 			.addClass('service-user-panel')
 			.appendTo(this.panel);
 
-		this.openWebsiteLink = $(document.createElement('button'))
+		this.userInfo = $(document.createElement('div'))
+			.addClass('user-info no-selectable')
+			.html('<div class="avatar"></div>' +
+				'<span class="username"></span>')
+			.appendTo(this.userPanel);
+
+		if( this.withValue ){
+			let value = $(document.createElement('span'))
+				.addClass('value')
+				.html('<span data-lang="' + this.transPath('value_label') + '">' + this.trans('value_label') + '</span>: ')
+				.appendTo(this.userInfo);
+
+			this.value_label = $(document.createElement('span'))
+				.text(this.curr_value)
+				.appendTo(value);
+		}
+
+		$(document.createElement('button'))
 			.addClass('open-website')
 			.attr('data-lang', 'service.open_website')
 			.text(Lang.get("service.open_website"))
@@ -96,7 +128,7 @@ class Seeker {
 			}, () => {
 				this.mainButton.removeClass('hovered');
 				if( this.started )
-					this.buttonState(window.timeToStr(this.doTimer - this.totalTicks % this.doTimer));
+					this.buttonState(window.timeToStr(this.doTimer() - this.totalTicks % this.doTimer()));
 			})
 			.click(() => {
 				if(this.mainButton.hasClass('disabled'))
@@ -157,6 +189,7 @@ class Seeker {
                     this.log(Lang.get('service.cant_start'), true);
                 }
                 else{
+	                this.buttonState(Lang.get('service.btn_awaiting'), 'disabled');
                     this.waitAuth = true;
 
                     Browser.webContents.on('did-finish-load', () => {
@@ -205,8 +238,11 @@ class Seeker {
 	runTimer(){
 		this.totalTicks = 0;
 		this.started = true;
+
         this.setStatus('good');
 		this.log( Lang.get('service.started') );
+
+		this.updateUserInfo();
 
 		if( this.intervalVar )
 			clearInterval(this.intervalVar);
@@ -215,11 +251,17 @@ class Seeker {
 			if( !this.started )
 				clearInterval(this.intervalVar);
 
-			if( this.totalTicks % this.doTimer === 0 ) {
+
+			// Обновление инфы о пользователе
+			if( this.totalTicks !== 0 && this.totalTicks % this.usrUpdTimer === 0 )
+				this.updateUserInfo();
+
+			// Выполнение основного действия
+			if( this.totalTicks % this.doTimer() === 0 ) {
                 this.authCheck((authState) => {
-                    if(authState == 1)
+                    if(authState === 1)
                         this.seekService();
-                    else if(authState == 0) {
+                    else if(authState === 0) {
                         this.log(Lang.get('service.session_expired'), true);
                         this.stopSeeker(true);
                     }
@@ -231,20 +273,51 @@ class Seeker {
             }
 
 			if( !this.mainButton.hasClass('hovered') )
-				this.buttonState(window.timeToStr(this.doTimer - this.totalTicks % this.doTimer));
+				this.buttonState(window.timeToStr(this.doTimer() - this.totalTicks % this.doTimer()));
 
 			this.totalTicks++;
 		}, 1000);
 	}
 
-    setStatus(status){
-        this.statusIcon.attr('data-status', status);
-    }
+	updateUserInfo(){
+		this.authCheck((authState) => {
+			if(authState === 1){
+				this.getUserInfo((userData) => {
+					this.userInfo.find('.avatar').css('background-image', "url('" + userData.avatar + "')");
+					this.userInfo.find('.username').text(userData.username);
+
+					if( this.withValue )
+						this.setValue(userData.value);
+
+					this.userInfo.addClass('visible');
+				})
+			}
+		});
+	}
+
+	renderSettings(){
+
+	}
+
+	doTimer(){
+		return this.getConfig('timer', 10) * 60;
+	}
+
+	setStatus(status){
+		this.statusIcon.attr('data-status', status);
+	}
 
 	buttonState(text, className){
 		this.mainButton.removeClass('disabled').text(text);
 		if( className )
 			this.mainButton.addClass(className);
+	}
+
+	setValue(new_value){
+		if( this.withValue ){
+			this.value_label.text( new_value );
+			this.curr_value = parseInt(new_value);
+		}
 	}
 
 	getConfig(key, def){
@@ -255,8 +328,12 @@ class Seeker {
 		return Config.set(this.constructor.name + '_' + key, val);
 	}
 
+    transPath(key){
+        return ('service.' + this.constructor.name.toLowerCase() + '.' + key);
+    }
+
     trans(key){
-        return Lang.get('service.' + this.constructor.name + '.' + key);
+        return Lang.get('service.' + this.constructor.name.toLowerCase() + '.' + key);
     }
 
 	clearLog(){
@@ -267,6 +344,18 @@ class Seeker {
 		this.logField.append('<div class="' + (logType ? 'warn' : 'normal') + '"><span class="time">' + timeStr() + ':</span>' + text + '</div>');
 	}
 
-	// Виртуальные функции - реализуются в потомках
+	// ### "Виртуальные методы" - реализуются в потомках
+	// Основной метод
 	seekService(){}
+
+	// Получение данных о юзере - аватар, имя, валюта
+	getUserInfo(callback){
+
+		callback({
+			avatar: 'http://giftseeker.ru/favicon.ico',
+			username: 'GS User',
+			value: 0
+		});
+
+	}
 }

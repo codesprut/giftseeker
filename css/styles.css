@@ -104,8 +104,12 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .seeker-button:not(.disabled):hover { background-color: #03a9f7; }
 .seeker-button.disabled { cursor: default; color: lightgray; opacity: 0.8; pointer-events: none; }
 
-.service-user-panel { position: relative; padding-top: 10px; height: 52px; }
+.service-user-panel { position: relative; padding: 7px 0; height: 52px; }
 .service-user-panel .seeker-button { position: absolute; right: 0; bottom: 10px; }
+.service-user-panel .user-info { display: none; line-height: 16px; }
+.service-user-panel .user-info.visible { display: block; }
+.service-user-panel .user-info .avatar { width: 40px; height: 40px; background: center/contain transparent no-repeat; border-radius: 1px; float: left; margin-right: 10px; }
+.service-user-panel .user-info > span { display: block; }
 
 button.open-website { font-size: inherit; font-weight: inherit; background: transparent; cursor: pointer; border: none; text-decoration: underline; color: #fff; }
 button.open-website:hover { color: #9EC5EA; }

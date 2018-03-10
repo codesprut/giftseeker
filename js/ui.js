@@ -4,7 +4,7 @@ const ipc    = require("electron").ipcRenderer;
 
 let Config = remote.getGlobal('Config');
 let Lang   = remote.getGlobal('Lang');
-let user   = remote.getGlobal('user');
+let GSuser = remote.getGlobal('user');
 
 let Browser     = remote.getGlobal('Browser');
 let authWindow  = remote.getGlobal('authWindow');
@@ -139,9 +139,9 @@ function profileSection() {
     // Отрисовка пользователя
 	let block = $('.content-item .info');
 	let avatar = $(document.createElement('div'))
-		.addClass('avatar').css({'background-image': 'url("' + user.avatar + '")'});
+		.addClass('avatar').css({'background-image': 'url("' + GSuser.avatar + '")'});
 	let username = $(document.createElement('div'))
-		.addClass('username').html(user.username);
+		.addClass('username').html(GSuser.username);
 
 	block.append(avatar)
 		.append(username);
