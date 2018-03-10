@@ -23,6 +23,10 @@ ipcMain.on('save-user', function(event, data) {
     user = data;
 	global.user = data;
 });
+ipcMain.on('change-lang', function(event, data) {
+	Lang.change(data);
+	event.sender.send('change-lang', data);
+});
 
 app.on('window-all-closed', function() {
 	if (process.platform !== 'darwin') {
@@ -70,8 +74,8 @@ app.on('ready', function() {
 
 	mainWindow.setMenu(null);
 
-	//authWindow.webContents.openDevTools();
-	mainWindow.webContents.openDevTools();
+	authWindow.webContents.openDevTools();
+	//mainWindow.webContents.openDevTools();
 
 	//### Browser for websites
 
@@ -151,20 +155,20 @@ app.on('ready', function() {
     tray.setToolTip("GiftSeeker");
     tray.setContextMenu(trayMenu);
     tray.on('click', () => {
-       if( user == null )
+       if( user === null )
            authWindow.isVisible() ? authWindow.hide() : authWindow.show();
        else
            mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
     });
 
 	// Ссылки в глобальное пространство
-	global.mainWindow = mainWindow;
 	global.authWindow = authWindow;
+	global.mainWindow = mainWindow;
 	global.Browser    = Browser;
-	global.execPath   = execPath;
 	global.storage    = storage;
 	global.Config     = Config;
 	global.Lang       = Lang;
+	global.ipc        = ipcMain;
 });
 
 class LanguageClass {
@@ -228,8 +232,8 @@ class LanguageClass {
 		return response;
 	}
 
-    changeLang(setLang){
-        //Config.set('lang', setLang);
+    change(setLang){
+        Config.set('lang', setLang);
 
     }
 

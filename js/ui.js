@@ -108,11 +108,16 @@ $(function(){
 				break;
 		}
 
-		Config.set(changed.attr('id'), value);
-
 		if( changed.attr('id') === 'lang' ){
-			reloadLangStrings();
+			ipc.send('change-lang', value);
+			return;
 		}
+
+		Config.set(changed.attr('id'), value);
+	});
+
+	ipc.on('change-lang', function(){
+		reloadLangStrings();
 	});
 });
 
@@ -152,6 +157,7 @@ function profileSection() {
     else{
         for(let lang in lang_list){
             let option = $(document.createElement('option'))
+	            .attr('id', lang_list[lang].lang_culture)
                 .val(lang).text('[' + lang_list[lang].lang_culture + '] ' + lang_list[lang].lang_name);
 
             if( Config.get('lang') === lang )

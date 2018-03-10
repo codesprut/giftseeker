@@ -23,6 +23,10 @@ $(function(){
 
 	// -------------------------------
 
+	remote.getGlobal('ipc').on('change-lang', function() {
+		reloadLangStrings();
+	});
+
 	reloadLangStrings();
 
 	$('#auth_button').click(function(e){
