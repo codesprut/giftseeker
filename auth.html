@@ -11,25 +11,35 @@
 	<body id="auth_window">
 		<div id="head_decor"></div>
 		<div id="head">
-			<div class="window-buttons">
-				<span class="minimizer fa fa-window-minimize"></span>
-				<span class="closer fa fa-times"></span>
-			</div>
 			<div class="logo">
 				GiftSeeker
+			</div>
+			<div class="window-buttons">
+				<span onclick="$('#choice-lang').addClass('visible')" class="language fa fa-globe" data-lang-title="auth.lng_choice_title"></span>
+				<span onclick="window.close()" class="closer fa fa-times"></span>
 			</div>
 		</div>
 		<div id="content" class="no-selectable">
 			<div class="status-text">
 			</div>
 			<button id="auth_button" class="seeker-button" data-lang="auth.steam_login">
-				Login via Steam
 			</button>
 			<div class="delimeter-or">
 				<span data-lang="auth.or">or</span>
 			</div>
 			<button id="cookies_button" class="seeker-button" data-lang="auth.enter_cookies">
-				Enter Cookies
+			</button>
+		</div>
+		<div id="choice-lang" class="no-selectable">
+			<div data-lang="auth.no_avail_trans" class="no-available-langs">
+			</div>
+			<div data-lang="auth.choose_lang" class="label">
+			</div>
+			<div class="input-wrap select">
+				<select class="setter" id="lang">
+				</select>
+			</div>
+			<button id="languages_button" class="seeker-button" data-lang="auth.go_back" onclick="$('#choice-lang').removeClass('visible')">
 			</button>
 		</div>
 		<script>window.$ = window.jQuery = require('./js/libs/jquery.min.js');</script>

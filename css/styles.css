@@ -12,7 +12,7 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .styled-scrollbar::-webkit-scrollbar { width: 8px; background-color: transparent; }
 .styled-scrollbar::-webkit-scrollbar-thumb { border-radius: 3px; -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color: #555; }
 
-#head { background-color: #111b29; height: 80px; border-bottom: 1px solid #28313e; -webkit-app-region:drag; }
+#head { background-color: #111b29; height: 80px; border-bottom: 1px solid #28313e; -webkit-app-region: drag; }
 
 #head_decor { height: 10px; width: 540px; background-color: #7c8e98; position: absolute; left: 0; right: 0; margin: 0 auto; top: 0; border-radius: 0 0 3px 3px; }
 #head_decor:before,
@@ -29,12 +29,9 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 
 .window-buttons { cursor: default; font-size: 0; z-index: 999; position: absolute; top: 10px; right: 10px; height: 14px; line-height: 14px; text-align: right; -webkit-app-region: no-drag; }
 .window-buttons span { cursor: pointer;  font-size: 12px; display: inline-block; vertical-align: middle; width: 14px; height: inherit; line-height: inherit; margin-left: 6px; }
-
-.window-buttons span.minimizer {  }
-.window-buttons span.minimizer:hover { color: #9EC5EA;  }
+.window-buttons span:hover { color: #9EC5EA }
 
 .window-buttons span.closer { font-size: 14px; }
-.window-buttons span.closer:hover { color: #9EC5EA }
 
 #content { height: 420px; border-bottom: 1px solid #28313e; background: #111b29; }
 .content-item { position: relative;  width: 100%; height: 100%; display: none; }

@@ -47,14 +47,6 @@ $(function(){
 
 	// EVENTS
 
-	// Управление окном
-	$('.window-buttons span').click(function () {
-		if($(this).hasClass('minimizer'))
-			remote.BrowserWindow.getFocusedWindow().hide();
-		else
-			window.close();
-	});
-
 	menu_switcher.click(function () {
 		$(this).toggleClass('state');
 
@@ -132,7 +124,7 @@ function reloadLangStrings() {
 
 	$('[data-lang-title]').each(function(){
 		$(this).attr('title', Lang.get($(this).attr('data-lang-title')));
-	})
+	});
 }
 
 function profileSection() {
@@ -146,10 +138,10 @@ function profileSection() {
 	block.append(avatar)
 		.append(username);
 
+	$('.build .version').text(currentBuild);
+
     let lang_select = $('select#lang');
     let lang_list	= Lang.list();
-
-    $('.build .version').text(currentBuild);
 
     // Наполняем языковой селект, либо удаляем его
     if( Lang.count() <= 1 )

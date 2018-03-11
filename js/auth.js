@@ -3,31 +3,47 @@
 const remote = require('electron').remote;
 const ipc    = require("electron").ipcRenderer;
 
-let Lang = remote.getGlobal('Lang');
+let Lang        = remote.getGlobal('Lang');
 let authWindow  = remote.getGlobal('authWindow');
 let mainWindow  = remote.getGlobal('mainWindow');
 let Browser     = remote.getGlobal('Browser');
 
 let status  = $('.status-text');
-let buttons = $('.seeker-button');
+let buttons = $('#content .seeker-button');
 
 
 $(function(){
-	// Управление окном
-	$('.window-buttons span').click(function () {
-		if($(this).hasClass('minimizer'))
-			require('electron').remote.BrowserWindow.getFocusedWindow().hide();
-		else
-			window.close();
-	});
-
-	// -------------------------------
-
 	remote.getGlobal('ipcMain').on('change-lang', function() {
 		reloadLangStrings();
 	});
 
 	reloadLangStrings();
+
+	let lang_select = $('select#lang');
+	let lang_list	= Lang.list();
+
+	// Наполняем языковой селект, либо удаляем его
+	if( Lang.count() <= 1 ){
+		lang_select.remove();
+		$('.no-available-langs').css('display', 'block')
+			.next().css('display', 'none');
+	}
+	else{
+		for(let lang in lang_list){
+			let option = $(document.createElement('option'))
+				.attr('id', lang_list[lang].lang_culture)
+				.val(lang).text('[' + lang_list[lang].lang_culture + '] ' + lang_list[lang].lang_name);
+
+			if( Lang.current() === lang )
+				option.prop('selected', true);
+
+			lang_select.append(option);
+		}
+
+		lang_select.change(function(){
+			ipc.send('change-lang', $(this).val());
+		});
+	}
 
 	$('#auth_button').click(function(e){
 		e.preventDefault();
@@ -90,5 +106,9 @@ function loadProgram(){
 function reloadLangStrings() {
 	$('[data-lang]').each(function(item, index){
 		$(this).html(Lang.get($(this).attr('data-lang')));
-	})
+	});
+
+	$('[data-lang-title]').each(function(){
+		$(this).attr('title', Lang.get($(this).attr('data-lang-title')));
+	});
 }

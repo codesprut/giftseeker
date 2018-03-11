@@ -74,8 +74,8 @@ app.on('ready', function() {
 
 	mainWindow.setMenu(null);
 
-	//authWindow.webContents.openDevTools();
-	mainWindow.webContents.openDevTools();
+	authWindow.webContents.openDevTools();
+	//mainWindow.webContents.openDevTools();
 
 	//### Browser for websites
 
@@ -239,6 +239,10 @@ class LanguageClass {
 
     count(){
         return this.langsCount;
+    }
+
+    current(){
+        return Config.get('lang', this.default);
     }
 
 	list(){

@@ -18,18 +18,16 @@
 			<ul class="menu">
 				<li class="active" data-id="services">
 					<span data-lang="ui.menu1">
-						Services
 					</span>
 				</li>
 				<li data-id="profile">
 					<span data-lang="ui.menu2">
-						Profile
 					</span>
 				</li>
 			</ul>
 			<div class="window-buttons">
-				<span class="minimizer fa fa-window-minimize"></span>
-				<span class="closer fa fa-times"></span>
+				<span class="minimizer fa fa-window-minimize" onclick="remote.BrowserWindow.getFocusedWindow().hide()"></span>
+				<span class="closer fa fa-times" onclick="window.close()"></span>
 			</div>
 		</div>
 		<div id="content">
@@ -52,7 +50,6 @@
 					<div class="info-links">
                     </div>
 					<button class="seeker-button logout" data-lang="profile.logout_btn">
-						Logout
 					</button>
 				</div>
 				<div class="settings">
@@ -63,19 +60,16 @@
 					<div class="input-wrap checkbox">
 						<input id="start_with_os" class="setter" type="checkbox"/>
 						<label for="start_with_os" data-lang="profile.start_with_os">
-							Start with Windows
 						</label>
 					</div>
 					<div class="input-wrap checkbox">
 						<input id="start_minimized" class="setter" type="checkbox"/>
 						<label for="start_minimized" data-lang="profile.start_minimized">
-							Start minimized
 						</label>
 					</div>
 					<div class="input-wrap checkbox">
 						<input id="autostart" class="setter" type="checkbox"/>
 						<label for="autostart" data-lang="profile.autostart">
-							Autostart Services
 						</label>
 					</div>
                     <div class="build no-selectable">
