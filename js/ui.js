@@ -172,15 +172,6 @@ function profileSection() {
 
     $(document.createElement('button'))
         .addClass('open-website')
-        .attr('data-lang', 'profile.donation')
-        .text(Lang.get('profile.donation'))
-        .css('margin-left', '7px')
-        .click(() => {
-            openWebsite('http://giftseeker.ru/donation');
-        }).appendTo(info_links);
-
-    $(document.createElement('button'))
-        .addClass('open-website')
         .attr('data-lang', 'profile.forum')
         .text(Lang.get('profile.forum'))
         .css('margin-left', '7px')
@@ -188,20 +179,14 @@ function profileSection() {
             openWebsite('http://iknows.ru/forums/gs/');
         }).appendTo(info_links);
 
-    $(document.createElement('br')).appendTo(info_links);
-    $(document.createElement('span'))
-        .attr('data-lang', 'profile.translated_by')
-        .text(Lang.get('profile.translated_by'))
-        .appendTo(info_links);
-
-    $(document.createElement('button'))
-        .addClass('open-website')
-        .attr('data-lang', 'translator')
-        .text(Lang.get('translator'))
-        .css('margin-left', '7px')
-        .click(() => {
-            openWebsite(Lang.get('feedback_url'));
-        }).appendTo(info_links);
+	$(document.createElement('button'))
+		.addClass('open-website')
+		.attr('data-lang', 'profile.donation')
+		.text(Lang.get('profile.donation'))
+		.css('margin-left', '7px')
+		.click(() => {
+			openWebsite('http://giftseeker.ru/donation');
+		}).appendTo(info_links);
 }
 
 function openWebsite(url){

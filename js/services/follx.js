@@ -5,6 +5,8 @@ class Follx extends Seeker {
 	constructor() {
 		super();
 
+		this.settings.timer.min = 5;
+
 		this.websiteUrl  = 'https://follx.com';
 		this.authLink    = 'https://follx.com/logIn';
 		this.wonsUrl     = 'https://follx.com/giveaways/won';
@@ -54,11 +56,19 @@ class Follx extends Seeker {
 				return;
 			}
 
-			html.find('.giveaway_card').each(function () {
-				let link = $(this).find('a.game_name').attr('href'),
-					name = $(this).find('a.game_name > span').text(),
-					have = $(this).find('.giveaway-indicators > .have').length > 0,
-					entered = $(this).find('entered').length > 0;
+			let found_games = html.find('.giveaway_card');
+			let curr_giveaway = 0;
+
+			function giveawayEnter(){
+				if( found_games.length <= curr_giveaway || !_this.started )
+					return;
+
+				let next_after = (_this.getConfig('interval') * 1000 );
+				let card = found_games.eq(curr_giveaway),
+					link = card.find('a.game_name').attr('href'),
+					name = card.find('a.game_name > span').text(),
+					have = card.find('.giveaway-indicators > .have').length > 0,
+					entered = card.find('entered').length > 0;
 
 				if( !have && !entered ){
 					$.get(link, function (html) {
@@ -73,14 +83,23 @@ class Follx extends Seeker {
 									'X-CSRF-TOKEN': CSRF
 								},
 								success: function (data) {
-									if(data.response)
-										_this.log('Вступил в ' + name);
+									if(data.response){
+										_this.setValue(data.points);
+										_this.log(_this.trans('entered_in') + name);
+									}
 								}
 							})
 						}
 					});
 				}
-			});
+				else
+					next_after = 10;
+
+				curr_giveaway++;
+				setTimeout(giveawayEnter, next_after);
+			}
+
+			setTimeout(giveawayEnter, 100 );
 
 		});
 	}
