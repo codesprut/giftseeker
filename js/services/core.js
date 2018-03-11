@@ -78,10 +78,22 @@ class Seeker {
 			'</ul>')
 			.appendTo(this.panel);
 
-		this.logField = $(document.createElement('div'))
+		this.logWrap = $(document.createElement('div'))
 			.addClass('service-logs in-service-panel styled-scrollbar active')
 			.attr('data-id', 'logs')
 			.appendTo(this.panel);
+
+		this.logField = $(document.createElement('div'))
+			.appendTo(this.logWrap);
+
+		$(document.createElement('span'))
+			.addClass('clear-log')
+			.text(Lang.get('service.clear_log'))
+			.attr('data-lang', 'service.clear_log')
+			.click(() => {
+				this.clearLog();
+			})
+			.appendTo(this.logWrap);
 
 		this.settingsPanel = $(document.createElement('div'))
 			.addClass('service-settings in-service-panel')
@@ -305,6 +317,11 @@ class Seeker {
 
 			switch(input.type){
 				case 'number':
+					if(input.default < input.min)
+						input.default = input.min;
+					else if( input.default > input.max )
+						input.default = input.max;
+
 					let numberWrap = $(document.createElement('div'))
 						.addClass('input-wrap number no-selectable')
 						.appendTo(this.settingsNums);
@@ -383,11 +400,13 @@ class Seeker {
 	}
 
 	getConfig(key, def){
-		return Config.get(this.constructor.name + '_' + key, def);
+		def = def || this.settings[key].default;
+
+		return Config.get(this.constructor.name.toLowerCase() + '_' + key, def);
 	}
 
 	setConfig(key, val){
-		return Config.set(this.constructor.name + '_' + key, val);
+		return Config.set(this.constructor.name.toLowerCase() + '_' + key, val);
 	}
 
     transPath(key){

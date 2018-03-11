@@ -12,7 +12,7 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .styled-scrollbar::-webkit-scrollbar { width: 8px; background-color: transparent; }
 .styled-scrollbar::-webkit-scrollbar-thumb { border-radius: 3px; -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color: #555; }
 
-#head { background-color: #111b29; height: 80px; border-bottom: 1px solid #28313e; -webkit-app-region: drag; }
+#head { position: relative; z-index: 10; background-color: #111b29; height: 80px; border-bottom: 1px solid #28313e; -webkit-app-region: drag; }
 
 #head_decor { height: 10px; width: 540px; background-color: #7c8e98; position: absolute; left: 0; right: 0; margin: 0 auto; top: 0; border-radius: 0 0 3px 3px; }
 #head_decor:before,
@@ -47,11 +47,11 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .content-item[data-id=profile] .settings .build { width: 100%; position: absolute; bottom: 10px; left: 0; text-align: center; }
 .content-item[data-id=profile] .seeker-button.logout { position: absolute; right: 10px; bottom: 10px; }
 
-.services_switcher { background-color: #030b15; width: 100px; height: 100%; position: absolute; left: 0; top: 0; border-right: 1px solid #28313e; }
+.services_switcher { background-color: #030b15; width: 100px; height: 100%; position: absolute; left: 0; top: 0; border-right: 1px solid #28313e; overflow: hidden; }
 
-.services-icons { padding-top: 4px; }
+.services-icons { padding-top: 4px; position: absolute; z-index: 1; width: 100%; top: 34px; left: 0; }
 
-.service-icon { border: 1px solid transparent; cursor: pointer; position: relative; width: 80px; height: 80px; margin: 0 auto 15px; font-size: 12px; }
+.service-icon { border: 1px solid transparent; cursor: pointer; position: relative; width: 80px; height: 80px; margin: 0 auto 10px; font-size: 12px; }
 .service-icon.active { border-color: #1a62a1; background: rgba(26, 98, 160, 0.3); }
 .service-icon:hover:not(.active) {  background: rgba(255, 255, 255, 0.3); border-color: #fff; }
 .service-icon .bg { margin: 10px auto 0; width: 42px; height: 42px; background: center center/contain no-repeat; }
@@ -62,14 +62,15 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .service-icon .service-status[data-status=normal] span + span { display: inline; }
 .service-icon .service-status[data-status=bad] span + span { display: inline; color: orangered; }
 
-.list_type { cursor: pointer; width: 100%; height: 30px; padding: 3px 4px 2px; text-align: center; font-size: 0; }
+.list_type { cursor: pointer; width: 100%; height: 34px; padding: 3px 4px 4px; text-align: center; font-size: 0; background-color: #030b15; position: relative; z-index: 5; }
 .list_type span { vertical-align: top; color: gray; display: inline-block; width: 48.5%; height: 100%; line-height: 25px; border: 1px solid #28313e; font-size: 18px; }
 .list_type span:first-child { margin-right: 2px; font-size: 16px; }
 .list_type:not(.state) span:first-child { color: #fff; }
 .list_type.state span+span { color: #fff; }
 
+.list_type.state + .services-icons { padding-top: 0; }
 .list_type.state + .services-icons .service-icon { width: 90px; height: 20px; margin: 0 auto 5px; }
-.list_type.state + .services-icons .service-icon .bg { width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin: 0 4px 0 2px; }
+.list_type.state + .services-icons .service-icon .bg { display: none; /*width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin: 0 4px 0 2px;*/ }
 .list_type.state + .services-icons .service-icon .service-name { left: 22px; top: 0; line-height: 20px; display: inline-block; vertical-align: middle; }
 .list_type.state + .services-icons .service-icon:hover,
 .list_type.state + .services-icons .service-icon.active { color: #9EC5EA;  border-color: transparent; background: transparent; }
@@ -95,6 +96,7 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .service-logs span.time { color: #9EC5EA; padding-right: 6px; }
 
 .service-logs { -webkit-user-select: text; }
+.service-logs .clear-log { position: absolute; right: 18px; top: 10px; font-size: 12px; color: #9EC5EA; cursor: pointer; }
 .service-settings {  }
 
 .service-settings .input-wrap { display: inline-block; position: relative; }

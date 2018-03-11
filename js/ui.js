@@ -6,13 +6,16 @@ let Config = remote.getGlobal('Config');
 let Lang   = remote.getGlobal('Lang');
 let GSuser = remote.getGlobal('user');
 
+let TrayIcon    = remote.getGlobal('TrayIcon');
 let Browser     = remote.getGlobal('Browser');
 let authWindow  = remote.getGlobal('authWindow');
 let mainWindow  = remote.getGlobal('mainWindow');
 
+let intervalTicks = 0;
+
 $(function(){
 	// Основной воркер главного окна
-	intervalSchedules();
+	setInterval(intervalSchedules, 1000);
 
 	// UI LOAD
 	reloadLangStrings();
@@ -47,8 +50,27 @@ $(function(){
 
 	// EVENTS
 
+	let icons  = $('.services-icons');
+	let maxTop = parseInt(icons.css('top').replace('px', ''));
+
+	$('.services_switcher').bind('mousewheel', function(e) {
+		let scroll = e.originalEvent.wheelDelta / 120 > 0 ? 20 : -20;
+
+		let height = icons.height();
+		let minTop = $(this).height() - height;
+		let top    = parseInt(icons.css('top').replace('px', ''));
+		let newTop = top + scroll;
+
+		if( scroll > 0 && newTop <= maxTop || scroll < 0 && newTop >= minTop )
+			top = newTop;
+
+		icons.css('top', top + 'px');
+	});
+
 	menu_switcher.click(function () {
 		$(this).toggleClass('state');
+
+		icons.css('top', maxTop + 'px');
 
 		Config.set("menu_as_list", $(this).hasClass('state'));
 	});
@@ -114,7 +136,32 @@ $(function(){
 });
 
 function intervalSchedules(){
-	// Обновлять инфо о юзере
+	// Проверяем обновления
+	if( intervalTicks % 600 === 0 ){
+		$.ajax({
+			url: 'http://giftseeker.ru/api/version',
+			dataType: 'json',
+			success: function(data){
+				if( data.response && data.response !== currentBuild )
+					TrayIcon.displayBalloon({ icon: __dirname + '/icon.png', title: Lang.get('ui.upd_title'), content: Lang.get('ui.upd_text') });
+			}
+		});
+	}
+
+	// Обновляем инфо о юзере
+	if( intervalTicks !== 0 && intervalTicks % 300 === 0 ){
+		$.ajax({
+			url: 'http://giftseeker.ru/api/userData',
+			data: { ver: currentBuild },
+			dataType: 'json',
+			success: function(data){
+				if( data.response )
+					renderUser(data.response);
+			}
+		});
+	}
+
+	intervalTicks++;
 }
 
 function reloadLangStrings() {
@@ -128,15 +175,7 @@ function reloadLangStrings() {
 }
 
 function profileSection() {
-    // Отрисовка пользователя
-	let block = $('.content-item .info');
-	let avatar = $(document.createElement('div'))
-		.addClass('avatar').css({'background-image': 'url("' + GSuser.avatar + '")'});
-	let username = $(document.createElement('div'))
-		.addClass('username').html(GSuser.username);
-
-	block.append(avatar)
-		.append(username);
+	renderUser(GSuser);
 
 	$('.build .version').text(currentBuild);
 
@@ -187,6 +226,11 @@ function profileSection() {
 		.click(() => {
 			openWebsite('http://giftseeker.ru/donation');
 		}).appendTo(info_links);
+}
+
+function renderUser(userData) {
+	$('.content-item .info .avatar').css({'background-image': 'url("' + userData.avatar + '")'});
+	$('.content-item .info .username').html(userData.username);
 }
 
 function openWebsite(url){

@@ -68,9 +68,12 @@ class Follx extends Seeker {
 					link = card.find('a.game_name').attr('href'),
 					name = card.find('a.game_name > span').text(),
 					have = card.find('.giveaway-indicators > .have').length > 0,
-					entered = card.find('entered').length > 0;
+					entered = card.find('.entered').length > 0;
 
-				if( !have && !entered ){
+				if( have || entered )
+					next_after = 50;
+				else
+				{
 					$.get(link, function (html) {
 						if( html.indexOf('data-action="enter"') > 0 ){
 							$.ajax({
@@ -85,15 +88,13 @@ class Follx extends Seeker {
 								success: function (data) {
 									if(data.response){
 										_this.setValue(data.points);
-										_this.log(_this.trans('entered_in') + name);
+										_this.log(Lang.get('service.entered_in') + name);
 									}
 								}
 							})
 						}
 					});
 				}
-				else
-					next_after = 10;
 
 				curr_giveaway++;
 				setTimeout(giveawayEnter, next_after);

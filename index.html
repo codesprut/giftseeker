@@ -47,6 +47,8 @@
 			</div>
 			<div class="content-item" data-id="profile">
 				<div class="info no-selectable">
+					<div class="avatar"></div>
+					<div class="username"></div>
 					<div class="info-links">
                     </div>
 					<button class="seeker-button logout" data-lang="profile.logout_btn">
@@ -86,13 +88,19 @@
 		<script src="./js/services/core.js"></script>
 		<script src="./js/services/follx.js"></script>
 		<script src="./js/services/steamgifts.js"></script>
+		<script src="./js/services/indiegala.js"></script>
+		<script src="./js/services/opiumpulses.js"></script>
+		<script src="./js/services/tf2r.js"></script>
 		<script>
 			window.services = {
-				Follx: new Follx(),
-				//SteamGifts: new SteamGifts(),
+				follx: new Follx(),
+				//steamgifts: new SteamGifts(),
+				indiegala: new IndieGala(),
+				//opiumpulses: new OpiumPulses(),
+				//tf2r: new TF2R()
 			};
 
-			window.services.Follx.setActive();
+			window.services.follx.setActive();
 		</script>
 	</body>
 </html>

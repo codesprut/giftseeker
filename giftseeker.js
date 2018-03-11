@@ -1,5 +1,5 @@
 'use strict';
-const {app, nativeImage, Menu, session, Tray, BrowserWindow, ipcMain} = require('electron');
+const {app, nativeImage, shell, Menu, session, Tray, BrowserWindow, ipcMain} = require('electron');
 const storage = require('electron-json-storage');
 const fs = require('fs');
 
@@ -74,8 +74,8 @@ app.on('ready', function() {
 
 	mainWindow.setMenu(null);
 
-	authWindow.webContents.openDevTools();
-	//mainWindow.webContents.openDevTools();
+	//authWindow.webContents.openDevTools();
+	mainWindow.webContents.openDevTools();
 
 	//### Browser for websites
 
@@ -143,7 +143,7 @@ app.on('ready', function() {
     tray = new Tray(nativeImage.createFromPath(__dirname + '/icon.ico'));
     const trayMenu = Menu.buildFromTemplate([
         {
-            label: "Open Website", click: (item, window, event) => {
+            label: "Open Website", click: () => {
                 Browser.loadURL("http://giftseeker.ru/");
                 Browser.show();
             }
@@ -161,6 +161,10 @@ app.on('ready', function() {
            mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
     });
 
+	tray.on('balloon-click', function(){
+		shell.openExternal('http://giftseeker.ru/downloads')
+	});
+
 	// Ссылки в глобальное пространство
 	global.authWindow = authWindow;
 	global.mainWindow = mainWindow;
@@ -169,6 +173,7 @@ app.on('ready', function() {
 	global.Config     = Config;
 	global.Lang       = Lang;
 	global.ipcMain    = ipcMain;
+	global.TrayIcon   = tray;
 });
 
 class LanguageClass {
