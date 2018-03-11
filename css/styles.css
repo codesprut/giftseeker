@@ -27,14 +27,14 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 #head .menu li.active span,
 #head .menu li span:hover { color: #9EC5EA; text-shadow: 0 0 15px #9EC5EA; }
 
-.window-buttons { font-size: 0; z-index: 999; position: absolute; top: 10px; right: 10px; height: 13px; line-height: 13px; text-align: right; -webkit-app-region: no-drag; }
-.window-buttons span { cursor: pointer; background: url('../images/window-buttons.png') no-repeat; display: inline-block; vertical-align: middle; height: 13px; width: 13px; margin-left: 6px; }
+.window-buttons { cursor: default; font-size: 0; z-index: 999; position: absolute; top: 10px; right: 10px; height: 14px; line-height: 14px; text-align: right; -webkit-app-region: no-drag; }
+.window-buttons span { cursor: pointer;  font-size: 12px; display: inline-block; vertical-align: middle; width: 14px; height: inherit; line-height: inherit; margin-left: 6px; }
 
-.window-buttons span.minimizer { background-position: -5px -28px; }
-.window-buttons span.minimizer:hover { background-position: -28px -28px; }
+.window-buttons span.minimizer {  }
+.window-buttons span.minimizer:hover { color: #9EC5EA;  }
 
-.window-buttons span.closer { background-position: -5px -5px; }
-.window-buttons span.closer:hover { background-position: -28px -5px; }
+.window-buttons span.closer { font-size: 14px; }
+.window-buttons span.closer:hover { color: #9EC5EA }
 
 #content { height: 420px; border-bottom: 1px solid #28313e; background: #111b29; }
 .content-item { position: relative;  width: 100%; height: 100%; display: none; }
@@ -52,31 +52,31 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 
 .services_switcher { background-color: #030b15; width: 100px; height: 100%; position: absolute; left: 0; top: 0; border-right: 1px solid #28313e; }
 
-.services-icons { padding-top: 10px; }
+.services-icons { padding-top: 4px; }
 
 .service-icon { border: 1px solid transparent; cursor: pointer; position: relative; width: 80px; height: 80px; margin: 0 auto 15px; font-size: 12px; }
 .service-icon.active { border-color: #1a62a1; background: rgba(26, 98, 160, 0.3); }
 .service-icon:hover:not(.active) {  background: rgba(255, 255, 255, 0.3); border-color: #fff; }
 .service-icon .bg { margin: 10px auto 0; width: 42px; height: 42px; background: center center/contain no-repeat; }
 .service-icon .service-name { display: block; text-align: center; }
-.service-icon .service-status { width: 16px; height: 16px; position: absolute; right: 2px; bottom: 2px; background: center/contain no-repeat; }
-.service-icon .service-status[data-status=good] { height: 14px; width: 14px; background-image: url('../images/statuses/green.png'); }
-.service-icon .service-status[data-status=bad] { background-image: url('../images/statuses/red.png'); }
-.service-icon .service-status[data-status=normal] { background-image: url('../images/statuses/gray.png'); }
+.service-icon .service-status { width: 16px; height: 16px; line-height: 16px; text-align: center; font-size: 16px; position: absolute; right: 2px; bottom: 2px; background: center/contain no-repeat; }
+.service-icon .service-status span { display: none; color: lightgray; }
+.service-icon .service-status[data-status=good] span:first-child { display: inline; color: lightgreen; }
+.service-icon .service-status[data-status=normal] span + span { display: inline; }
+.service-icon .service-status[data-status=bad] span + span { display: inline; color: orangered; }
 
-.list_type { background: url('../images/list_style.png') -5px -44px no-repeat; cursor: pointer; width: 98px; height: 29px; margin: 1px auto 0; }
-.list_type.state { background-position: -5px -5px; }
+.list_type { cursor: pointer; width: 100%; height: 30px; padding: 3px 4px 2px; text-align: center; font-size: 0; }
+.list_type span { vertical-align: top; color: gray; display: inline-block; width: 48.5%; height: 100%; line-height: 25px; border: 1px solid #28313e; font-size: 18px; }
+.list_type span:first-child { margin-right: 2px; font-size: 16px; }
+.list_type:not(.state) span:first-child { color: #fff; }
+.list_type.state span+span { color: #fff; }
 
-.list_type.state + .services-icons { padding-top: 4px; }
 .list_type.state + .services-icons .service-icon { width: 90px; height: 20px; margin: 0 auto 5px; }
 .list_type.state + .services-icons .service-icon .bg { width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin: 0 4px 0 2px; }
 .list_type.state + .services-icons .service-icon .service-name { left: 22px; top: 0; line-height: 20px; display: inline-block; vertical-align: middle; }
 .list_type.state + .services-icons .service-icon:hover,
 .list_type.state + .services-icons .service-icon.active { color: #9EC5EA;  border-color: transparent; background: transparent; }
-.list_type.state + .services-icons .service-icon .service-status { width: 16px; height: 16px; position: absolute; right: 2px; bottom: 2px; background: center/contain no-repeat; }
-.list_type.state + .services-icons .service-icon .service-status[data-status=good] { background-image: url('images/statuses/green.png'); }
-.list_type.state + .services-icons .service-icon .service-status[data-status=bad] { background-image: url('images/statuses/red.png'); }
-.list_type.state + .services-icons .service-icon .service-status[data-status=neutral] { background-image: url('images/statuses/gray.png'); }
+.list_type.state + .services-icons .service-icon .service-status { font-size: 14px; position: absolute; right: 0; bottom: 0; }
 
 
 
@@ -86,11 +86,11 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .service-panel.active { display: block; }
 
 .service-panel > ul { list-style: none; font-size: 0; padding-left: 10px; padding-top: 2px; }
-.service-panel > ul li { border-radius: 3px 3px 0 0; color: #808080; cursor: pointer; display: inline-block; font-size: 12px; line-height: 14px; height: 18px; vertical-align: middle; padding: 4px 12px; background: rgba(80, 80, 80, 0.4); }
+.service-panel > ul li { border-radius: 2px 2px 0 0; color: #808080; cursor: pointer; display: inline-block; font-size: 12px; line-height: 14px; height: 18px; vertical-align: middle; padding: 4px 12px; background: rgba(80, 80, 80, 0.4); }
 .service-panel > ul li.active { color: #fff; }
 .service-panel > ul li+li { margin-left: 6px; }
 
-.in-service-panel { font-size: 14px; display: none; background: rgba(80, 80, 80, 0.2); height: 340px; padding: 5px; border-radius: 3px; border: 1px solid rgba(80, 80, 80, 0.5); }
+.in-service-panel { font-size: 14px; display: none; background: rgba(80, 80, 80, 0.2); height: 340px; padding: 5px; border-radius: 2px; border: 1px solid rgba(80, 80, 80, 0.5); }
 .in-service-panel.active { display: block; }
 
 .service-logs { font-size: 13px; overflow-x: auto; }
@@ -99,6 +99,26 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 
 .service-logs { -webkit-user-select: text; }
 .service-settings {  }
+
+.service-settings .input-wrap { display: inline-block; position: relative; }
+.service-settings .input-wrap .label { padding: 0 5px; font-size: 12px; color: #9EC5EA; cursor: help; }
+.service-settings .input-wrap.number { text-align: center; }
+
+.service-settings .input-wrap.number .value-label,
+.service-settings .input-wrap.number .button { display: inline-block; vertical-align: middle; }
+
+.service-settings .input-wrap.number .value-label { min-width: 20px; text-align: center; font-size: 15px; }
+
+.service-settings .input-wrap.number .button { width: 20px; cursor: pointer; color: #9EC5EA; font-weight: bold; text-align: center; font-size: 14px; }
+.service-settings .input-wrap.number .button:hover { color: #0e86ca; }
+.service-settings .input-wrap.number .button.disabled { cursor: default; color: grey; }
+
+.service-settings .input-wrap .label { padding: 0 5px; font-size: 12px; color: #9EC5EA; }
+
+
+
+
+
 
 .seeker-button { color: #fff; cursor: pointer; width: 125px; height: 30px; text-align: center; line-height: 26px; font-size: 14px; font-weight: bold; background-color: #0e86ca; border: 2px solid #10a1de; box-sizing: border-box; }
 .seeker-button:not(.disabled):hover { background-color: #03a9f7; }

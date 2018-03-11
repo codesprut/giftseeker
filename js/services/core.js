@@ -50,6 +50,10 @@ class Seeker {
         this.statusIcon = $(document.createElement('div'))
             .addClass('service-status')
             .attr('data-status', 'normal')
+	        .html(
+	        	'<span class="fa fa-play"></span>' +
+	        	'<span class="fa fa-pause"></span>'
+	        )
             .appendTo(this.icon);
 
 		$(document.createElement('span'))
@@ -82,13 +86,13 @@ class Seeker {
 		this.settingsPanel = $(document.createElement('div'))
 			.addClass('service-settings in-service-panel')
 			.attr('data-id', 'settings')
-			.appendTo(this.panel).append(
-				$(document.createElement('div'))
-					.addClass('settings-numbers')
-			).append(
-				$(document.createElement('div'))
-					.addClass('settings-checkbox')
-			);
+			.appendTo(this.panel);
+
+		this.settingsNums = $(document.createElement('div'))
+			.addClass('settings-numbers').appendTo(this.settingsPanel);
+
+		this.settingsChecks = $(document.createElement('div'))
+			.addClass('settings-checkbox').appendTo(this.settingsPanel);
 
 		this.userPanel = $(document.createElement('div'))
 			.addClass('service-user-panel')
@@ -296,7 +300,65 @@ class Seeker {
 	}
 
 	renderSettings(){
+		for(let control in this.settings){
+			let input = this.settings[control];
 
+			switch(input.type){
+				case 'number':
+					let numberWrap = $(document.createElement('div'))
+						.addClass('input-wrap number no-selectable')
+						.appendTo(this.settingsNums);
+
+					numberWrap.html(
+						'<div class="button btn-down"><span class="fa fa-minus"></span></div>' +
+						'<div class="value-label">' + input.default + '</div>' +
+						'<div class="button btn-up"><span class="fa fa-plus"></span></div>' +
+						'<div class="label" title="' + this.trans(input.trans + '_title') + '" data-lang-title="' + input.trans + '_title" data-lang="' + input.trans + '">' + this.trans(input.trans) + '</div>'
+					);
+
+					let _this  = this;
+					let vLabel = numberWrap.find('.value-label');
+					let btnUp  = numberWrap.find('.btn-up');
+					let btnDn  = numberWrap.find('.btn-down');
+
+					if( input.default === input.max ) btnUp.addClass('disabled');
+					if( input.default === input.min ) btnDn.addClass('disabled');
+
+					btnUp.click(function() {
+						let val = parseFloat(vLabel.text());
+						if (val < input.max){
+							val++;
+							btnDn.removeClass('disabled');
+						}
+
+						if( val === input.max )
+							btnUp.addClass('disabled');
+
+						vLabel.text(val);
+						_this.setConfig(control, val);
+					});
+
+					btnDn.click(function() {
+						let val = parseFloat(vLabel.text());
+						if (val > input.min){
+							val--;
+							btnUp.removeClass('disabled');
+						}
+
+						if( val === input.min )
+							btnDn.addClass('disabled');
+
+						vLabel.text(val);
+						_this.setConfig(control, val);
+					});
+
+					break;
+				case 'checkbox':
+
+
+					break;
+			}
+		}
 	}
 
 	doTimer(){
