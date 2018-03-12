@@ -100,7 +100,7 @@ class Follx extends Seeker {
 				setTimeout(giveawayEnter, next_after);
 			}
 
-			setTimeout(giveawayEnter, 100 );
+			giveawayEnter();
 
 		});
 	}

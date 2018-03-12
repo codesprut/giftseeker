@@ -22,8 +22,8 @@ class Seeker {
 		this.getTimeout  = 15000;
 		this.keepCookies = [];
 		this.settings    = {
-			timer:      { type: 'number', trans: 'service.timer', min: 1, max: 60, default: this.getConfig('timer', 10) },
-			interval:   { type: 'number', trans: 'service.interval', min: 3, max: 30, default: this.getConfig('interval', 5) }
+			timer:      { type: 'number', trans: 'service.timer', min: 5, max: 60, default: this.getConfig('timer', 10) },
+			interval:   { type: 'number', trans: 'service.interval', min: 5, max: 30, default: this.getConfig('interval', 5) }
 			// turn_off_notifications
 			// random_interval - from 1 to 30
 		};

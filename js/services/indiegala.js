@@ -58,7 +58,7 @@ class IndieGala extends Seeker {
 
 	seekService(){
 		let _this = this;
-		let page  = 4;
+		let page  = 1;
 
 		$.get('https://www.indiegala.com/giveaways/get_user_level_and_coins', function(data){
 			data = JSON.parse(data);
@@ -115,7 +115,7 @@ class IndieGala extends Seeker {
 					setTimeout(giveawayEnter, next_after);
 				}
 
-				setTimeout(giveawayEnter, 100 );
+				giveawayEnter();
 			});
 
 		});
