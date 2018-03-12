@@ -9,7 +9,9 @@
     "electron-builder": "^20.4.0"
   },
   "dependencies": {
-    "electron-json-storage": "^4.0.2"
+    "electron-json-storage": "^4.0.2",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2"
   },
   "author": "ES Soft",
   "license": "ISC",

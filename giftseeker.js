@@ -39,6 +39,7 @@ app.on('ready', function() {
 	Config   = new ConfigClass();
 	Lang     = new LanguageClass();
 	_session = session.fromPartition('persist:GiftSeeker');
+	_session.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36');
 
 	authWindow = new BrowserWindow({
 		width: 280,
@@ -161,10 +162,6 @@ app.on('ready', function() {
            mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
     });
 
-	tray.on('balloon-click', function(){
-		shell.openExternal('http://giftseeker.ru/downloads')
-	});
-
 	// Ссылки в глобальное пространство
 	global.authWindow = authWindow;
 	global.mainWindow = mainWindow;
@@ -174,6 +171,7 @@ app.on('ready', function() {
 	global.Lang       = Lang;
 	global.ipcMain    = ipcMain;
 	global.TrayIcon   = tray;
+	global.shell      = shell;
 });
 
 class LanguageClass {

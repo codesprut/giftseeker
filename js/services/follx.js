@@ -13,8 +13,6 @@ class Follx extends Seeker {
 
 		this.authContent = '/account';
 
-		this.keepCookies.push('follx_session');
-
 		super.init();
 	}
 

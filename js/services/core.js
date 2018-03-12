@@ -11,6 +11,8 @@ class Seeker {
 		this.started     = false;
 		this.waitAuth    = false;
 
+		this.cookies     = '';
+		this.domain      = 'giftseeker.ru';
 		this.websiteUrl  = 'http://giftseeker.ru';
 		this.authLink    = 'http://giftseeker.ru';
 		this.wonsUrl     = 'http://giftseeker.ru';
@@ -20,7 +22,6 @@ class Seeker {
 		this.curr_value  = 0;
 
 		this.getTimeout  = 15000;
-		this.keepCookies = [];
 		this.settings    = {
 			timer:      { type: 'number', trans: 'service.timer', min: 5, max: 60, default: this.getConfig('timer', 10) },
 			interval:   { type: 'number', trans: 'service.interval', min: 5, max: 30, default: this.getConfig('interval', 5) }
@@ -33,6 +34,8 @@ class Seeker {
 		this.addIcon();
 		this.addPanel();
 		this.renderSettings();
+
+		this.updateCookies();
 
 		if( Config.get('autostart') )
 			this.startSeeker(true);
@@ -267,7 +270,6 @@ class Seeker {
 			if( !this.started )
 				clearInterval(this.intervalVar);
 
-
 			// Обновление инфы о пользователе
 			if( this.totalTicks !== 0 && this.totalTicks % this.usrUpdTimer === 0 )
 				this.updateUserInfo();
@@ -275,8 +277,10 @@ class Seeker {
 			// Выполнение основного действия
 			if( this.totalTicks % this.doTimer() === 0 ) {
                 this.authCheck((authState) => {
-                    if(authState === 1)
-                        this.seekService();
+                    if(authState === 1) {
+	                    this.updateCookies();
+	                    this.seekService();
+                    }
                     else if(authState === 0) {
                         this.log(Lang.get('service.session_expired'), true);
                         this.stopSeeker(true);
@@ -376,6 +380,18 @@ class Seeker {
 					break;
 			}
 		}
+	}
+
+	updateCookies(){
+		mainWindow.webContents.session.cookies.get({ domain: this.domain }, (error, cookies) => {
+			let newCookies = '';
+
+			for( let one in cookies )
+				newCookies += cookies[one].name + '=' + cookies[one].value + ';';
+
+			this.cookies = newCookies;
+		});
+
 	}
 
 	doTimer(){

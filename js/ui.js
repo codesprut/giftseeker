@@ -1,12 +1,14 @@
 'use strict';
-const remote = require('electron').remote;
-const ipc    = require("electron").ipcRenderer;
+const remote  = require('electron').remote;
+const ipc     = require("electron").ipcRenderer;
+const Request = require('request-promise');
 
 let Config = remote.getGlobal('Config');
 let Lang   = remote.getGlobal('Lang');
 let GSuser = remote.getGlobal('user');
 
 let TrayIcon    = remote.getGlobal('TrayIcon');
+let shell       = remote.getGlobal('shell');
 let Browser     = remote.getGlobal('Browser');
 let authWindow  = remote.getGlobal('authWindow');
 let mainWindow  = remote.getGlobal('mainWindow');
@@ -142,8 +144,17 @@ function intervalSchedules(){
 			url: 'http://giftseeker.ru/api/version',
 			dataType: 'json',
 			success: function(data){
-				if( data.response && data.response !== currentBuild )
-					TrayIcon.displayBalloon({ icon: __dirname + '/icon.png', title: Lang.get('ui.upd_title'), content: Lang.get('ui.upd_text') });
+				if( data.response && data.response !== currentBuild ) {
+					TrayIcon.displayBalloon({
+						icon: __dirname + '/icon.png',
+						title: Lang.get('ui.upd_title'),
+						content: Lang.get('ui.upd_text')
+					});
+
+					TrayIcon.once('balloon-click', function(){
+						shell.openExternal('http://giftseeker.ru/downloads')
+					});
+				}
 			}
 		});
 	}
