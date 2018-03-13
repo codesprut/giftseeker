@@ -343,7 +343,10 @@ class Seeker {
 					if( input.default === input.max ) btnUp.addClass('disabled');
 					if( input.default === input.min ) btnDn.addClass('disabled');
 
-					btnUp.click(function() {
+					let pressTimeout = undefined;
+					let iterations   = 0;
+
+					let up = function(){
 						let val = parseFloat(vLabel.text());
 						if (val < input.max){
 							val++;
@@ -355,9 +358,9 @@ class Seeker {
 
 						vLabel.text(val);
 						_this.setConfig(control, val);
-					});
+					};
 
-					btnDn.click(function() {
+					let dn = function(){
 						let val = parseFloat(vLabel.text());
 						if (val > input.min){
 							val--;
@@ -369,6 +372,34 @@ class Seeker {
 
 						vLabel.text(val);
 						_this.setConfig(control, val);
+					};
+
+					btnUp.on('mousedown', () =>{
+							let func = function(){
+								iterations++;
+								up();
+
+								pressTimeout = setTimeout(func, 200 / ( iterations / 2 ));
+							};
+							func();
+						})
+						.on('mouseup mouseleave', () => {
+							iterations = 0;
+							clearTimeout(pressTimeout);
+						});
+
+					btnDn.on('mousedown', () =>{
+						let func = function(){
+							iterations++;
+							dn();
+
+							pressTimeout = setTimeout(func, 200 / ( iterations / 2 ));
+						};
+						func();
+					})
+					.on('mouseup mouseleave', () => {
+						iterations = 0;
+						clearTimeout(pressTimeout);
 					});
 
 					break;

@@ -10,7 +10,9 @@ class SteamGifts extends Seeker {
 		this.authLink    = "https://www.steamgifts.com/?login";
 		this.wonsUrl     = "https://www.steamgifts.com/giveaways/won";
 
-		this.settings.min_level = { type: 'number', trans: this.transPath('min_level'), min: 0, max: 10, default: this.getConfig('min_level', 0) };
+		this.settings.min_level      = { type: 'number', trans: this.transPath('min_level'), min: 0, max: 10, default: this.getConfig('min_level', 0) };
+		this.settings.points_reserve = { type: 'number', trans: this.transPath('points_reserve'), min: 0, max: 500, default: this.getConfig('points_reserve', 0) };
+		this.settings.max_cost       = { type: 'number', trans: this.transPath('max_cost'), min: 0, max: 300, default: this.getConfig('max_cost', 0) };
 
 		super.init();
 	}
@@ -67,7 +69,13 @@ class SteamGifts extends Seeker {
 					cost     = parseInt(giveaway.find('a.giveaway__icon[rel]').prev().text().replace('(','').replace('P)', '')),
 					entered  = giveaway.find('.giveaway__row-inner-wrap.is-faded').length > 0;
 
-				if( entered || _this.curr_value < cost )
+					console.log('reserver - ' + (_this.curr_value - cost) < _this.getConfig('points_reserve'));
+
+				if( entered ||
+					_this.curr_value < cost ||
+					( _this.getConfig('max_cost') === 0 || cost > _this.getConfig('max_cost') ) || // Максимальная стоимость
+					( _this.getConfig('points_reserve') === 0 || (_this.curr_value - cost) < _this.getConfig('points_reserve') ) // Резерв очков
+				)
 					next_after = 50;
 				else
 				{
