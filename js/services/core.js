@@ -198,6 +198,9 @@ class Seeker {
 			else if( authState === -1 ){
 				this.log(Lang.get('service.connection_error'), true);
 				this.buttonState(Lang.get('service.btn_start'));
+				if( autostart ) {
+					this.setStatus('bad');
+				}
 			}
 			else {
                 if( autostart ){

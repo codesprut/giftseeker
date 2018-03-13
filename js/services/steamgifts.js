@@ -69,12 +69,10 @@ class SteamGifts extends Seeker {
 					cost     = parseInt(giveaway.find('a.giveaway__icon[rel]').prev().text().replace('(','').replace('P)', '')),
 					entered  = giveaway.find('.giveaway__row-inner-wrap.is-faded').length > 0;
 
-					console.log('reserver - ' + (_this.curr_value - cost) < _this.getConfig('points_reserve'));
-
 				if( entered ||
 					_this.curr_value < cost ||
-					( _this.getConfig('max_cost') === 0 || cost > _this.getConfig('max_cost') ) || // Максимальная стоимость
-					( _this.getConfig('points_reserve') === 0 || (_this.curr_value - cost) < _this.getConfig('points_reserve') ) // Резерв очков
+					( _this.getConfig('max_cost') !== 0 && cost > _this.getConfig('max_cost') ) || // Максимальная стоимость
+					( _this.getConfig('points_reserve') !== 0 && (_this.curr_value - cost) < _this.getConfig('points_reserve') ) // Резерв очков
 				)
 					next_after = 50;
 				else
@@ -90,7 +88,7 @@ class SteamGifts extends Seeker {
 						},
 						success: function(data){
 							if(data.type === 'success'){
-								_this.log(Lang.get('service.entered_in') + name);
+								_this.log(Lang.get('service.entered_in') + name + '. ' + _this.trans('cost') + ' - ' + cost);
 								_this.setValue(data.points);
 							}
 						}
