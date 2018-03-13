@@ -7,10 +7,96 @@ class SteamGifts extends Seeker {
 
 		this.websiteUrl  = 'https://www.steamgifts.com';
 		this.authContent = 'Account';
-		this.authLink    = "https://steamcommunity.com/openid/login?openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&openid.mode=checkid_setup&openid.return_to=https%3A%2F%2Fwww.steamgifts.com%2F%3Flogin&openid.realm=https%3A%2F%2Fwww.steamgifts.com&openid.ns.sreg=http%3A%2F%2Fopenid.net%2Fextensions%2Fsreg%2F1.1&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select";
+		this.authLink    = "https://www.steamgifts.com/?login";
 		this.wonsUrl     = "https://www.steamgifts.com/giveaways/won";
 
+		this.settings.min_level = { type: 'number', trans: this.transPath('min_level'), min: 0, max: 10, default: this.getConfig('min_level', 0) };
+
 		super.init();
+	}
+
+	getUserInfo(callback){
+		let userData = {
+			avatar: 'https://cdn.steamgifts.com/img/favicon.ico',
+			username: 'SG User',
+			value: 0
+		};
+
+		$.ajax({
+			url: 'https://www.steamgifts.com/account/settings/profile',
+			success: function(data){
+				data = $(data);
+
+				userData.avatar   = data.find('.nav__avatar-inner-wrap').attr('style').replace('background-image:url(', '').replace(');', '');
+				userData.username = data.find('input[name=username]').val();
+				userData.value    = data.find('.nav__points').text();
+			},
+			complete: function () {
+				callback(userData);
+			}
+		})
+
+	}
+
+	seekService(){
+		let _this = this;
+
+		$.get('https://www.steamgifts.com/', (data) => {
+
+			data = $('<div>' + data + '</div>');
+
+			let token = data.find('input[name="xsrf_token"]').val();
+
+			if( token.length < 10 ){
+				_this.log(this.trans('token_error'), true);
+				_this.stopSeeker(true);
+				return;
+			}
+
+			let giveaways = data.find('.giveaway__row-outer-wrap');
+			let curr_giveaway = 0;
+
+			function giveawayEnter(){
+				if( giveaways.length <= curr_giveaway || !_this.started )
+					return;
+
+				let next_after = (_this.getConfig('interval') * 1000 );
+				let giveaway = giveaways.eq(curr_giveaway),
+					code     = giveaway.find('a.giveaway__heading__name').attr('href').match(/away\/(.*)\//)[1],
+					name     = giveaway.find('a.giveaway__heading__name').text(),
+					cost     = parseInt(giveaway.find('a.giveaway__icon[rel]').prev().text().replace('(','').replace('P)', '')),
+					entered  = giveaway.find('.giveaway__row-inner-wrap.is-faded').length > 0;
+
+				if( entered || _this.curr_value < cost )
+					next_after = 50;
+				else
+				{
+					$.ajax({
+						url: 'https://www.steamgifts.com/ajax_tmp.php',
+						method: 'post',
+						dataType: 'json',
+						data: {
+							xsrf_token: token,
+							do: 'entry_insert',
+							code: code
+						},
+						success: function(data){
+							if(data.type === 'success'){
+								_this.log(Lang.get('service.entered_in') + name);
+								_this.setValue(data.points);
+							}
+						}
+					});
+				}
+
+				curr_giveaway++;
+				setTimeout(giveawayEnter, next_after);
+			}
+
+			giveawayEnter();
+
+		});
+
 	}
 
 }

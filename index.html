@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="./css/styles.css">
 		<link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
         <script>
-            const currentBuild = '1.0.0';
+            const currentBuild = require('electron').remote.app.getVersion();
         </script>
 	</head>
 	<body>
@@ -94,7 +94,7 @@
 		<script>
 			window.services = {
 				follx: new Follx(),
-				//steamgifts: new SteamGifts(),
+				steamgifts: new SteamGifts(),
 				indiegala: new IndieGala(),
 				opiumpulses: new OpiumPulses(),
 				tf2r: new TF2R()

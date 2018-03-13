@@ -1,7 +1,7 @@
 'use strict';
 const remote  = require('electron').remote;
 const ipc     = require("electron").ipcRenderer;
-const Request = require('request-promise');
+const Request = remote.getGlobal('Request');
 
 let Config = remote.getGlobal('Config');
 let Lang   = remote.getGlobal('Lang');

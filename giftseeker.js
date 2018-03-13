@@ -1,7 +1,8 @@
 'use strict';
-const {app, nativeImage, shell, Menu, session, Tray, BrowserWindow, ipcMain} = require('electron');
+const {app, nativeImage, shell, Menu, session, Tray, BrowserWindow, ipcMain, ipcRenderer} = require('electron');
 const storage = require('electron-json-storage');
 const fs = require('fs');
+const Request = require('request-promise');
 
 let authWindow;
 let mainWindow;
@@ -51,7 +52,8 @@ app.on('ready', function() {
 		resizable: false,
 		frame: false,
 		webPreferences: {
-			session: _session
+			session: _session,
+			devTools: false
 		}
 	});
 
@@ -69,7 +71,8 @@ app.on('ready', function() {
 		resizable: false,
 		frame: false,
 		webPreferences: {
-			session: _session
+			session: _session,
+			//devTools: false
 		}
 	});
 
@@ -92,7 +95,8 @@ app.on('ready', function() {
 		resizable: false,
 		webPreferences: {
 			nodeIntegration: false,
-			session: _session
+			session: _session,
+			devTools: false
 		}
 	});
 
@@ -172,6 +176,7 @@ app.on('ready', function() {
 	global.ipcMain    = ipcMain;
 	global.TrayIcon   = tray;
 	global.shell      = shell;
+	global.Request    = Request;
 });
 
 class LanguageClass {
@@ -180,7 +185,32 @@ class LanguageClass {
 		this.languages  = {};
         this.langsCount = 0;
 
-        this.loadLangs();
+		// Проверяем наличие локализаций в директории с данными, если чего-то не хватает то скачиваем
+		Request({uri: 'http://giftseeker.ru/api/langs', json: true})
+		.then((data) => {
+			if(data.response !== false){
+				data = JSON.parse(data.response).langs;
+				let initStarted = false;
+
+				for(let one in data){
+					if( !fs.existsSync(storage.getDataPath() + '/' + data[one]) ){
+						Request({uri:'http://giftseeker.ru/trans/' + data[one], json: true})
+						.then((lang) => {
+							storage.set(data[one].replace('.json', ''), lang, () => {
+								if( !initStarted ){
+									this.loadLangs();
+									initStarted = true;
+								}
+							});
+						});
+					}
+					else
+						this.loadLangs();
+				}
+			}
+		}).catch(() => {
+			this.loadLangs();
+		});
 	}
 
     loadLangs(){
@@ -200,7 +230,7 @@ class LanguageClass {
                 return;
 
             storage.getMany(lng_to_load, function(error, langs){
-                if(error) throw error;
+                if(error) throw new Error(`Can't load selected translation`);
 
                 let lng;
 
@@ -274,7 +304,7 @@ class ConfigClass {
 		if( this.settings[key] !== undefined )
 			return this.settings[key];
 
-		if( def_val )
+		if( def_val !== undefined )
 			return def_val;
 
 		return false;

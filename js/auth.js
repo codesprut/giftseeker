@@ -78,6 +78,7 @@ function checkAuth() {
 
 	$.ajax({
 		url: 'http://giftseeker.ru/api/userData',
+		data: { ver: currentBuild },
 		dataType: 'json',
 		success: function (data) {
 			if( !data.response ){

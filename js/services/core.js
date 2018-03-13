@@ -25,8 +25,6 @@ class Seeker {
 		this.settings    = {
 			timer:      { type: 'number', trans: 'service.timer', min: 5, max: 60, default: this.getConfig('timer', 10) },
 			interval:   { type: 'number', trans: 'service.interval', min: 5, max: 30, default: this.getConfig('interval', 5) }
-			// turn_off_notifications
-			// random_interval - from 1 to 30
 		};
 	}
 
@@ -386,8 +384,12 @@ class Seeker {
 		mainWindow.webContents.session.cookies.get({ domain: this.domain }, (error, cookies) => {
 			let newCookies = '';
 
-			for( let one in cookies )
-				newCookies += cookies[one].name + '=' + cookies[one].value + ';';
+			for( let one in cookies ){
+				if(newCookies.length !== 0)
+					newCookies += '; ';
+
+				newCookies += cookies[one].name + '=' + cookies[one].value;
+			}
 
 			this.cookies = newCookies;
 		});
@@ -416,7 +418,8 @@ class Seeker {
 	}
 
 	getConfig(key, def){
-		def = def || this.settings[key].default;
+		if( def === undefined )
+			def = this.settings[key].default;
 
 		return Config.get(this.constructor.name.toLowerCase() + '_' + key, def);
 	}

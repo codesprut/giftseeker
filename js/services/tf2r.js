@@ -79,7 +79,7 @@ class TF2R extends Seeker {
 								ass: "yup, indeed"
 							},
 							headers: {
-								'User-Agent': mainWindow.getUserAgent(),
+								'User-Agent': mainWindow.webContents.session.getUserAgent(),
 								Cookie: _this.cookies
 							},
 							json: true
