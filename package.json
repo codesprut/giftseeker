@@ -1,11 +1,11 @@
 {
   "name": "GiftSeeker",
   "productName": "GiftSeeker",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Steam raffles autojoiner",
   "main": "giftseeker.js",
   "devDependencies": {
-    "electron": "^1.7.8",
+    "electron": "^1.8.3",
     "electron-builder": "^20.4.0"
   },
   "dependencies": {

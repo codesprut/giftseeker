@@ -13,6 +13,7 @@ class SteamGifts extends Seeker {
 		this.settings.min_level      = { type: 'number', trans: this.transPath('min_level'), min: 0, max: 10, default: this.getConfig('min_level', 0) };
 		this.settings.points_reserve = { type: 'number', trans: this.transPath('points_reserve'), min: 0, max: 500, default: this.getConfig('points_reserve', 0) };
 		this.settings.max_cost       = { type: 'number', trans: this.transPath('max_cost'), min: 0, max: 300, default: this.getConfig('max_cost', 0) };
+		this.settings.pages          = { type: 'number', trans: 'service.pages', min: 1, max: 10, default: this.getConfig('pages', 1) };
 
 		super.init();
 	}
@@ -42,8 +43,22 @@ class SteamGifts extends Seeker {
 
 	seekService(){
 		let _this = this;
+		let page  = 1;
 
-		$.get('https://www.steamgifts.com/', (data) => {
+		let callback = function() {
+			if ( page <= this.getConfig('pages', 1) )
+				_this.enterByUrl('https://www.steamgifts.com/giveaways/search?page=' + page, callback);
+
+			page++;
+		};
+
+		this.enterByUrl('https://www.steamgifts.com/giveaways/search?type=wishlist', callback);
+	}
+
+	enterByUrl(url, callback){
+		let _this = this;
+
+		$.get(url, (data) => {
 
 			data = $('<div>' + data + '</div>');
 
@@ -59,26 +74,37 @@ class SteamGifts extends Seeker {
 			let curr_giveaway = 0;
 
 			function giveawayEnter(){
-				if( giveaways.length <= curr_giveaway || !_this.started )
+				if( giveaways.length <= curr_giveaway || !_this.started ){
+
+					if(callback)
+						callback();
+
 					return;
+				}
 
 				let next_after = (_this.getConfig('interval') * 1000 );
 				let giveaway = giveaways.eq(curr_giveaway),
 					code     = giveaway.find('a.giveaway__heading__name').attr('href').match(/away\/(.*)\//)[1],
 					name     = giveaway.find('a.giveaway__heading__name').text(),
+					level    = giveaway.find('.giveaway__column--contributor-level').length > 0 ? parseInt(giveaway.find('.giveaway__column--contributor-level').text().replace('+', '').replace('Level ', '')) : 0,
 					cost     = parseInt(giveaway.find('a.giveaway__icon[rel]').prev().text().replace('(','').replace('P)', '')),
 					entered  = giveaway.find('.giveaway__row-inner-wrap.is-faded').length > 0;
 
-				if( entered ||
-					_this.curr_value < cost ||
-					( _this.getConfig('max_cost') !== 0 && cost > _this.getConfig('max_cost') ) || // Максимальная стоимость
-					( _this.getConfig('points_reserve') !== 0 && (_this.curr_value - cost) < _this.getConfig('points_reserve') ) // Резерв очков
+
+				_this.log(name);
+
+				if( true === true || //#//#//
+				entered || // Уже учавствую в розыгрыше
+				_this.curr_value < cost || // Стоимость больше чем имеется очков
+				( _this.getConfig('min_level') !== 0 && level < _this.getConfig('min_level') ) || // Минимальный уровень
+				( _this.getConfig('max_cost') !== 0 && cost > _this.getConfig('max_cost') ) || // Максимальная стоимость
+				( _this.getConfig('points_reserve') !== 0 && (_this.curr_value - cost) < _this.getConfig('points_reserve') ) // Резерв очков
 				)
 					next_after = 50;
 				else
 				{
 					$.ajax({
-						url: 'https://www.steamgifts.com/ajax_tmp.php',
+						url: 'https://www.steamgifts.com/ajax.php',
 						method: 'post',
 						dataType: 'json',
 						data: {
@@ -102,7 +128,6 @@ class SteamGifts extends Seeker {
 			giveawayEnter();
 
 		});
-
 	}
 
 }

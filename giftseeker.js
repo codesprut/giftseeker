@@ -13,10 +13,13 @@ let Lang     = null;
 let execPath = process.execPath.match(/.*\\/i)[0];
 let tray     = null;
 let user     = null;
+let devMode  = true;
 
 // for windows portable
 if( process.env.PORTABLE_EXECUTABLE_DIR !== undefined )
 	execPath = process.env.PORTABLE_EXECUTABLE_DIR + "\\";
+
+app.disableHardwareAcceleration();
 
 storage.setDataPath(execPath + 'data');
 
@@ -37,6 +40,7 @@ app.on('window-all-closed', function() {
 
 
 app.on('ready', function() {
+
 	Config   = new ConfigClass();
 	Lang     = new LanguageClass();
 	_session = session.fromPartition('persist:GiftSeeker');
@@ -53,7 +57,7 @@ app.on('ready', function() {
 		frame: false,
 		webPreferences: {
 			session: _session,
-			devTools: false
+			devTools: devMode
 		}
 	});
 
@@ -72,14 +76,17 @@ app.on('ready', function() {
 		frame: false,
 		webPreferences: {
 			session: _session,
-			//devTools: false
+			devTools: devMode
 		}
 	});
 
 	mainWindow.setMenu(null);
 
-	//authWindow.webContents.openDevTools();
-	mainWindow.webContents.openDevTools();
+	if(devMode){
+		authWindow.webContents.openDevTools();
+		mainWindow.webContents.openDevTools();
+	}
+	//app.commandLine.appendSwitch('inspect', '5858');
 
 	//### Browser for websites
 
