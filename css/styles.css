@@ -101,7 +101,7 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 
 .service-settings .input-wrap { display: inline-block; position: relative; }
 .service-settings .input-wrap .label { padding: 0 5px; font-size: 12px; color: #9EC5EA; cursor: help; }
-.service-settings .input-wrap.number { text-align: center; }
+.service-settings .input-wrap.number { text-align: center; width: 20%; margin-bottom: 10px; }
 
 .service-settings .input-wrap.number .value-label,
 .service-settings .input-wrap.number .button { display: inline-block; vertical-align: middle; }
