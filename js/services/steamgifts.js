@@ -46,7 +46,7 @@ class SteamGifts extends Seeker {
 		let page  = 1;
 
 		let callback = function() {
-			if ( page <= this.getConfig('pages', 1) )
+			if ( page <= _this.getConfig('pages', 1) )
 				_this.enterByUrl('https://www.steamgifts.com/giveaways/search?page=' + page, callback);
 
 			page++;
@@ -91,9 +91,9 @@ class SteamGifts extends Seeker {
 					entered  = giveaway.find('.giveaway__row-inner-wrap.is-faded').length > 0;
 
 
-				_this.log(name);
+				//_this.log('echo = ' + name + ' - ' + level + ' - ' + cost);
 
-				if( true === true || //#//#//
+				if( //true === true || //#//#//
 				entered || // Уже учавствую в розыгрыше
 				_this.curr_value < cost || // Стоимость больше чем имеется очков
 				( _this.getConfig('min_level') !== 0 && level < _this.getConfig('min_level') ) || // Минимальный уровень

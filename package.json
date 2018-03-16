@@ -1,7 +1,7 @@
 {
   "name": "GiftSeeker",
   "productName": "GiftSeeker",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Steam raffles autojoiner",
   "main": "giftseeker.js",
   "devDependencies": {
@@ -18,7 +18,8 @@
   "scripts": {
     "start": "electron giftseeker.js",
     "pack": "build --dir",
-    "dist": "build"
+    "build32": "build --ia32",
+    "build64": "build --x64"
   },
   "build": {
     "appId": "com.giftseeker.app",

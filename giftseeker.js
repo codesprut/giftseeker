@@ -13,7 +13,7 @@ let Lang     = null;
 let execPath = process.execPath.match(/.*\\/i)[0];
 let tray     = null;
 let user     = null;
-let devMode  = true;
+let devMode  = false;
 
 // for windows portable
 if( process.env.PORTABLE_EXECUTABLE_DIR !== undefined )
