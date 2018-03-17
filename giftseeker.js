@@ -6,16 +6,16 @@ const Request = require('request-promise');
 
 let appLoaded = false;
 
-let authWindow;
-let mainWindow;
-let Browser;
-let _session = null;
-let Config   = null;
-let Lang     = null;
-let tray     = null;
-let user     = null;
-let devMode  = app.getVersion() === '1.8.3'; // if run via electron
-let execPath = process.execPath.match(/.*\\/i)[0];
+let authWindow = null;
+let mainWindow = null;
+let Browser    = null;
+let _session   = null;
+let Config     = null;
+let Lang       = null;
+let tray       = null;
+let user       = null;
+let devMode    = app.getVersion() === '1.8.3'; // if run via electron
+let execPath   = process.execPath.match(/.*\\/i)[0];
 
 // for windows portable
 if( process.env.PORTABLE_EXECUTABLE_DIR !== undefined )
@@ -24,6 +24,24 @@ if( process.env.PORTABLE_EXECUTABLE_DIR !== undefined )
 app.disableHardwareAcceleration();
 
 storage.setDataPath(execPath + 'data');
+
+
+// Если произошёл повторный запуск процесса то переводим фокус на окно программы
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+    if (mainWindow) {
+        if (mainWindow.isMinimized())
+            mainWindow.restore();
+
+        if( !mainWindow.isVisible() )
+            mainWindow.show();
+
+        mainWindow.focus()
+    }
+});
+
+if ( isSecondInstance ){
+    app.quit();
+}
 
 ipcMain.on('save-user', function(event, data) {
     user = data;
