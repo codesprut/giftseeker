@@ -476,6 +476,9 @@ class Seeker {
 
 	log(text, logType){
 		this.logField.append('<div class="' + (logType ? 'warn' : 'normal') + '"><span class="time">' + timeStr() + ':</span>' + text + '</div>');
+        this.logWrap.animate({
+            scrollTop: (this.logWrap[0].scrollHeight)
+        }, 500);
 	}
 
 	// ### "Виртуальные методы" - реализуются в потомках

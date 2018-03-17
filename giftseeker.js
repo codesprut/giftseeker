@@ -4,16 +4,18 @@ const storage = require('electron-json-storage');
 const fs = require('fs');
 const Request = require('request-promise');
 
+let appLoaded = false;
+
 let authWindow;
 let mainWindow;
 let Browser;
 let _session = null;
 let Config   = null;
 let Lang     = null;
-let execPath = process.execPath.match(/.*\\/i)[0];
 let tray     = null;
 let user     = null;
-let devMode  = false;
+let devMode  = app.getVersion() === '1.8.3'; // if run via electron
+let execPath = process.execPath.match(/.*\\/i)[0];
 
 // for windows portable
 if( process.env.PORTABLE_EXECUTABLE_DIR !== undefined )
@@ -40,7 +42,6 @@ app.on('window-all-closed', function() {
 
 
 app.on('ready', function() {
-
 	Config   = new ConfigClass();
 	Lang     = new LanguageClass();
 	_session = session.fromPartition('persist:GiftSeeker');
@@ -63,8 +64,6 @@ app.on('ready', function() {
 
 	authWindow.setMenu(null);
 
-	authWindow.loadURL('file://' + __dirname + '/auth.html');
-
 	mainWindow = new BrowserWindow({
 		width: 730,
 		height: 500,
@@ -86,7 +85,6 @@ app.on('ready', function() {
 		authWindow.webContents.openDevTools();
 		mainWindow.webContents.openDevTools();
 	}
-	//app.commandLine.appendSwitch('inspect', '5858');
 
 	//### Browser for websites
 
@@ -121,16 +119,6 @@ app.on('ready', function() {
 
 	//### end browser for websites
 
-
-
-	authWindow.on('ready-to-show', function() {
-        authWindow.show();
-
-        if( Config.get('start_minimized') )
-            authWindow.hide();
-        else
-            authWindow.focus();
-	});
 
 	authWindow.on('close', function(e){
 		authWindow.removeAllListeners('close');
@@ -184,7 +172,30 @@ app.on('ready', function() {
 	global.TrayIcon   = tray;
 	global.shell      = shell;
 	global.Request    = Request;
+	global.devMode    = devMode;
 });
+
+function startApp(){
+    if( appLoaded )
+        return;
+
+    let afterLangs = function(){
+        authWindow.loadURL('file://' + __dirname + '/auth.html');
+
+        authWindow.on('ready-to-show', function() {
+            authWindow.show();
+
+            if( Config.get('start_minimized') )
+                authWindow.hide();
+            else
+                authWindow.focus();
+        });
+    };
+
+    Lang.loadLangs(afterLangs);
+
+    appLoaded = true;
+}
 
 class LanguageClass {
 	constructor(){
@@ -205,22 +216,23 @@ class LanguageClass {
 						.then((lang) => {
 							storage.set(data[one].replace('.json', ''), lang, () => {
 								if( !initStarted ){
-									this.loadLangs();
+									startApp();
 									initStarted = true;
 								}
 							});
 						});
 					}
 					else
-						this.loadLangs();
+                        startApp();
 				}
 			}
 		}).catch(() => {
-			this.loadLangs();
+            console.log('catchLang Constructor');
+            startApp();
 		});
 	}
 
-    loadLangs(){
+    loadLangs(callback){
         let _this = this;
 
         if( fs.existsSync(storage.getDataPath()) ){
@@ -251,6 +263,9 @@ class LanguageClass {
                 }
 
                 _this.languages = langs.lang;
+
+				if(callback)
+					callback();
             });
         }
     }

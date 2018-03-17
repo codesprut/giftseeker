@@ -2,6 +2,7 @@
 const remote  = require('electron').remote;
 const ipc     = require("electron").ipcRenderer;
 const Request = remote.getGlobal('Request');
+const devMode = remote.getGlobal('devMode');
 
 let Config = remote.getGlobal('Config');
 let Lang   = remote.getGlobal('Lang');
@@ -139,7 +140,7 @@ $(function(){
 
 function intervalSchedules(){
 	// Проверяем обновления
-	if( intervalTicks % 600 === 0 ){
+	if( !devMode && intervalTicks % 10 === 0 ){
 		$.ajax({
 			url: 'http://giftseeker.ru/api/version',
 			dataType: 'json',
@@ -150,6 +151,8 @@ function intervalSchedules(){
 						title: Lang.get('ui.upd_title'),
 						content: Lang.get('ui.upd_text')
 					});
+
+					TrayIcon.removeAllListeners('balloon-click');
 
 					TrayIcon.once('balloon-click', function(){
 						shell.openExternal('http://giftseeker.ru/downloads')
