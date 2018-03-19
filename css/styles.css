@@ -114,6 +114,9 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 
 .service-settings .input-wrap .label { padding: 0 5px; font-size: 12px; color: #9EC5EA; }
 
+.service-settings .input-wrap.checkbox { padding-left: 5px; line-height: 20px; width: 50%; }
+.service-settings .input-wrap.checkbox input { margin-right: 3px; }
+
 
 
 

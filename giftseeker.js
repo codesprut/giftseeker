@@ -222,31 +222,57 @@ class LanguageClass {
         this.langsCount = 0;
 
 		// Проверяем наличие локализаций в директории с данными, если чего-то не хватает то скачиваем
-		Request({uri: 'http://giftseeker.ru/api/langs', json: true})
+		Request({uri: 'http://giftseeker.ru/api/langs_new', json: true})
 		.then((data) => {
 			if(data.response !== false){
 				data = JSON.parse(data.response).langs;
 				let initStarted = false;
 
 				for(let one in data){
-					if( !fs.existsSync(storage.getDataPath() + '/' + data[one]) ){
-						Request({uri:'http://giftseeker.ru/trans/' + data[one], json: true})
-						.then((lang) => {
-							storage.set(data[one].replace('.json', ''), lang, () => {
-								if( !initStarted ){
-									startApp();
-									initStarted = true;
-								}
+					let name = data[one].name;
+					let size = data[one].size;
+
+					if( !fs.existsSync( storage.getDataPath() + '/' + name ) ){
+						Request( { uri: 'http://giftseeker.ru/trans/' + name } )
+							.then(( lang ) => {
+								fs.writeFile(storage.getDataPath() + '/' + name, lang, (err) => {
+									if(err) return;
+
+									if( !initStarted ){
+										startApp();
+										initStarted = true;
+									}
+								});
 							});
+					}
+					else{
+						fs.stat(storage.getDataPath() + '/' + name, (err, stats) => {
+							if( stats.size !== size ){
+								Request( { uri: 'http://giftseeker.ru/trans/' + name } )
+									.then(( lang ) => {
+										fs.writeFile(storage.getDataPath() + '/' + name, lang, (err) => {
+											if(err) return;
+
+											if( !initStarted ){
+												startApp();
+												initStarted = true;
+											}
+										});
+									});
+							}
+							else if( !initStarted ){
+								startApp();
+								initStarted = true;
+							}
 						});
 					}
-					else
-                        startApp();
 				}
 			}
+			else
+				startApp();
 		}).catch(() => {
-            console.log('catchLang Constructor');
-            startApp();
+			console.log('catchLang Constructor');
+			startApp();
 		});
 	}
 
@@ -332,6 +358,7 @@ class ConfigClass {
 			if(error) throw error;
 
 			_this.settings = data;
+			_this.set('inits', ( _this.get('inits', 0) + 1) );
 		});
 	}
 

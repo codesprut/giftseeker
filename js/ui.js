@@ -140,7 +140,7 @@ $(function(){
 
 function intervalSchedules(){
 	// Проверяем обновления
-	if( !devMode && intervalTicks % 10 === 0 ){
+	if( !devMode && intervalTicks % 600 === 0 ){
 		$.ajax({
 			url: 'http://giftseeker.ru/api/version',
 			dataType: 'json',

@@ -335,7 +335,7 @@ class Seeker {
 						'<div class="button btn-down"><span class="fa fa-minus"></span></div>' +
 						'<div class="value-label">' + input.default + '</div>' +
 						'<div class="button btn-up"><span class="fa fa-plus"></span></div>' +
-						'<div class="label" title="' + this.trans(input.trans + '_title') + '" data-lang-title="' + input.trans + '_title" data-lang="' + input.trans + '">' + this.trans(input.trans) + '</div>'
+						'<div class="label" title="' + Lang.get(input.trans + '_title') + '" data-lang-title="' + input.trans + '_title" data-lang="' + input.trans + '">' + Lang.get(input.trans) + '</div>'
 					);
 
 					let _this  = this;
@@ -407,7 +407,24 @@ class Seeker {
 
 					break;
 				case 'checkbox':
+					let checkboxWrap = $(document.createElement('div'))
+						.addClass('input-wrap checkbox no-selectable')
+						.appendTo(this.settingsChecks);
 
+					checkboxWrap.html(
+						'<label title="' + input.trans + '_title' + '" data-lang-title="' + input.trans + '_title">' +
+							'<input type="checkbox"/>' +
+							'<span data-lang="' + input.trans + '">' +
+								Lang.get(input.trans) +
+							'</span>' +
+						'</label>'
+					);
+
+					let checkbox = checkboxWrap.find('input').prop('checked', input.default);
+
+					checkbox.change(() => {
+						this.setConfig(control, checkbox.prop('checked'));
+					});
 
 					break;
 			}
@@ -476,9 +493,7 @@ class Seeker {
 
 	log(text, logType){
 		this.logField.append('<div class="' + (logType ? 'warn' : 'normal') + '"><span class="time">' + timeStr() + ':</span>' + text + '</div>');
-        this.logWrap.animate({
-            scrollTop: (this.logWrap[0].scrollHeight)
-        }, 500);
+        this.logWrap.scrollTop(this.logWrap[0].scrollHeight);
 	}
 
 	// ### "Виртуальные методы" - реализуются в потомках

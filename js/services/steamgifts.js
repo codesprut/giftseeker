@@ -15,6 +15,10 @@ class SteamGifts extends Seeker {
 		this.settings.max_cost       = { type: 'number', trans: this.transPath('max_cost'), min: 0, max: 300, default: this.getConfig('max_cost', 0) };
 		this.settings.pages          = { type: 'number', trans: 'service.pages', min: 1, max: 10, default: this.getConfig('pages', 1) };
 
+		this.settings.wishlist_only   = { type: 'checkbox', trans: this.transPath('wishlist_only'), default: this.getConfig('wishlist_only', false) };
+		this.settings.reserve_on_wish = { type: 'checkbox', trans: this.transPath('reserve_on_wish'), default: this.getConfig('reserve_on_wish', false) };
+		this.settings.ignore_on_wish  = { type: 'checkbox', trans: this.transPath('ignore_on_wish'), default: this.getConfig('ignore_on_wish', false) };
+
 		super.init();
 	}
 
@@ -46,6 +50,9 @@ class SteamGifts extends Seeker {
 		let page  = 1;
 
 		let callback = function() {
+			if( _this.getConfig('wishlist_only') )
+				return;
+
 			if ( page <= _this.getConfig('pages', 1) )
 				_this.enterByUrl('https://www.steamgifts.com/giveaways/search?page=' + page, callback);
 
@@ -57,6 +64,7 @@ class SteamGifts extends Seeker {
 
 	enterByUrl(url, callback){
 		let _this = this;
+		let wishlist = url.indexOf('wishlist') > 0;
 
 		$.get(url, (data) => {
 
@@ -84,24 +92,23 @@ class SteamGifts extends Seeker {
 
 				let next_after = (_this.getConfig('interval') * 1000 );
 				let giveaway = giveaways.eq(curr_giveaway),
+					pinned   = giveaway.closest('.pinned-giveaways__outer-wrap').length > 0,
 					code     = giveaway.find('a.giveaway__heading__name').attr('href').match(/away\/(.*)\//)[1],
 					name     = giveaway.find('a.giveaway__heading__name').text(),
 					level    = giveaway.find('.giveaway__column--contributor-level').length > 0 ? parseInt(giveaway.find('.giveaway__column--contributor-level').text().replace('+', '').replace('Level ', '')) : 0,
 					cost     = parseInt(giveaway.find('a.giveaway__icon[rel]').prev().text().replace('(','').replace('P)', '')),
 					entered  = giveaway.find('.giveaway__row-inner-wrap.is-faded').length > 0;
 
+				//_this.log(name + ', level - ' + level + ', cost - ' + cost + ', wishlist - ' + wishlist + ', pinned - ' + pinned);
 
-				//_this.log('echo = ' + name + ' - ' + level + ' - ' + cost);
-
-				if( //true === true || //#//#//
-				entered || // Уже учавствую в розыгрыше
-				_this.curr_value < cost || // Стоимость больше чем имеется очков
-				( _this.getConfig('min_level') !== 0 && level < _this.getConfig('min_level') ) || // Минимальный уровень
-				( _this.getConfig('max_cost') !== 0 && cost > _this.getConfig('max_cost') ) || // Максимальная стоимость
-				( _this.getConfig('points_reserve') !== 0 && (_this.curr_value - cost) < _this.getConfig('points_reserve') ) // Резерв очков
+				if( //true === false && ///////
+					!entered && // Не участвую в розыгрыше
+					( !wishlist || !pinned ) &&
+					_this.curr_value >= cost && // Имеется необходимое кол-во очков
+					( ( wishlist && _this.getConfig('ignore_on_wish') ) || _this.getConfig('min_level') === 0 || level >= _this.getConfig('min_level') ) && // Минимальный уровень
+					( ( wishlist && _this.getConfig('ignore_on_wish') ) || _this.getConfig('max_cost') === 0 || cost <= _this.getConfig('max_cost') ) && // Максимальная стоимость
+					( ( wishlist && _this.getConfig('reserve_on_wish') ) || _this.getConfig('points_reserve') === 0 || ( (_this.curr_value - cost) >= _this.getConfig('points_reserve') ) ) // Резерв очков
 				)
-					next_after = 50;
-				else
 				{
 					$.ajax({
 						url: 'https://www.steamgifts.com/ajax.php',
@@ -120,6 +127,8 @@ class SteamGifts extends Seeker {
 						}
 					});
 				}
+				else
+					next_after = 50;
 
 				curr_giveaway++;
 				setTimeout(giveawayEnter, next_after);
