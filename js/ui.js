@@ -249,6 +249,7 @@ function renderUser(userData) {
 
 function openWebsite(url){
     Browser.loadURL(url);
+	Browser.setTitle('GS Browser - ' + Lang.get('auth.browser_loading'));
+	
     Browser.show();
-    Browser.setTitle('GS Browser - ' + Lang.get('auth.browser_loading'));
 }

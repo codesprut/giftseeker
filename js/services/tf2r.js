@@ -11,6 +11,7 @@ class TF2R extends Seeker {
 		this.authLink    = "http://tf2r.com/login";
 		this.wonsUrl     = "http://tf2r.com/notifications.html";
 		this.withValue   = false;
+        this.getTimeout  = 10000;
 
 		super.init();
 	}
@@ -114,7 +115,7 @@ class TF2R extends Seeker {
 				response.data = html;
 			},
 			error: function (error) {
-				if( error.responseText.indexOf('!DOCTYPE') >= 0 ){
+				if( error.responseText !== undefined && error.responseText.indexOf('!DOCTYPE') >= 0 ){
 					response.success = true;
 					response.data = error.responseText;
 				}

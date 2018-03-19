@@ -1,7 +1,7 @@
 {
   "name": "GiftSeeker",
   "productName": "GiftSeeker",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Steam raffles autojoiner",
   "main": "giftseeker.js",
   "devDependencies": {

@@ -100,7 +100,7 @@ app.on('ready', function() {
 	mainWindow.setMenu(null);
 
 	if(devMode){
-		authWindow.webContents.openDevTools();
+		//authWindow.webContents.openDevTools();
 		mainWindow.webContents.openDevTools();
 	}
 
@@ -112,10 +112,11 @@ app.on('ready', function() {
 		title: 'GS Browser',
 		width: 1000,
 		height: 600,
+        minWidth: 600,
+        minHeight: 500,
 		modal: true,
 		show: false,
 		center: true,
-		resizable: false,
 		webPreferences: {
 			nodeIntegration: false,
 			session: _session,
@@ -127,6 +128,7 @@ app.on('ready', function() {
 
 	Browser.on('close', (e) => {
 		e.preventDefault();
+        Browser.loadURL('file://' + __dirname + '/blank.html');
 		Browser.hide();
 
 		if(mainWindow.hidden)
