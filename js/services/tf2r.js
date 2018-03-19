@@ -13,6 +13,7 @@ class TF2R extends Seeker {
 		this.withValue   = false;
         this.getTimeout  = 10000;
 
+		delete this.settings.pages;
 		super.init();
 	}
 

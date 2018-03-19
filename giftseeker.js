@@ -110,7 +110,7 @@ app.on('ready', function() {
 		parent: mainWindow,
 		icon: __dirname + '/icon.ico',
 		title: 'GS Browser',
-		width: 1000,
+		width: 1024,
 		height: 600,
         minWidth: 600,
         minHeight: 500,

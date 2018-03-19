@@ -60,6 +60,19 @@ class IndieGala extends Seeker {
 		let _this = this;
 		let page  = 1;
 
+		let callback = function() {
+            page++;
+
+			if ( page <= _this.getConfig('pages', 1) )
+				_this.enterOnPage(page, callback);
+		};
+
+		this.enterOnPage(page, callback);
+	}
+
+	enterOnPage(page, callback){
+		let _this = this;
+
 		$.get('https://www.indiegala.com/giveaways/get_user_level_and_coins', function(data){
 			data = JSON.parse(data);
 			if(data.status !== 'ok')
@@ -72,8 +85,13 @@ class IndieGala extends Seeker {
 				let curr_ticket = 0;
 
 				function giveawayEnter(){
-					if( tickets.length <= curr_ticket || !_this.started )
+					if( tickets.length <= curr_ticket || !_this.started ){
+
+                        if(callback)
+                            callback();
+
 						return;
+                    }
 
 					let next_after = (_this.getConfig('interval') * 1000 );
 					let ticket = tickets.eq(curr_ticket),

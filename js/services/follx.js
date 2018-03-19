@@ -41,6 +41,19 @@ class Follx extends Seeker {
 	seekService(){
 		let _this = this;
 		let page  = 1;
+
+		let callback = function() {
+			page++;
+
+			if ( page <= _this.getConfig('pages', 1) )
+				_this.enterOnPage(page, callback);
+		};
+
+		this.enterOnPage(page, callback);
+	}
+
+	enterOnPage(page, callback){
+		let _this = this;
 		let CSRF  = '';
 
 		$.get('https://follx.com/giveaways?page=' + page, function (html) {
@@ -58,8 +71,13 @@ class Follx extends Seeker {
 			let curr_giveaway = 0;
 
 			function giveawayEnter(){
-				if( found_games.length <= curr_giveaway || !_this.started )
-					return;
+				if( found_games.length <= curr_giveaway || !_this.started ) {
+
+                    if(callback)
+                        callback();
+
+                    return;
+                }
 
 				let next_after = (_this.getConfig('interval') * 1000 );
 				let card = found_games.eq(curr_giveaway),
@@ -86,7 +104,7 @@ class Follx extends Seeker {
 								success: function (data) {
 									if(data.response){
 										_this.setValue(data.points);
-										_this.log(Lang.get('service.entered_in') + name);
+										_this.log(Lang.get('service.entered_in') + _this.logLink(link, name));
 									}
 								}
 							})

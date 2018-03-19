@@ -13,7 +13,6 @@ class SteamGifts extends Seeker {
 		this.settings.min_level      = { type: 'number', trans: this.transPath('min_level'), min: 0, max: 10, default: this.getConfig('min_level', 0) };
 		this.settings.points_reserve = { type: 'number', trans: this.transPath('points_reserve'), min: 0, max: 500, default: this.getConfig('points_reserve', 0) };
 		this.settings.max_cost       = { type: 'number', trans: this.transPath('max_cost'), min: 0, max: 300, default: this.getConfig('max_cost', 0) };
-		this.settings.pages          = { type: 'number', trans: 'service.pages', min: 1, max: 10, default: this.getConfig('pages', 1) };
 
 		this.settings.wishlist_only   = { type: 'checkbox', trans: this.transPath('wishlist_only'), default: this.getConfig('wishlist_only', false) };
 		this.settings.reserve_on_wish = { type: 'checkbox', trans: this.transPath('reserve_on_wish'), default: this.getConfig('reserve_on_wish', false) };
@@ -93,7 +92,8 @@ class SteamGifts extends Seeker {
 				let next_after = (_this.getConfig('interval') * 1000 );
 				let giveaway = giveaways.eq(curr_giveaway),
 					pinned   = giveaway.closest('.pinned-giveaways__outer-wrap').length > 0,
-					code     = giveaway.find('a.giveaway__heading__name').attr('href').match(/away\/(.*)\//)[1],
+					link     = 'https://www.steamgifts.com' + giveaway.find('a.giveaway__heading__name').attr('href'),
+					code     = link.match(/away\/(.*)\//)[1],
 					name     = giveaway.find('a.giveaway__heading__name').text(),
 					level    = giveaway.find('.giveaway__column--contributor-level').length > 0 ? parseInt(giveaway.find('.giveaway__column--contributor-level').text().replace('+', '').replace('Level ', '')) : 0,
 					cost     = parseInt(giveaway.find('a.giveaway__icon[rel]').prev().text().replace('(','').replace('P)', '')),
@@ -121,7 +121,7 @@ class SteamGifts extends Seeker {
 						},
 						success: function(data){
 							if(data.type === 'success'){
-								_this.log(Lang.get('service.entered_in') + name + '. ' + _this.trans('cost') + ' - ' + cost);
+								_this.log(Lang.get('service.entered_in') + _this.logLink(link, name) + '. ' + _this.trans('cost') + ' - ' + cost);
 								_this.setValue(data.points);
 							}
 						}

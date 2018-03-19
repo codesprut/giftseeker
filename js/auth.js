@@ -66,9 +66,6 @@ $(function(){
 		});
 	});
 
-});
-
-authWindow.on('show', function(){
 	checkAuth();
 });
 

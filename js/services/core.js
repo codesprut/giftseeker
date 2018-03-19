@@ -24,7 +24,8 @@ class Seeker {
 		this.getTimeout  = 15000;
 		this.settings    = {
 			timer:      { type: 'number', trans: 'service.timer', min: 5, max: 60, default: this.getConfig('timer', 10) },
-			interval:   { type: 'number', trans: 'service.interval', min: 5, max: 30, default: this.getConfig('interval', 5) }
+			interval:   { type: 'number', trans: 'service.interval', min: 0, max: 30, default: this.getConfig('interval', 5) },
+			pages:    	{ type: 'number', trans: 'service.pages', min: 1, max: 10, default: this.getConfig('pages', 1) }
 		};
 	}
 
@@ -322,10 +323,14 @@ class Seeker {
 
 			switch(input.type){
 				case 'number':
-					if(input.default < input.min)
-						input.default = input.min;
-					else if( input.default > input.max )
+					if(input.default < input.min) {
+                        input.default = input.min;
+                        this.setConfig(control, input.default);
+                    }
+					else if( input.default > input.max ){
 						input.default = input.max;
+                        this.setConfig(control, input.default);
+                    }
 
 					let numberWrap = $(document.createElement('div'))
 						.addClass('input-wrap number no-selectable')
@@ -430,6 +435,10 @@ class Seeker {
 			}
 		}
 	}
+    
+    logLink(address, anchor){
+        return '<span class="open-website" data-link="' + address + '">' + anchor + '</span>';
+    }
 
 	updateCookies(){
 		mainWindow.webContents.session.cookies.get({ domain: this.domain }, (error, cookies) => {

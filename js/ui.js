@@ -136,6 +136,10 @@ $(function(){
 	ipc.on('change-lang', function(){
 		reloadLangStrings();
 	});
+
+	$(document).on('click', '.open-website', function(){
+		openWebsite($(this).attr('data-link'));
+	});
 });
 
 function intervalSchedules(){

@@ -10,6 +10,7 @@ class OpiumPulses extends Seeker {
 		this.authLink    = "https://www.opiumpulses.com/site/login";
 		this.wonsUrl     = "http://www.opiumpulses.com/user/giveawaykeys";
 
+		delete this.settings.pages;
 		super.init();
 
 		if(Lang.current() === 'ru_RU')
@@ -75,7 +76,7 @@ class OpiumPulses extends Seeker {
 								return;
 
 							$.get("http://www.opiumpulses.com" + eLink, function(){
-								_this.log(Lang.get('service.entered_in') + name);
+								_this.log(Lang.get('service.entered_in') + _this.logLink("http://www.opiumpulses.com" + link, name));
 							});
 						});
 					}

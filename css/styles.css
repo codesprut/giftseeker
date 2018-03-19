@@ -94,6 +94,7 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 .service-logs { font-size: 13px; overflow-x: auto; }
 .service-logs .warn { color: lightcoral; }
 .service-logs span.time { color: #9EC5EA; padding-right: 6px; }
+.service-logs span.open-website { cursor: pointer; text-decoration: underline; }
 
 .service-logs { -webkit-user-select: text; }
 .service-logs .clear-log { position: absolute; right: 18px; top: 10px; font-size: 12px; color: #9EC5EA; cursor: pointer; }
