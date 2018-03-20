@@ -79,7 +79,7 @@ class Follx extends Seeker {
                     return;
                 }
 
-				let next_after = (_this.getConfig('interval') * 1000 );
+				let next_after = _this.interval();
 				let card = found_games.eq(curr_giveaway),
 					link = card.find('a.game_name').attr('href'),
 					name = card.find('a.game_name > span').text(),
