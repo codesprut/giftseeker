@@ -3,6 +3,7 @@ const {app, nativeImage, shell, Menu, session, Tray, BrowserWindow, ipcMain, ipc
 const storage = require('electron-json-storage');
 const fs = require('fs');
 const Request = require('request-promise');
+const devMode    = app.getVersion() === '1.8.3'; // if run via electron
 
 let appLoaded = false;
 
@@ -14,7 +15,6 @@ let Config     = null;
 let Lang       = null;
 let tray       = null;
 let user       = null;
-let devMode    = app.getVersion() === '1.8.3'; // if run via electron
 let execPath   = process.execPath.match(/.*\\/i)[0];
 
 // for windows portable
