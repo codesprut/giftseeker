@@ -23,9 +23,10 @@ class Seeker {
 
 		this.getTimeout  = 15000;
 		this.settings    = {
-			timer:      { type: 'number', trans: 'service.timer', min: 5, max: 60, default: this.getConfig('timer', 10) },
-			interval:   { type: 'number', trans: 'service.interval', min: 0, max: 30, default: this.getConfig('interval', 5) },
-			pages:    	{ type: 'number', trans: 'service.pages', min: 1, max: 10, default: this.getConfig('pages', 1) }
+			timer:          { type: 'number', trans: 'service.timer', min: 5, max: 60, default: this.getConfig('timer', 10) },
+			interval_from:  { type: 'number', trans: 'service.interval_from', min: 0, max: this.getConfig('interval_to', 5), default: this.getConfig('interval_from', 3) },
+			interval_to:    { type: 'number', trans: 'service.interval_to', min: this.getConfig('interval_from', 3), max: 60, default: this.getConfig('interval_to', 5) },
+			pages:          { type: 'number', trans: 'service.pages', min: 1, max: 10, default: this.getConfig('pages', 1) }
 		};
 	}
 
@@ -49,14 +50,14 @@ class Seeker {
 			.css({'background-image': "url('images/services/" + this.constructor.name + ".png')"})
 			.appendTo(this.icon);
 
-        this.statusIcon = $(document.createElement('div'))
-            .addClass('service-status')
-            .attr('data-status', 'normal')
-	        .html(
-	        	'<span class="fa fa-play"></span>' +
-	        	'<span class="fa fa-pause"></span>'
-	        )
-            .appendTo(this.icon);
+		this.statusIcon = $(document.createElement('div'))
+			.addClass('service-status')
+			.attr('data-status', 'normal')
+			.html(
+				'<span class="fa fa-play"></span>' +
+				'<span class="fa fa-pause"></span>'
+			)
+			.appendTo(this.icon);
 
 		$(document.createElement('span'))
 			.addClass('service-name')
@@ -71,7 +72,7 @@ class Seeker {
 	addPanel(){
 		this.panel = $(document.createElement('div'))
 			.addClass('service-panel')
-            .attr('id', this.constructor.name.toLowerCase())
+			.attr('id', this.constructor.name.toLowerCase())
 			.appendTo('.services-panels');
 
 		$('<ul>' +
@@ -133,9 +134,8 @@ class Seeker {
 			.addClass('open-website')
 			.attr('data-lang', 'service.open_website')
 			.text(Lang.get("service.open_website"))
-			.click(() => {
-				openWebsite(this.websiteUrl);
-			}).appendTo(this.userPanel);
+			.attr('data-link', this.websiteUrl)
+			.appendTo(this.userPanel);
 
 		this.mainButton = $('<button>' + Lang.get('service.btn_start') + '</button>')
 			.addClass('seeker-button start-button')
@@ -194,8 +194,8 @@ class Seeker {
 
 		this.authCheck( (authState) => {
 			if ( authState === 1) {
-                this.runTimer();
-            }
+				this.runTimer();
+			}
 			else if( authState === -1 ){
 				this.log(Lang.get('service.connection_error'), true);
 				this.buttonState(Lang.get('service.btn_start'));
@@ -204,52 +204,53 @@ class Seeker {
 				}
 			}
 			else {
-                if( autostart ){
-                    this.setStatus('bad');
-                    this.buttonState(Lang.get('service.btn_start'));
-                    this.log(Lang.get('service.cant_start'), true);
-                }
-                else{
-	                this.buttonState(Lang.get('service.btn_awaiting'), 'disabled');
-                    this.waitAuth = true;
+				if( autostart ){
+					this.setStatus('bad');
+					this.buttonState(Lang.get('service.btn_start'));
+					this.log(Lang.get('service.cant_start'), true);
+				}
+				else{
+					this.buttonState(Lang.get('service.btn_awaiting'), 'disabled');
+					this.waitAuth = true;
 
-                    Browser.webContents.on('did-finish-load', () => {
-                        if( this.waitAuth && Browser.getURL().indexOf(this.websiteUrl) >= 0 ){
-                            Browser.webContents.executeJavaScript('document.querySelector("body").innerHTML', (body) => {
-                                if( body.indexOf(this.authContent) >= 0 ){
-                                    Browser.close();
-                                    this.waitAuth = false;
-                                }
-                            });
-                        }
-                    });
+					Browser.webContents.on('did-finish-load', () => {
+						if( this.waitAuth && Browser.getURL().indexOf(this.websiteUrl) >= 0 ){
+							Browser.webContents.executeJavaScript('document.querySelector("body").innerHTML', (body) => {
+								if( body.indexOf(this.authContent) >= 0 ){
+									Browser.close();
+									this.waitAuth = false;
+								}
+							});
+						}
+					});
 
-                    Browser.loadURL(this.authLink);
+					Browser.setTitle('GS Browser - ' + Lang.get('auth.browser_loading'));
+					Browser.loadURL(this.authLink);
 
-                    Browser.once('close', () => {
-                        Browser.webContents.removeAllListeners('did-finish-load');
+					Browser.once('close', () => {
+						Browser.webContents.removeAllListeners('did-finish-load');
 
-                        this.waitAuth = false;
-                        this.authCheck((authState) => {
-                            if ( authState === 1)
-                                this.runTimer();
-                            else
-                                this.buttonState(Lang.get('service.btn_start'));
-                        });
-                    });
-                    Browser.show();
-                }
+						this.waitAuth = false;
+						this.authCheck((authState) => {
+							if ( authState === 1)
+								this.runTimer();
+							else
+								this.buttonState(Lang.get('service.btn_start'));
+						});
+					});
+					Browser.show();
+				}
 			}
 		});
 	}
 
 	stopSeeker(bad){
-        let status = bad ? 'bad' : 'normal';
+		let status = bad ? 'bad' : 'normal';
 		if( !this.started )
 			return false;
 
 		this.started = false;
-        this.setStatus(status);
+		this.setStatus(status);
 		clearInterval(this.intervalVar);
 
 		this.log(Lang.get('service.stopped'));
@@ -278,21 +279,21 @@ class Seeker {
 
 			// Выполнение основного действия
 			if( this.totalTicks % this.doTimer() === 0 ) {
-                this.authCheck((authState) => {
-                    if(authState === 1) {
-	                    this.updateCookies();
-	                    this.seekService();
-                    }
-                    else if(authState === 0) {
-                        this.log(Lang.get('service.session_expired'), true);
-                        this.stopSeeker(true);
-                    }
-                    else{
-                        this.log(Lang.get('service.connection_lost'), true);
-                        this.stopSeeker(true);
-                    }
-                });
-            }
+				this.authCheck((authState) => {
+					if(authState === 1) {
+						this.updateCookies();
+						this.seekService();
+					}
+					else if(authState === 0) {
+						this.log(Lang.get('service.session_expired'), true);
+						this.stopSeeker(true);
+					}
+					else{
+						this.log(Lang.get('service.connection_lost'), true);
+						this.stopSeeker(true);
+					}
+				});
+			}
 
 			if( !this.mainButton.hasClass('hovered') )
 				this.buttonState(window.timeToStr(this.doTimer() - this.totalTicks % this.doTimer()));
@@ -324,16 +325,17 @@ class Seeker {
 			switch(input.type){
 				case 'number':
 					if(input.default < input.min) {
-                        input.default = input.min;
-                        this.setConfig(control, input.default);
-                    }
+						input.default = input.min;
+						this.setConfig(control, input.default);
+					}
 					else if( input.default > input.max ){
 						input.default = input.max;
-                        this.setConfig(control, input.default);
-                    }
+						this.setConfig(control, input.default);
+					}
 
 					let numberWrap = $(document.createElement('div'))
 						.addClass('input-wrap number no-selectable')
+						.attr('data-control', this.constructor.name.toLowerCase() + '.' + control)
 						.appendTo(this.settingsNums);
 
 					numberWrap.html(
@@ -366,6 +368,17 @@ class Seeker {
 
 						vLabel.text(val);
 						_this.setConfig(control, val);
+
+						switch(control){
+							case 'interval_from':
+								_this.settings.interval_to.min = val;
+								_this.reinitNumber('interval_to');
+								break;
+							case 'interval_to':
+								_this.settings.interval_from.max = val;
+								_this.reinitNumber('interval_from');
+								break;
+						}
 					};
 
 					let dn = function(){
@@ -380,6 +393,17 @@ class Seeker {
 
 						vLabel.text(val);
 						_this.setConfig(control, val);
+
+						switch(control){
+							case 'interval_from':
+								_this.settings.interval_to.min = val;
+								_this.reinitNumber('interval_to');
+								break;
+							case 'interval_to':
+								_this.settings.interval_from.max = val;
+								_this.reinitNumber('interval_from');
+								break;
+						}
 					};
 
 					btnUp.on('mousedown', () =>{
@@ -435,10 +459,23 @@ class Seeker {
 			}
 		}
 	}
-    
-    logLink(address, anchor){
-        return '<span class="open-website" data-link="' + address + '">' + anchor + '</span>';
-    }
+
+	reinitNumber(control){
+		let wrap = $('[data-control="' + this.constructor.name.toLowerCase() + '.' + control + '"]'),
+			val  = parseInt(wrap.find('.value-label').text());
+
+		wrap.find('.button').removeClass('disabled');
+
+		if( val <= this.settings[control].min )
+			wrap.find('.btn-down').addClass('disabled');
+
+		if( val >= this.settings[control].max )
+			wrap.find('.btn-up').addClass('disabled');
+	}
+
+	logLink(address, anchor){
+		return '<span class="open-website" data-link="' + address + '">' + anchor + '</span>';
+	}
 
 	updateCookies(){
 		mainWindow.webContents.session.cookies.get({ domain: this.domain }, (error, cookies) => {
@@ -454,6 +491,13 @@ class Seeker {
 			this.cookies = newCookies;
 		});
 
+	}
+
+	interval(){
+		let min = this.getConfig('interval_from', this.settings.interval_from.default);
+		let max = this.getConfig('interval_to', this.settings.interval_to.default) + 1;
+
+		return ( Math.floor(Math.random() * (max - min)) + min ) * 1000;
 	}
 
 	doTimer(){
@@ -502,7 +546,7 @@ class Seeker {
 
 	log(text, logType){
 		this.logField.append('<div class="' + (logType ? 'warn' : 'normal') + '"><span class="time">' + timeStr() + ':</span>' + text + '</div>');
-        this.logWrap.scrollTop(this.logWrap[0].scrollHeight);
+		this.logWrap.scrollTop(this.logWrap[0].scrollHeight);
 	}
 
 	// ### "Виртуальные методы" - реализуются в потомках

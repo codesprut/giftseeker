@@ -89,7 +89,7 @@ class SteamGifts extends Seeker {
 					return;
 				}
 
-				let next_after = (_this.getConfig('interval') * 1000 );
+				let next_after = _this.interval();
 				let giveaway = giveaways.eq(curr_giveaway),
 					pinned   = giveaway.closest('.pinned-giveaways__outer-wrap').length > 0,
 					link     = 'https://www.steamgifts.com' + giveaway.find('a.giveaway__heading__name').attr('href'),

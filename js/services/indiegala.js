@@ -93,7 +93,7 @@ class IndieGala extends Seeker {
 						return;
                     }
 
-					let next_after = (_this.getConfig('interval') * 1000 );
+					let next_after = _this.interval();
 					let ticket = tickets.eq(curr_ticket),
 						id     = ticket.find('.ticket-right .relative').attr('rel'),
 						price  = ticket.find('.ticket-price strong').text(),

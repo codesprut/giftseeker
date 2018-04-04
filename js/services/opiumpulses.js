@@ -45,7 +45,7 @@ class OpiumPulses extends Seeker {
 	seekService(){
 		let _this = this;
 
-		$.get('http://www.opiumpulses.com/giveaway/filterGiveaways?source=gf&pageSize=240&status=active&ajax=1', function(){
+		$.get('http://www.opiumpulses.com/giveaway/filterGiveaways?source=gf&pageSize=240&jointypes=everyone&status=active&ajax=1', function(){
 			$.get('http://www.opiumpulses.com/giveaways', function(data){
 
 
@@ -57,10 +57,10 @@ class OpiumPulses extends Seeker {
 					if( found_games.length <= curr_giveaway || !_this.started )
 						return;
 
-					let next_after = (_this.getConfig('interval') * 1000 );
+					let next_after = _this.interval();
 					let giveaway = found_games.eq(curr_giveaway),
 						name     = giveaway.find('.giveaways-page-item-footer-name').text().trim(),
-						eLink     = giveaway.find('.giveaways-page-item-img-btn-enter').attr('href'),
+						eLink    = giveaway.find('.giveaways-page-item-img-btn-enter').attr('href'),
 						link     = giveaway.find('.giveaways-page-item-img-btn-more').attr('href'),
 						cost     = parseInt(giveaway.find('.giveaways-page-item-header-points').text().replace('points', '').trim()),
 						free     = isNaN(cost);

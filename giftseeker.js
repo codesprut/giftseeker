@@ -124,6 +124,8 @@ app.on('ready', function() {
 		}
 	});
 
+	Browser.loadURL('file://' + __dirname + '/blank.html');
+
 	Browser.setMenu(null);
 
 	Browser.on('close', (e) => {
@@ -228,53 +230,50 @@ class LanguageClass {
 		.then((data) => {
 			if(data.response !== false){
 				data = JSON.parse(data.response).langs;
-				let initStarted = false;
+
+				let checked = 0;
 
 				for(let one in data){
 					let name = data[one].name;
 					let size = data[one].size;
 
-					if( !fs.existsSync( storage.getDataPath() + '/' + name ) ){
+					let loadLang = () => {
 						Request( { uri: 'http://giftseeker.ru/trans/' + name } )
 							.then(( lang ) => {
-								fs.writeFile(storage.getDataPath() + '/' + name, lang, (err) => {
-									if(err) return;
+								fs.writeFile(storage.getDataPath() + '/' + name, lang, (err) => { });
+							})
+							.finally(() => {
+								checked++;
 
-									if( !initStarted ){
-										startApp();
-										initStarted = true;
-									}
-								});
+								// запускаем приложение если загружены все языки или хотя-бы текущий
+								if( checked === data.length || name.indexOf(Lang.current()) >= 0 )
+									startApp();
 							});
-					}
+					};
+
+
+					if( !fs.existsSync( storage.getDataPath() + '/' + name ) )
+						loadLang();
 					else{
 						fs.stat(storage.getDataPath() + '/' + name, (err, stats) => {
-							if( stats.size !== size ){
-								Request( { uri: 'http://giftseeker.ru/trans/' + name } )
-									.then(( lang ) => {
-										fs.writeFile(storage.getDataPath() + '/' + name, lang, (err) => {
-											if(err) return;
+							if( stats.size !== size )
+								loadLang();
+							else
+								checked++;
 
-											if( !initStarted ){
-												startApp();
-												initStarted = true;
-											}
-										});
-									});
-							}
-							else if( !initStarted ){
+							// запускаем приложение если загружены все языки
+							if( checked === data.length )
 								startApp();
-								initStarted = true;
-							}
 						});
 					}
 				}
 			}
 			else
 				startApp();
-		}).catch(() => {
-			console.log('catchLang Constructor');
+		})
+		.catch(() => {
 			startApp();
+			console.log('catchLang Constructor');
 		});
 	}
 

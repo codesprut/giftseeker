@@ -137,7 +137,7 @@ $(function(){
 		reloadLangStrings();
 	});
 
-	$(document).on('click', '.open-website', function(){
+	$(document).on('click', '.open-website[data-link]', function(){
 		openWebsite($(this).attr('data-link'));
 	});
 });
@@ -197,53 +197,50 @@ function profileSection() {
 
 	$('.build .version').text(currentBuild);
 
-    let lang_select = $('select#lang');
-    let lang_list	= Lang.list();
+	let lang_select = $('select#lang');
+	let lang_list	= Lang.list();
 
-    // Наполняем языковой селект, либо удаляем его
-    if( Lang.count() <= 1 )
-        lang_select.remove();
-    else{
-        for(let lang in lang_list){
-            let option = $(document.createElement('option'))
-	            .attr('id', lang_list[lang].lang_culture)
-                .val(lang).text('[' + lang_list[lang].lang_culture + '] ' + lang_list[lang].lang_name);
+	// Наполняем языковой селект, либо удаляем его
+	if( Lang.count() <= 1 )
+		lang_select.remove();
+	else{
+		for(let lang in lang_list){
+			let option = $(document.createElement('option'))
+				.attr('id', lang_list[lang].lang_culture)
+				.val(lang).text('[' + lang_list[lang].lang_culture + '] ' + lang_list[lang].lang_name);
 
-            if( Config.get('lang') === lang )
-                option.prop('selected', true);
+			if( Config.get('lang') === lang )
+				option.prop('selected', true);
 
-            lang_select.append(option);
-        }
-    }
+			lang_select.append(option);
+		}
+	}
 
 
-    // Ссылки внизу
-    let info_links = $('.content-item .info-links');
+	// Ссылки внизу
+	let info_links = $('.content-item .info-links');
 
-    $(document.createElement('button'))
-        .addClass('open-website')
-        .text('GiftSeeker.RU')
-        .click(() => {
-            openWebsite('http://giftseeker.ru/');
-        }).appendTo(info_links);
+	$(document.createElement('button'))
+		.addClass('open-website')
+		.text('GiftSeeker.RU')
+		.attr('data-link', 'http://giftseeker.ru/')
+		.appendTo(info_links);
 
-    $(document.createElement('button'))
-        .addClass('open-website')
-        .attr('data-lang', 'profile.forum')
-        .text(Lang.get('profile.forum'))
-        .css('margin-left', '7px')
-        .click(() => {
-            openWebsite('http://iknows.ru/forums/gs/');
-        }).appendTo(info_links);
+	$(document.createElement('button'))
+		.addClass('open-website')
+		.attr('data-lang', 'profile.forum')
+		.text(Lang.get('profile.forum'))
+		.css('margin-left', '7px')
+		.attr('data-link', 'http://iknows.ru/forums/gs/')
+		.appendTo(info_links);
 
 	$(document.createElement('button'))
 		.addClass('open-website')
 		.attr('data-lang', 'profile.donation')
 		.text(Lang.get('profile.donation'))
 		.css('margin-left', '7px')
-		.click(() => {
-			openWebsite('http://giftseeker.ru/donation');
-		}).appendTo(info_links);
+		.attr('data-link', 'http://giftseeker.ru/donation')
+		.appendTo(info_links);
 }
 
 function renderUser(userData) {
@@ -252,7 +249,7 @@ function renderUser(userData) {
 }
 
 function openWebsite(url){
-    Browser.loadURL(url);
+	Browser.loadURL(url);
 	Browser.setTitle('GS Browser - ' + Lang.get('auth.browser_loading'));
 	
     Browser.show();
