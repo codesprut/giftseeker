@@ -1,38 +1,50 @@
 {
   "name": "GiftSeeker",
-  "productName": "GiftSeeker",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Steam raffles autojoiner",
   "main": "giftseeker.js",
-  "devDependencies": {
-    "electron": "^1.8.3",
-    "electron-builder": "^20.4.0"
-  },
-  "dependencies": {
-    "electron-json-storage": "^4.0.2",
-    "request": "^2.85.0",
-    "request-promise": "^4.2.2"
-  },
-  "author": "ES Soft",
+  "author": "CodeSprut",
   "license": "ISC",
+  "homepage": "https://bitbucket.org/CodeSprut/giftseekerelectron#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org:CodeSprut/giftseekerelectron.git"
+  },
   "scripts": {
-    "start": "electron giftseeker.js",
-    "pack": "build --dir",
-    "build32": "build --ia32",
-    "build64": "build --x64"
+    "start": "electron .",
+    "build-win": "build --x64"
   },
   "build": {
     "appId": "com.giftseeker.app",
+    "productName": "GiftSeeker",
+    "artifactName": "${productName}Setup.${ext}",
     "linux": {
       "target": "deb",
       "icon": "icon.ico"
     },
     "win": {
-      "target": "portable",
       "icon": "icon.ico"
     },
     "portable": {
       "artifactName": "${productName}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "publish": {
+      "provider": "generic",
+      "url": "http://giftseeker.ru/files"
     }
+  },
+  "devDependencies": {
+    "electron": "^3.0.11",
+    "electron-builder": "^20.38.3"
+  },
+  "dependencies": {
+    "electron-json-storage": "^4.1.5",
+    "electron-updater": "^4.0.6",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
   }
 }

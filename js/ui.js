@@ -1,8 +1,11 @@
 'use strict';
 const remote  = require('electron').remote;
 const ipc     = require("electron").ipcRenderer;
+const shared  = remote.getGlobal('sharedData');
+
 const Request = remote.getGlobal('Request');
 const devMode = remote.getGlobal('devMode');
+const autoUpdater = shared.autoUpdater;
 
 let Config = remote.getGlobal('Config');
 let Lang   = remote.getGlobal('Lang');
@@ -15,8 +18,23 @@ let authWindow  = remote.getGlobal('authWindow');
 let mainWindow  = remote.getGlobal('mainWindow');
 
 let intervalTicks = 0;
+let updateIcon    = $('div.update-available');
+let updateAvail   = false;
 
 $(function(){
+	autoUpdater.on('update-available', () => {
+		updateAvail = true;
+		updateIcon.addClass('progress');
+	});
+
+	autoUpdater.on('download-progress', (progress, speed, percent) => {
+		updateIcon.attr('title', Lang.get('ui.upd_progress') + ' - ' + percent + '%');
+	});
+
+	autoUpdater.on('update-downloaded', () => {
+		updateIcon.addClass('downloaded').attr('title', Lang.get('ui.upd_downloaded'));
+	});
+
 	// Основной воркер главного окна
 	setInterval(intervalSchedules, 1000);
 
@@ -144,27 +162,10 @@ $(function(){
 
 function intervalSchedules(){
 	// Проверяем обновления
-	if( !devMode && intervalTicks % 600 === 0 ){
-		$.ajax({
-			url: 'http://giftseeker.ru/api/version',
-			dataType: 'json',
-			success: function(data){
-				if( data.response && data.response !== currentBuild ) {
-					TrayIcon.displayBalloon({
-						icon: __dirname + '/icon.png',
-						title: Lang.get('ui.upd_title'),
-						content: Lang.get('ui.upd_text')
-					});
+	if( intervalTicks % 300 === 0 && !shared.isPortable && !updateAvail )
+		autoUpdater.checkForUpdatesAndNotify();
 
-					TrayIcon.removeAllListeners('balloon-click');
-
-					TrayIcon.once('balloon-click', function(){
-						shell.openExternal('http://giftseeker.ru/downloads')
-					});
-				}
-			}
-		});
-	}
+		// TrayIcon.removeAllListeners('balloon-click');
 
 	// Обновляем инфо о юзере
 	if( intervalTicks !== 0 && intervalTicks % 300 === 0 ){
@@ -209,13 +210,12 @@ function profileSection() {
 				.attr('id', lang_list[lang].lang_culture)
 				.val(lang).text('[' + lang_list[lang].lang_culture + '] ' + lang_list[lang].lang_name);
 
-			if( Config.get('lang') === lang )
+			if( Lang.current() === lang )
 				option.prop('selected', true);
 
 			lang_select.append(option);
 		}
 	}
-
 
 	// Ссылки внизу
 	let info_links = $('.content-item .info-links');

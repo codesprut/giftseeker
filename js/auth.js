@@ -13,7 +13,7 @@ let buttons = $('#content .seeker-button');
 
 
 $(function(){
-	remote.getGlobal('ipcMain').on('change-lang', function() {
+	remote.getGlobal('ipc').on('change-lang', function() {
 		reloadLangStrings();
 	});
 
@@ -98,7 +98,7 @@ function checkAuth() {
 }
 
 function loadProgram(){
-	mainWindow.loadURL('file://' + __dirname + '/index.html');
+	mainWindow.loadFile('index.html');
 }
 
 function reloadLangStrings() {

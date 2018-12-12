@@ -1,9 +1,13 @@
 'use strict';
-const {app, nativeImage, shell, Menu, session, Tray, BrowserWindow, ipcMain, ipcRenderer} = require('electron');
+const { app, nativeImage, shell, Menu, session, Tray, BrowserWindow, ipcMain, ipcRenderer } = require('electron');
+const { autoUpdater } = require("electron-updater");
 const storage = require('electron-json-storage');
 const fs = require('fs');
 const Request = require('request-promise');
-const devMode    = app.getVersion() === '1.8.3'; // if run via electron
+
+const devMode = true;//process.argv[1] === '.';
+const isPortable = process.env.PORTABLE_EXECUTABLE_DIR !== undefined;
+const gotTheLock = app.requestSingleInstanceLock();
 
 let appLoaded = false;
 
@@ -17,49 +21,49 @@ let tray       = null;
 let user       = null;
 let execPath   = process.execPath.match(/.*\\/i)[0];
 
-// for windows portable
-if( process.env.PORTABLE_EXECUTABLE_DIR !== undefined )
+// Портативная версия
+if( isPortable )
 	execPath = process.env.PORTABLE_EXECUTABLE_DIR + "\\";
+
+log( 'Путь приложения: ' + execPath );
 
 app.disableHardwareAcceleration();
 
 storage.setDataPath(execPath + 'data');
 
-
 // Если произошёл повторный запуск процесса то переводим фокус на окно программы
-const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
-    if (mainWindow) {
-        if (mainWindow.isMinimized())
-            mainWindow.restore();
+app.on('second-instance', (commandLine, workingDirectory) => {
+	if (mainWindow) {
+		if (mainWindow.isMinimized())
+			mainWindow.restore();
 
-        if( !mainWindow.isVisible() )
-            mainWindow.show();
+		if( !mainWindow.isVisible() )
+			mainWindow.show();
 
-        mainWindow.focus()
-    }
+		mainWindow.focus()
+	}
 });
 
-if ( isSecondInstance ){
-    app.quit();
-}
+if ( !gotTheLock )
+	return app.quit();
 
 ipcMain.on('save-user', function(event, data) {
     user = data;
 	global.user = data;
 });
+
 ipcMain.on('change-lang', function(event, data) {
 	Lang.change(data);
 	event.sender.send('change-lang', data);
 });
 
-app.on('window-all-closed', function() {
-	if (process.platform !== 'darwin') {
+app.on('window-all-closed', () => {
+	if (process.platform !== 'darwin')
 		app.quit();
-	}
 });
 
 
-app.on('ready', function() {
+app.on('ready', () => {
 	Config   = new ConfigClass();
 	Lang     = new LanguageClass();
 	_session = session.fromPartition('persist:GiftSeeker');
@@ -124,13 +128,13 @@ app.on('ready', function() {
 		}
 	});
 
-	Browser.loadURL('file://' + __dirname + '/blank.html');
+	Browser.loadFile('blank.html');
 
 	Browser.setMenu(null);
 
 	Browser.on('close', (e) => {
 		e.preventDefault();
-        Browser.loadURL('file://' + __dirname + '/blank.html');
+        Browser.loadFile('blank.html');
 		Browser.hide();
 
 		if(mainWindow.hidden)
@@ -140,27 +144,25 @@ app.on('ready', function() {
 	});
 
 	//### end browser for websites
-
-
-	authWindow.on('close', function(e){
+	
+	authWindow.on('close', () => {
 		authWindow.removeAllListeners('close');
 		mainWindow.close();
 	});
 
-	mainWindow.on('close', function(e){
+	mainWindow.on('close', () => {
 		mainWindow.removeAllListeners('close');
 		authWindow.close();
 	});
 
-	authWindow.on('closed', function(e) {
+	authWindow.on('closed', () => {
 		authWindow = null;
 	});
 
-	mainWindow.on('closed', function(e) {
+	mainWindow.on('closed', () => {
 		mainWindow = null;
 	});
-
-
+	
     // Работа с треем
     tray = new Tray(nativeImage.createFromPath(__dirname + '/icon.ico'));
     const trayMenu = Menu.buildFromTemplate([
@@ -174,7 +176,7 @@ app.on('ready', function() {
         { role: "quit" }
     ]);
 
-    tray.setToolTip("GiftSeeker");
+    tray.setToolTip("GiftSeeker " + app.getVersion());
     tray.setContextMenu(trayMenu);
     tray.on('click', () => {
        if( user === null )
@@ -184,13 +186,18 @@ app.on('ready', function() {
     });
 
 	// Ссылки в глобальное пространство
+	global.sharedData = {
+		isPortable: isPortable,
+		autoUpdater: autoUpdater
+	};
+	
 	global.authWindow = authWindow;
 	global.mainWindow = mainWindow;
 	global.Browser    = Browser;
 	global.storage    = storage;
 	global.Config     = Config;
 	global.Lang       = Lang;
-	global.ipcMain    = ipcMain;
+	global.ipc        = ipcMain;
 	global.TrayIcon   = tray;
 	global.shell      = shell;
 	global.Request    = Request;
@@ -202,7 +209,7 @@ function startApp(){
         return;
 
     let afterLangs = function(){
-        authWindow.loadURL('file://' + __dirname + '/auth.html');
+	    authWindow.loadFile('auth.html');
 
         authWindow.on('ready-to-show', function() {
             authWindow.show();
@@ -217,6 +224,11 @@ function startApp(){
     Lang.loadLangs(afterLangs);
 
     appLoaded = true;
+}
+
+function log(logThis) {
+	if( devMode )
+		console.log(logThis);
 }
 
 class LanguageClass {
@@ -245,8 +257,8 @@ class LanguageClass {
 							.finally(() => {
 								checked++;
 
-								// запускаем приложение если загружены все языки или хотя-бы текущий
-								if( checked === data.length || name.indexOf(Lang.current()) >= 0 )
+								// запускаем приложение если загружены все языки
+								if( checked >= data.length )// || name.indexOf(Lang.current()) >= 0 )
 									startApp();
 							});
 					};
@@ -298,9 +310,8 @@ class LanguageClass {
 
                 let lng;
 
-                for(lng in langs.lang ){
+                for(lng in langs.lang )
                     _this.langsCount++;
-                }
 
                 if( langs.lang[Config.get('lang', _this.default)] === undefined ){
                     _this.default = lng;
@@ -334,7 +345,6 @@ class LanguageClass {
 
     change(setLang){
         Config.set('lang', setLang);
-
     }
 
     count(){
