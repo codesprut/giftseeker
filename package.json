@@ -1,28 +1,26 @@
 {
   "name": "GiftSeeker",
   "version": "1.1.0",
-  "description": "Steam raffles autojoiner",
-  "main": "giftseeker.js",
   "author": "CodeSprut",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/CodeSprut/giftseekerelectron#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@bitbucket.org:CodeSprut/giftseekerelectron.git"
-  },
+  "description": "Steam raffles autojoiner",
+  "homepage": "http://giftseeker.ru/",
+  "main": "giftseeker.js",
   "scripts": {
     "start": "electron .",
-    "build-win": "build --x64"
+    "build-win": "build --x64 --ia32"
   },
   "build": {
     "appId": "com.giftseeker.app",
     "productName": "GiftSeeker",
     "artifactName": "${productName}Setup.${ext}",
+    "copyright": "Copyright © 2018 ${author}",
     "linux": {
       "target": "deb",
       "icon": "icon.ico"
     },
     "win": {
+      "target": "nsis-web",
       "icon": "icon.ico"
     },
     "portable": {
@@ -42,6 +40,7 @@
     "electron-builder": "^20.38.3"
   },
   "dependencies": {
+    "auto-launch": "^5.0.5",
     "electron-json-storage": "^4.1.5",
     "electron-updater": "^4.0.6",
     "request": "^2.88.0",

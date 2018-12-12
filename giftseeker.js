@@ -1,11 +1,12 @@
 'use strict';
 const { app, nativeImage, shell, Menu, session, Tray, BrowserWindow, ipcMain, ipcRenderer } = require('electron');
 const { autoUpdater } = require("electron-updater");
+const AutoLaunch = require('auto-launch');
 const storage = require('electron-json-storage');
 const fs = require('fs');
 const Request = require('request-promise');
 
-const devMode = true;//process.argv[1] === '.';
+const devMode = process.argv[1] === '.';
 const isPortable = process.env.PORTABLE_EXECUTABLE_DIR !== undefined;
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -30,6 +31,8 @@ log( 'Путь приложения: ' + execPath );
 app.disableHardwareAcceleration();
 
 storage.setDataPath(execPath + 'data');
+
+let autostart = new AutoLaunch({ name: 'GiftSeeker' });
 
 // Если произошёл повторный запуск процесса то переводим фокус на окно программы
 app.on('second-instance', (commandLine, workingDirectory) => {
@@ -226,6 +229,15 @@ function startApp(){
     appLoaded = true;
 }
 
+function autoStartControl() {
+	if( Config.get('start_with_os', false) && !devMode ) {
+		autostart.enable().catch(() => {});
+		return;
+	}
+
+	autostart.disable().catch(()=>{});
+}
+
 function log(logThis) {
 	if( devMode )
 		console.log(logThis);
@@ -370,12 +382,17 @@ class ConfigClass {
 
 			_this.settings = data;
 			_this.set('inits', ( _this.get('inits', 0) + 1) );
+
+			autoStartControl();
 		});
 	}
 
 	set(key, value){
 		this.settings[key] = value;
 		storage.set("configs", this.settings);
+
+		if( key === 'start_with_os' )
+			autoStartControl();
 	}
 
 	get(key, def_val){

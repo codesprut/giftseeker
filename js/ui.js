@@ -4,7 +4,6 @@ const ipc     = require("electron").ipcRenderer;
 const shared  = remote.getGlobal('sharedData');
 
 const Request = remote.getGlobal('Request');
-const devMode = remote.getGlobal('devMode');
 const autoUpdater = shared.autoUpdater;
 
 let Config = remote.getGlobal('Config');
