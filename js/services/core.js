@@ -322,8 +322,11 @@ class Seeker {
 		for(let control in this.settings){
 			let input = this.settings[control];
 
-			switch(input.type){
+			switch( input.type ){
 				case 'number':
+				case 'float_number':
+					let step = input.type === 'number' ? 1 : 0.1;
+
 					if(input.default < input.min) {
 						input.default = input.min;
 						this.setConfig(control, input.default);
@@ -359,9 +362,12 @@ class Seeker {
 					let up = function(){
 						let val = parseFloat(vLabel.text());
 						if (val < input.max){
-							val++;
+							val = val + step;
 							btnDn.removeClass('disabled');
 						}
+
+						if( input.type === 'float_number' )
+							val = parseFloat( val.toFixed(1) );
 
 						if( val === input.max )
 							btnUp.addClass('disabled');
@@ -392,9 +398,12 @@ class Seeker {
 					let dn = function(){
 						let val = parseFloat(vLabel.text());
 						if (val > input.min){
-							val--;
+							val = val - step;
 							btnUp.removeClass('disabled');
 						}
+
+						if( input.type === 'float_number' )
+							val = parseFloat( val.toFixed(1) );
 
 						if( val === input.min )
 							btnDn.addClass('disabled');
@@ -403,14 +412,14 @@ class Seeker {
 						_this.setConfig(control, val);
 
 						switch(control){
-                            case 'min_cost':
-                                _this.settings.max_cost.min = val;
-                                _this.reinitNumber('max_cost');
-                                break;
-                            case 'max_cost':
-                                _this.settings.min_cost.max = val;
-                                _this.reinitNumber('min_cost');
-                                break;
+							case 'min_cost':
+								_this.settings.max_cost.min = val;
+								_this.reinitNumber('max_cost');
+							break;
+							case 'max_cost':
+								_this.settings.min_cost.max = val;
+								_this.reinitNumber('min_cost');
+							break;
 							case 'interval_from':
 								_this.settings.interval_to.min = val;
 								_this.reinitNumber('interval_to');

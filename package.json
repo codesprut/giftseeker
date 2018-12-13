@@ -20,7 +20,11 @@
       "icon": "icon.ico"
     },
     "win": {
-      "target": "nsis-web",
+      "target":
+	  [
+		"nsis-web",
+		"portable"
+	  ],
       "icon": "icon.ico"
     },
     "portable": {
