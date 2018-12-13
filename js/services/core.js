@@ -370,6 +370,14 @@ class Seeker {
 						_this.setConfig(control, val);
 
 						switch(control){
+							case 'min_cost':
+                                _this.settings.max_cost.min = val;
+                                _this.reinitNumber('max_cost');
+                                break;
+                            case 'max_cost':
+                                _this.settings.min_cost.max = val;
+                                _this.reinitNumber('min_cost');
+							    break;
 							case 'interval_from':
 								_this.settings.interval_to.min = val;
 								_this.reinitNumber('interval_to');
@@ -395,6 +403,14 @@ class Seeker {
 						_this.setConfig(control, val);
 
 						switch(control){
+                            case 'min_cost':
+                                _this.settings.max_cost.min = val;
+                                _this.reinitNumber('max_cost');
+                                break;
+                            case 'max_cost':
+                                _this.settings.min_cost.max = val;
+                                _this.reinitNumber('min_cost');
+                                break;
 							case 'interval_from':
 								_this.settings.interval_to.min = val;
 								_this.reinitNumber('interval_to');

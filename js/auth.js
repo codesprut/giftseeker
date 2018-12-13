@@ -2,18 +2,18 @@
 
 const remote = require('electron').remote;
 const ipc    = require("electron").ipcRenderer;
+const shared = remote.getGlobal('sharedData');
 
-let Lang        = remote.getGlobal('Lang');
-let authWindow  = remote.getGlobal('authWindow');
-let mainWindow  = remote.getGlobal('mainWindow');
-let Browser     = remote.getGlobal('Browser');
+let Lang        = shared.Lang;
+let mainWindow  = shared.mainWindow;
+let Browser     = shared.Browser;
 
 let status  = $('.status-text');
 let buttons = $('#content .seeker-button');
 
 
 $(function(){
-	remote.getGlobal('ipc').on('change-lang', function() {
+	shared.ipcMain.on('change-lang', function() {
 		reloadLangStrings();
 	});
 
@@ -90,7 +90,7 @@ function checkAuth() {
 
 			loadProgram();
 		},
-		error: function(error){
+		error: () => {
 			status.text(Lang.get('auth.connection_error'));
 			buttons.removeClass('disabled');
 		}
@@ -102,7 +102,7 @@ function loadProgram(){
 }
 
 function reloadLangStrings() {
-	$('[data-lang]').each(function(item, index){
+	$('[data-lang]').each(function(){
 		$(this).html(Lang.get($(this).attr('data-lang')));
 	});
 

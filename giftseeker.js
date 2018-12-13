@@ -191,20 +191,18 @@ app.on('ready', () => {
 	// Ссылки в глобальное пространство
 	global.sharedData = {
 		isPortable: isPortable,
-		autoUpdater: autoUpdater
+		autoUpdater: autoUpdater,
+		devMode: devMode,
+		shell: shell,
+		TrayIcon: tray,
+		ipcMain: ipcMain,
+		Lang: Lang,
+		Config: Config,
+		Browser: Browser,
+		authWindow: authWindow,
+		mainWindow: mainWindow,
+		Request: Request
 	};
-	
-	global.authWindow = authWindow;
-	global.mainWindow = mainWindow;
-	global.Browser    = Browser;
-	global.storage    = storage;
-	global.Config     = Config;
-	global.Lang       = Lang;
-	global.ipc        = ipcMain;
-	global.TrayIcon   = tray;
-	global.shell      = shell;
-	global.Request    = Request;
-	global.devMode    = devMode;
 });
 
 function startApp(){

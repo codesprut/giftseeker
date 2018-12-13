@@ -3,18 +3,16 @@ const remote  = require('electron').remote;
 const ipc     = require("electron").ipcRenderer;
 const shared  = remote.getGlobal('sharedData');
 
-const Request = remote.getGlobal('Request');
+const Request = shared.Request; // request-promise(пока только в tf2r) - думаю отказаться в пользу request
 const autoUpdater = shared.autoUpdater;
 
-let Config = remote.getGlobal('Config');
-let Lang   = remote.getGlobal('Lang');
+let Config = shared.Config;
+let Lang   = shared.Lang;
 let GSuser = remote.getGlobal('user');
 
-let TrayIcon    = remote.getGlobal('TrayIcon');
-let shell       = remote.getGlobal('shell');
-let Browser     = remote.getGlobal('Browser');
-let authWindow  = remote.getGlobal('authWindow');
-let mainWindow  = remote.getGlobal('mainWindow');
+let Browser     = shared.Browser;
+let authWindow  = shared.authWindow;
+let mainWindow  = shared.mainWindow;
 
 let intervalTicks = 0;
 let updateIcon    = $('div.update-available');

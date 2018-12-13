@@ -81,8 +81,8 @@ class Follx extends Seeker {
 
 				let next_after = _this.interval();
 				let card = found_games.eq(curr_giveaway),
-					link = card.find('a.game_name').attr('href'),
-					name = card.find('a.game_name > span').text(),
+					link = card.find('.head_info a').attr('href'),
+					name = card.find('.head_info').attr('title'),
 					have = card.find('.giveaway-indicators > .have').length > 0,
 					entered = card.find('.entered').length > 0;
 
