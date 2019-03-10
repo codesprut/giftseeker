@@ -147,6 +147,10 @@ app.on('ready', () => {
 	});
 
 	//### end browser for websites
+
+	authWindow.on('show', () => {
+		authWindow.webContents.executeJavaScript('onShow()');
+	});
 	
 	authWindow.on('close', () => {
 		authWindow.removeAllListeners('close');
@@ -171,7 +175,7 @@ app.on('ready', () => {
     const trayMenu = Menu.buildFromTemplate([
         {
             label: "Open Website", click: () => {
-                Browser.loadURL("http://giftseeker.ru/");
+                Browser.loadURL("https://giftseeker.ru/");
                 Browser.show();
             }
         },
@@ -248,7 +252,7 @@ class LanguageClass {
         this.langsCount = 0;
 
 		// Проверяем наличие локализаций в директории с данными, если чего-то не хватает то скачиваем
-		Request({uri: 'http://giftseeker.ru/api/langs_new', json: true})
+		Request({uri: 'https://giftseeker.ru/api/langs_new', json: true})
 		.then((data) => {
 			if(data.response !== false){
 				data = JSON.parse(data.response).langs;
@@ -260,7 +264,7 @@ class LanguageClass {
 					let size = data[one].size;
 
 					let loadLang = () => {
-						Request( { uri: 'http://giftseeker.ru/trans/' + name } )
+						Request( { uri: 'https://giftseeker.ru/trans/' + name } )
 							.then(( lang ) => {
 								fs.writeFile(storage.getDataPath() + '/' + name, lang, (err) => { });
 							})

@@ -9,15 +9,22 @@ let mainWindow  = shared.mainWindow;
 let Browser     = shared.Browser;
 
 let status  = $('.status-text');
-let buttons = $('#content .seeker-button');
+let buttons = $('#auth_button');
+//let buttons = $('#content .seeker-button');
 
+
+function onShow(){
+	reloadLangStrings();
+	buttons.removeClass('disabled');
+}
 
 $(function(){
 	shared.ipcMain.on('change-lang', function() {
 		reloadLangStrings();
 	});
-
-	reloadLangStrings();
+	shared.ipcMain.on('window-shown', function() {
+		buttons.removeClass('disabled');
+	});
 
 	let lang_select = $('select#lang');
 	let lang_list	= Lang.list();
@@ -48,13 +55,13 @@ $(function(){
 	$('#auth_button').click(function(e){
 		e.preventDefault();
 
-		Browser.loadURL('http://giftseeker.ru/logIn');
+		Browser.loadURL('https://giftseeker.ru/logIn');
 		Browser.show();
 		Browser.setTitle('GS Browser - ' + Lang.get('auth.browser_loading'));
 
 
 		Browser.webContents.on('did-finish-load',  () => {
-			if( Browser.getURL() === 'http://giftseeker.ru/'){
+			if( Browser.getURL() === 'https://giftseeker.ru/'){
 				Browser.webContents.executeJavaScript('document.querySelector("body").innerHTML', (body) => {
 					if( body.indexOf('/account') >= 0 ){
 						Browser.webContents.removeAllListeners('did-finish-load');
@@ -74,7 +81,7 @@ function checkAuth() {
 	status.text(Lang.get('auth.check'));
 
 	$.ajax({
-		url: 'http://giftseeker.ru/api/userData',
+		url: 'https://giftseeker.ru/api/userData',
 		data: { ver: currentBuild },
 		dataType: 'json',
 		success: function (data) {

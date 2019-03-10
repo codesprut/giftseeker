@@ -13,9 +13,9 @@ class Seeker {
 
 		this.cookies     = '';
 		this.domain      = 'giftseeker.ru';
-		this.websiteUrl  = 'http://giftseeker.ru';
-		this.authLink    = 'http://giftseeker.ru';
-		this.wonsUrl     = 'http://giftseeker.ru';
+		this.websiteUrl  = 'https://giftseeker.ru';
+		this.authLink    = 'https://giftseeker.ru';
+		this.wonsUrl     = 'https://giftseeker.ru';
 		this.authContent = '';
 
 		this.withValue   = true;
@@ -582,7 +582,7 @@ class Seeker {
 	getUserInfo(callback){
 
 		callback({
-			avatar: 'http://giftseeker.ru/favicon.ico',
+			avatar: 'https://giftseeker.ru/favicon.ico',
 			username: 'GS User',
 			value: 0
 		});

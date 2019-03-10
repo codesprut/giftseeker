@@ -4,19 +4,19 @@
   "author": "CodeSprut",
   "license": "ISC",
   "description": "Steam raffles autojoiner",
-  "homepage": "http://giftseeker.ru/",
+  "homepage": "https://giftseeker.ru/",
   "main": "giftseeker.js",
   "scripts": {
     "start": "electron .",
-    "build-win": "build --x64 --ia32"
+    "build-win": "build --x64 --ia32",
+    "build-nix": "build -l --x64 --ia32"
   },
   "build": {
     "appId": "com.giftseeker.app",
     "productName": "GiftSeeker",
     "artifactName": "${productName}Setup.${ext}",
-    "copyright": "Copyright © 2018 ${author}",
+    "copyright": "Copyright © 2019 ${author}",
     "linux": {
-      "target": "deb",
       "icon": "icon.ico"
     },
     "win": {
@@ -36,7 +36,7 @@
     },
     "publish": {
       "provider": "generic",
-      "url": "http://giftseeker.ru/files"
+      "url": "https://giftseeker.ru/files"
     }
   },
   "devDependencies": {

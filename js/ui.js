@@ -114,7 +114,7 @@ $(function(){
 
 		$.ajax({
 			method: 'get',
-			url: 'http://giftseeker.ru/logout',
+			url: 'https://giftseeker.ru/logout',
 			success: function () {
 				mainWindow.hide();
 				mainWindow.loadURL(__dirname + '/blank.html');
@@ -167,7 +167,7 @@ function intervalSchedules(){
 	// Обновляем инфо о юзере
 	if( intervalTicks !== 0 && intervalTicks % 300 === 0 ){
 		$.ajax({
-			url: 'http://giftseeker.ru/api/userData',
+			url: 'https://giftseeker.ru/api/userData',
 			data: { ver: currentBuild },
 			dataType: 'json',
 			success: function(data){
@@ -220,7 +220,7 @@ function profileSection() {
 	$(document.createElement('button'))
 		.addClass('open-website')
 		.text('GiftSeeker.RU')
-		.attr('data-link', 'http://giftseeker.ru/')
+		.attr('data-link', 'https://giftseeker.ru/')
 		.appendTo(info_links);
 
 	$(document.createElement('button'))
@@ -236,7 +236,7 @@ function profileSection() {
 		.attr('data-lang', 'profile.donation')
 		.text(Lang.get('profile.donation'))
 		.css('margin-left', '7px')
-		.attr('data-link', 'http://giftseeker.ru/donation')
+		.attr('data-link', 'https://giftseeker.ru/donation')
 		.appendTo(info_links);
 }
 
