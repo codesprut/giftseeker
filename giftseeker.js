@@ -16,6 +16,8 @@ const storage = require("electron-json-storage");
 const fs = require("fs");
 const Request = require("request-promise");
 
+const config = require("./app/config");
+
 const devMode = process.argv[1] === ".";
 const isPortable = process.env.PORTABLE_EXECUTABLE_DIR !== undefined;
 const gotTheLock = app.requestSingleInstanceLock();
@@ -26,7 +28,6 @@ let authWindow = null;
 let mainWindow = null;
 let Browser = null;
 let _session = null;
-let Config = null;
 let Lang = null;
 let tray = null;
 let user = null;
@@ -70,8 +71,11 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
+config.on("change", (configKey, newValue) => {
+  if (configKey === "start_with_os") autoStartControl(newValue);
+});
+
 app.on("ready", () => {
-  Config = new ConfigClass();
   Lang = new LanguageClass();
   _session = session.fromPartition("persist:GiftSeeker");
   _session.setUserAgent(
@@ -207,7 +211,7 @@ app.on("ready", () => {
     TrayIcon: tray,
     ipcMain: ipcMain,
     Lang: Lang,
-    Config: Config,
+    Config: config,
     Browser: Browser,
     authWindow: authWindow,
     mainWindow: mainWindow,
@@ -224,7 +228,7 @@ function startApp() {
     authWindow.on("ready-to-show", function() {
       authWindow.show();
 
-      if (Config.get("start_minimized")) authWindow.hide();
+      if (config.get("start_minimized")) authWindow.hide();
       else authWindow.focus();
     });
   });
@@ -232,8 +236,8 @@ function startApp() {
   appLoaded = true;
 }
 
-function autoStartControl() {
-  if (Config.get("start_with_os", false) && !devMode) {
+function autoStartControl(startWithOs) {
+  if (startWithOs === true && !devMode) {
     autostart.enable().catch(() => {});
     return;
   }
@@ -323,9 +327,9 @@ class LanguageClass {
 
         for (lng in langs.lang) _this.langsCount++;
 
-        if (langs.lang[Config.get("lang", _this.default)] === undefined) {
+        if (langs.lang[config.get("lang", _this.default)] === undefined) {
           _this.default = lng;
-          Config.set("lang", _this.default);
+          config.set("lang", _this.default);
         }
 
         _this.languages = langs.lang;
@@ -337,7 +341,7 @@ class LanguageClass {
 
   get(key) {
     let response = this.languages;
-    let splited = (Config.get("lang", this.default) + "." + key).split(".");
+    let splited = (config.get("lang", this.default) + "." + key).split(".");
 
     for (let i = 0; i < splited.length; i++) {
       if (response[splited[i]] !== undefined) {
@@ -352,7 +356,7 @@ class LanguageClass {
   }
 
   change(setLang) {
-    Config.set("lang", setLang);
+    config.set("lang", setLang);
   }
 
   count() {
@@ -360,41 +364,10 @@ class LanguageClass {
   }
 
   current() {
-    return Config.get("lang", this.default);
+    return config.get("lang", this.default);
   }
 
   list() {
     return this.languages;
-  }
-}
-
-class ConfigClass {
-  constructor() {
-    let _this = this;
-    this.settings = {};
-
-    storage.get("configs", function(error, data) {
-      if (error) throw error;
-
-      _this.settings = data;
-      _this.set("inits", _this.get("inits", 0) + 1);
-
-      autoStartControl();
-    });
-  }
-
-  set(key, value) {
-    this.settings[key] = value;
-    storage.set("configs", this.settings);
-
-    if (key === "start_with_os") autoStartControl();
-  }
-
-  get(key, def_val) {
-    if (this.settings[key] !== undefined) return this.settings[key];
-
-    if (def_val !== undefined) return def_val;
-
-    return false;
   }
 }
