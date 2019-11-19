@@ -89,7 +89,8 @@ app.on("ready", () => {
     frame: false,
     webPreferences: {
       session: _session,
-      devTools: devMode
+      devTools: devMode,
+      nodeIntegration: true
     }
   });
 
@@ -106,15 +107,16 @@ app.on("ready", () => {
     frame: false,
     webPreferences: {
       session: _session,
-      devTools: devMode
+      devTools: devMode,
+      nodeIntegration: true
     }
   });
 
   mainWindow.setMenu(null);
 
   if (devMode) {
-    //authWindow.webContents.openDevTools();
-    mainWindow.webContents.openDevTools();
+    authWindow.webContents.openDevTools({ mode: "detach" });
+    mainWindow.webContents.openDevTools({ mode: "detach" });
   }
 
   //### Browser for websites
@@ -216,7 +218,7 @@ app.on("ready", () => {
 function startApp() {
   if (appLoaded) return;
 
-  let afterLangs = function() {
+  Lang.loadLangs(() => {
     authWindow.loadFile("auth.html");
 
     authWindow.on("ready-to-show", function() {
@@ -225,9 +227,7 @@ function startApp() {
       if (Config.get("start_minimized")) authWindow.hide();
       else authWindow.focus();
     });
-  };
-
-  Lang.loadLangs(afterLangs);
+  });
 
   appLoaded = true;
 }
@@ -258,13 +258,12 @@ class LanguageClass {
           startApp();
           return;
         }
-        data = JSON.parse(data.response).langs;
+        const languages = JSON.parse(data.response).langs;
 
-        let checked = 0;
+        let languagesLoaded = 0;
 
-        for (let one in data) {
-          let name = data[one].name;
-          let size = data[one].size;
+        languages.forEach(language => {
+          const { name, size } = language;
 
           let loadLang = () => {
             Request({ uri: "https://giftseeker.ru/trans/" + name })
@@ -276,26 +275,25 @@ class LanguageClass {
                 );
               })
               .finally(() => {
-                checked++;
+                languagesLoaded++;
 
-                // запускаем приложение если загружены все языки
-                if (checked >= data.length)
-                  // || name.indexOf(Lang.current()) >= 0 )
-                  startApp();
-              });
+                // запускаем приложение когда загружены все языки
+                if (languagesLoaded >= languages.length) startApp();
+              })
+              .catch(err => console.log("lang loading error ", err));
           };
 
           if (!fs.existsSync(storage.getDataPath() + "/" + name)) loadLang();
           else {
             fs.stat(storage.getDataPath() + "/" + name, (err, stats) => {
               if (stats.size !== size) loadLang();
-              else checked++;
+              else languagesLoaded++;
 
               // запускаем приложение если загружены все языки
-              if (checked === data.length) startApp();
+              if (languagesLoaded === languages.length) startApp();
             });
           }
-        }
+        });
       })
       .catch(() => {
         startApp();
