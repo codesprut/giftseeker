@@ -139,13 +139,13 @@ app.on("ready", () => {
     }
   });
 
-  Browser.loadFile("blank.html");
+  Browser.loadFile("./web/blank.html");
 
   Browser.setMenu(null);
 
   Browser.on("close", e => {
     e.preventDefault();
-    Browser.loadFile("blank.html");
+    Browser.loadFile("./web/blank.html");
     Browser.hide();
 
     if (mainWindow.hidden) authWindow.focus();
@@ -219,7 +219,7 @@ function startApp() {
   if (appLoaded) return;
 
   Lang.loadLangs(() => {
-    authWindow.loadFile("auth.html");
+    authWindow.loadFile("./web/auth.html");
 
     authWindow.on("ready-to-show", function() {
       authWindow.show();

@@ -19,7 +19,7 @@ a, a:visited, a:hover{ color:#fff; text-decoration: none; }
 #head_decor:after { content: ''; display: block; background-color: inherit; height: 20px; width: 30px; position: absolute; left: -22px; bottom: 7px; transform: rotate(30deg); }
 #head_decor:after { left: auto; right: -22px; bottom: 7px; transform: rotate(-30deg); }
 
-#head .logo { background: url('../icon.ico') 20px center/55% no-repeat; width: 100px; position: absolute; z-index: 5; left: 0; top: 0; height: 80px; -webkit-app-region: no-drag; }
+#head .logo { background: url('../../icon.ico') 20px center/55% no-repeat; width: 100px; position: absolute; z-index: 5; left: 0; top: 0; height: 80px; -webkit-app-region: no-drag; }
 
 #head .menu { position: relative; z-index: 1; list-style: none; display: block; width: 630px; margin-left: 100px; height: 80px; }
 #head .menu li { line-height: 80px; display: inline-block; padding: 0 10px; text-transform: uppercase; font-size: 18px; }
