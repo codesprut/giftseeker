@@ -54,8 +54,7 @@ class OpiumPulses extends Seeker {
 				let curr_giveaway = 0;
 
 				function giveawayEnter(){
-					if( found_games.length <= curr_giveaway || !_this.started )
-						return;
+					if (found_games.length <= curr_giveaway || !_this.started) return;
 
 					let next_after = _this.interval();
 					let giveaway = found_games.eq(curr_giveaway),
