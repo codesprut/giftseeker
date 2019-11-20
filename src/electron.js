@@ -7,11 +7,11 @@ const {
   session,
   Tray,
   BrowserWindow,
-  ipcMain
+  ipcMain,
+  dialog
 } = require("electron");
 const { autoUpdater } = require("electron-updater");
 const autoLaunch = require("auto-launch");
-const fs = require("fs");
 const request = require("request-promise");
 
 const config = require("./app/config");
@@ -19,7 +19,7 @@ const ENV = require("./app/environment");
 const storage = require("electron-json-storage");
 const settings = require("./app/settings");
 
-const iconPath = __dirname + "/src/resources/images/icon.ico";
+const language = require("./app/language");
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -29,7 +29,6 @@ let authWindow = null;
 let mainWindow = null;
 let browserWindow = null;
 let _session = null;
-let Lang = null;
 let tray = null;
 let user = null;
 
@@ -57,8 +56,9 @@ ipcMain.on("save-user", function(event, data) {
   global.user = data;
 });
 
+// TODO: language event emitter
 ipcMain.on("change-lang", function(event, data) {
-  Lang.change(data);
+  language.change(data);
   event.sender.send("change-lang", data);
 });
 
@@ -72,7 +72,6 @@ app.on("ready", () => {
   });
   settings.init();
 
-  Lang = new LanguageClass();
   _session = session.fromPartition(`persist:${config.appName}`);
   _session.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36"
@@ -82,7 +81,7 @@ app.on("ready", () => {
     width: 280,
     height: 340,
     title: config.appName,
-    icon: iconPath,
+    icon: config.appIcon,
     show: false,
     center: true,
     resizable: false,
@@ -100,7 +99,7 @@ app.on("ready", () => {
     width: 730,
     height: 500,
     title: config.appName,
-    icon: iconPath,
+    icon: config.appIcon,
     show: false,
     center: true,
     resizable: false,
@@ -123,7 +122,7 @@ app.on("ready", () => {
 
   browserWindow = new BrowserWindow({
     parent: mainWindow,
-    icon: iconPath,
+    icon: config.appIcon,
     title: "GS Browser",
     width: 1024,
     height: 600,
@@ -176,7 +175,7 @@ app.on("ready", () => {
     mainWindow = null;
   });
 
-  tray = new Tray(nativeImage.createFromPath(iconPath));
+  tray = new Tray(nativeImage.createFromPath(config.appIcon));
   const trayMenu = Menu.buildFromTemplate([
     {
       label: "Open Website",
@@ -200,35 +199,53 @@ app.on("ready", () => {
   // Variables shared with browser windows
   global.sharedData = {
     isPortable: ENV.isPortable,
-    autoUpdater: autoUpdater,
+    autoUpdater,
     devMode: ENV.devMode,
-    shell: shell,
+    shell,
     TrayIcon: tray,
-    ipcMain: ipcMain,
-    Lang: Lang,
-    Config: settings,
+    ipcMain,
+    language,
+    settings,
     Browser: browserWindow,
     authWindow: authWindow,
     mainWindow: mainWindow,
     Request: request
   };
+
+  startApp();
 });
 
 function startApp() {
   if (appLoaded) return;
 
-  Lang.loadLangs(() => {
-    authWindow.loadFile("./src/web/auth.html");
+  language
+    .init()
+    .then(() => {
+      authWindow.loadFile("./src/web/auth.html");
 
-    authWindow.on("ready-to-show", function() {
-      authWindow.show();
+      authWindow.on("ready-to-show", function() {
+        authWindow.show();
 
-      if (settings.get("start_minimized")) authWindow.hide();
-      else authWindow.focus();
+        if (settings.get("start_minimized")) authWindow.hide();
+        else authWindow.focus();
+
+        appLoaded = true;
+      });
+    })
+    .catch(ex => {
+      dialog
+        .showMessageBox({
+          type: "error",
+          title: "Error loading translations",
+          message:
+            ex.message +
+            ENV.EOL +
+            "Try restart the app or contact with developer"
+        })
+        .finally(() => {
+          app.quit();
+        });
     });
-  });
-
-  appLoaded = true;
 }
 
 function autoStartControl(startWithOs) {
@@ -242,127 +259,4 @@ function autoStartControl(startWithOs) {
 
 function log(...logThis) {
   if (ENV.devMode) console.log(...logThis);
-}
-
-class LanguageClass {
-  constructor() {
-    this.default = "ru_RU";
-    this.languages = {};
-    this.langsCount = 0;
-
-    // Проверяем наличие локализаций в директории с данными, если чего-то не хватает то скачиваем
-    request({ uri: `${config.websiteUrl}api/langs_new`, json: true })
-      .then(data => {
-        if (!data.response) {
-          startApp();
-          return;
-        }
-        const languages = JSON.parse(data.response).langs;
-
-        let languagesLoaded = 0;
-
-        languages.forEach(language => {
-          const { name, size } = language;
-
-          let loadLang = () => {
-            request({ uri: `${config.websiteUrl}trans/${name}` })
-              .then(lang => {
-                fs.writeFile(
-                  storage.getDataPath() + "/" + name,
-                  lang,
-                  err => {}
-                );
-              })
-              .finally(() => {
-                languagesLoaded++;
-
-                // запускаем приложение когда загружены все языки
-                if (languagesLoaded >= languages.length) startApp();
-              })
-              .catch(err => console.log("lang loading error ", err));
-          };
-
-          if (!fs.existsSync(storage.getDataPath() + "/" + name)) loadLang();
-          else {
-            fs.stat(storage.getDataPath() + "/" + name, (err, stats) => {
-              if (stats.size !== size) loadLang();
-              else languagesLoaded++;
-
-              // запускаем приложение если загружены все языки
-              if (languagesLoaded === languages.length) startApp();
-            });
-          }
-        });
-      })
-      .catch(() => {
-        startApp();
-        console.log("catchLang Constructor");
-      });
-  }
-
-  loadLangs(callback) {
-    let _this = this;
-
-    if (fs.existsSync(storage.getDataPath())) {
-      let lng_to_load = [];
-      let dir = fs.readdirSync(storage.getDataPath());
-
-      for (let x = 0; x < dir.length; x++) {
-        if (dir[x].indexOf("lang.") >= 0) {
-          lng_to_load.push(dir[x].replace(".json", ""));
-        }
-      }
-
-      if (!lng_to_load.length) return;
-
-      storage.getMany(lng_to_load, function(error, langs) {
-        if (error) throw new Error(`Can't load selected translation`);
-
-        let lng;
-
-        for (lng in langs.lang) _this.langsCount++;
-
-        if (langs.lang[settings.get("lang", _this.default)] === undefined) {
-          _this.default = lng;
-          settings.set("lang", _this.default);
-        }
-
-        _this.languages = langs.lang;
-
-        if (callback) callback();
-      });
-    }
-  }
-
-  get(key) {
-    let response = this.languages;
-    let splited = (settings.get("lang", this.default) + "." + key).split(".");
-
-    for (let i = 0; i < splited.length; i++) {
-      if (response[splited[i]] !== undefined) {
-        response = response[splited[i]];
-      } else {
-        response = key;
-        break;
-      }
-    }
-
-    return response;
-  }
-
-  change(setLang) {
-    settings.set("lang", setLang);
-  }
-
-  count() {
-    return this.langsCount;
-  }
-
-  current() {
-    return settings.get("lang", this.default);
-  }
-
-  list() {
-    return this.languages;
-  }
 }

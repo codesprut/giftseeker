@@ -4,12 +4,12 @@ const remote = require("electron").remote;
 const ipc = require("electron").ipcRenderer;
 const shared = remote.getGlobal("sharedData");
 
-let Lang = shared.Lang;
-let mainWindow = shared.mainWindow;
-let Browser = shared.Browser;
+const language = shared.language;
+const mainWindow = shared.mainWindow;
+const Browser = shared.Browser;
 
-let status = $(".status-text");
-let buttons = $("#auth_button");
+const status = $(".status-text");
+const buttons = $("#auth_button");
 //let buttons = $('#content .seeker-button');
 
 function onShow() {
@@ -25,31 +25,34 @@ $(function() {
     buttons.removeClass("disabled");
   });
 
-  let lang_select = $("select#lang");
-  let lang_list = Lang.list();
+  const languageSelect = $("select#lang");
+  const languagesList = language.listAvailable();
 
   // Наполняем языковой селект, либо удаляем его
-  if (Lang.count() <= 1) {
-    lang_select.remove();
+  if (language.count() <= 1) {
+    languageSelect.remove();
     $(".no-available-langs")
       .css("display", "block")
       .next()
       .css("display", "none");
   } else {
-    for (let lang in lang_list) {
+    for (let lang in languagesList) {
       let option = $(document.createElement("option"))
-        .attr("id", lang_list[lang].lang_culture)
+        .attr("id", languagesList[lang].lang_culture)
         .val(lang)
         .text(
-          "[" + lang_list[lang].lang_culture + "] " + lang_list[lang].lang_name
+          "[" +
+            languagesList[lang].lang_culture +
+            "] " +
+            languagesList[lang].lang_name
         );
 
-      if (Lang.current() === lang) option.prop("selected", true);
+      if (language.current() === lang) option.prop("selected", true);
 
-      lang_select.append(option);
+      languageSelect.append(option);
     }
 
-    lang_select.change(function() {
+    languageSelect.change(function() {
       ipc.send("change-lang", $(this).val());
     });
   }
@@ -59,7 +62,7 @@ $(function() {
 
     Browser.loadURL("https://giftseeker.ru/logIn");
     Browser.show();
-    Browser.setTitle("GS Browser - " + Lang.get("auth.browser_loading"));
+    Browser.setTitle("GS Browser - " + language.get("auth.browser_loading"));
 
     Browser.webContents.on("did-finish-load", () => {
       if (Browser.getURL() === "https://giftseeker.ru/") {
@@ -82,7 +85,7 @@ $(function() {
 
 function checkAuth() {
   buttons.addClass("disabled");
-  status.text(Lang.get("auth.check"));
+  status.text(language.get("auth.check"));
 
   $.ajax({
     url: "https://giftseeker.ru/api/userData",
@@ -90,19 +93,19 @@ function checkAuth() {
     dataType: "json",
     success: function(data) {
       if (!data.response) {
-        status.text(Lang.get("auth.ses_not_found"));
+        status.text(language.get("auth.ses_not_found"));
         buttons.removeClass("disabled");
         return;
       }
 
       ipc.send("save-user", data.response);
 
-      status.text(Lang.get("auth.session") + data.response.username);
+      status.text(language.get("auth.session") + data.response.username);
 
       loadProgram();
     },
     error: () => {
-      status.text(Lang.get("auth.connection_error"));
+      status.text(language.get("auth.connection_error"));
       buttons.removeClass("disabled");
     }
   });
@@ -114,10 +117,10 @@ function loadProgram() {
 
 function reloadLangStrings() {
   $("[data-lang]").each(function() {
-    $(this).html(Lang.get($(this).attr("data-lang")));
+    $(this).html(language.get($(this).attr("data-lang")));
   });
 
   $("[data-lang-title]").each(function() {
-    $(this).attr("title", Lang.get($(this).attr("data-lang-title")));
+    $(this).attr("title", language.get($(this).attr("data-lang-title")));
   });
 }

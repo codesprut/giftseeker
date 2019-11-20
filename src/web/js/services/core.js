@@ -60,7 +60,7 @@ class Seeker {
 
     this.updateCookies();
 
-    if (Config.get("autostart")) this.startSeeker(true);
+    if (settings.get("autostart")) this.startSeeker(true);
   }
 
   addIcon() {
@@ -103,10 +103,10 @@ class Seeker {
     $(
       "<ul>" +
         '<li class="active" data-id="logs" data-lang="service.logs">' +
-        Lang.get("service.logs") +
+        language.get("service.logs") +
         "</li>" +
         '<li data-id="settings" data-lang="service.settings">' +
-        Lang.get("service.settings") +
+        language.get("service.settings") +
         "</li>" +
         "</ul>"
     ).appendTo(this.panel);
@@ -120,7 +120,7 @@ class Seeker {
 
     $(document.createElement("span"))
       .addClass("clear-log")
-      .text(Lang.get("service.clear_log"))
+      .text(language.get("service.clear_log"))
       .attr("data-lang", "service.clear_log")
       .click(() => {
         this.clearLog();
@@ -169,18 +169,18 @@ class Seeker {
     $(document.createElement("button"))
       .addClass("open-website")
       .attr("data-lang", "service.open_website")
-      .text(Lang.get("service.open_website"))
+      .text(language.get("service.open_website"))
       .attr("data-link", this.websiteUrl)
       .appendTo(this.userPanel);
 
     this.mainButton = $(
-      "<button>" + Lang.get("service.btn_start") + "</button>"
+      "<button>" + language.get("service.btn_start") + "</button>"
     )
       .addClass("seeker-button start-button")
       .hover(
         () => {
           this.mainButton.addClass("hovered");
-          if (this.started) this.buttonState(Lang.get("service.btn_stop"));
+          if (this.started) this.buttonState(language.get("service.btn_stop"));
         },
         () => {
           this.mainButton.removeClass("hovered");
@@ -227,24 +227,24 @@ class Seeker {
   startSeeker(autostart) {
     if (this.started) return false;
 
-    this.buttonState(Lang.get("service.btn_checking"), "disabled");
+    this.buttonState(language.get("service.btn_checking"), "disabled");
 
     this.authCheck(authState => {
       if (authState === 1) {
         this.runTimer();
       } else if (authState === -1) {
-        this.log(Lang.get("service.connection_error"), true);
-        this.buttonState(Lang.get("service.btn_start"));
+        this.log(language.get("service.connection_error"), true);
+        this.buttonState(language.get("service.btn_start"));
         if (autostart) {
           this.setStatus("bad");
         }
       } else {
         if (autostart) {
           this.setStatus("bad");
-          this.buttonState(Lang.get("service.btn_start"));
-          this.log(Lang.get("service.cant_start"), true);
+          this.buttonState(language.get("service.btn_start"));
+          this.log(language.get("service.cant_start"), true);
         } else {
-          this.buttonState(Lang.get("service.btn_awaiting"), "disabled");
+          this.buttonState(language.get("service.btn_awaiting"), "disabled");
           this.waitAuth = true;
 
           Browser.webContents.on("did-finish-load", () => {
@@ -264,7 +264,9 @@ class Seeker {
             }
           });
 
-          Browser.setTitle("GS Browser - " + Lang.get("auth.browser_loading"));
+          Browser.setTitle(
+            "GS Browser - " + language.get("auth.browser_loading")
+          );
           Browser.loadURL(this.authLink);
 
           Browser.once("close", () => {
@@ -273,7 +275,7 @@ class Seeker {
             this.waitAuth = false;
             this.authCheck(authState => {
               if (authState === 1) this.runTimer();
-              else this.buttonState(Lang.get("service.btn_start"));
+              else this.buttonState(language.get("service.btn_start"));
             });
           });
           Browser.show();
@@ -290,8 +292,8 @@ class Seeker {
     this.setStatus(status);
     clearInterval(this.intervalVar);
 
-    this.log(Lang.get("service.stopped"));
-    this.buttonState(Lang.get("service.btn_start"));
+    this.log(language.get("service.stopped"));
+    this.buttonState(language.get("service.btn_start"));
   }
 
   runTimer() {
@@ -299,7 +301,7 @@ class Seeker {
     this.started = true;
 
     this.setStatus("good");
-    this.log(Lang.get("service.started"));
+    this.log(language.get("service.started"));
 
     this.updateUserInfo();
 
@@ -319,10 +321,10 @@ class Seeker {
             this.updateCookies();
             this.seekService();
           } else if (authState === 0) {
-            this.log(Lang.get("service.session_expired"), true);
+            this.log(language.get("service.session_expired"), true);
             this.stopSeeker(true);
           } else {
-            this.log(Lang.get("service.connection_lost"), true);
+            this.log(language.get("service.connection_lost"), true);
             this.stopSeeker(true);
           }
         });
@@ -386,13 +388,13 @@ class Seeker {
               "</div>" +
               '<div class="button btn-up"><span class="fa fa-plus"></span></div>' +
               '<div class="label" title="' +
-              Lang.get(input.trans + "_title") +
+              language.get(input.trans + "_title") +
               '" data-lang-title="' +
               input.trans +
               '_title" data-lang="' +
               input.trans +
               '">' +
-              Lang.get(input.trans) +
+              language.get(input.trans) +
               "</div>"
           );
 
@@ -522,7 +524,7 @@ class Seeker {
               '<span data-lang="' +
               input.trans +
               '">' +
-              Lang.get(input.trans) +
+              language.get(input.trans) +
               "</span>" +
               "</label>"
           );
@@ -620,11 +622,11 @@ class Seeker {
   getConfig(key, def) {
     if (def === undefined) def = this.settings[key].default;
 
-    return Config.get(this.constructor.name.toLowerCase() + "_" + key, def);
+    return settings.get(this.constructor.name.toLowerCase() + "_" + key, def);
   }
 
   setConfig(key, val) {
-    return Config.set(this.constructor.name.toLowerCase() + "_" + key, val);
+    return settings.set(this.constructor.name.toLowerCase() + "_" + key, val);
   }
 
   transPath(key) {
@@ -632,7 +634,7 @@ class Seeker {
   }
 
   trans(key) {
-    return Lang.get(
+    return language.get(
       "service." + this.constructor.name.toLowerCase() + "." + key
     );
   }
@@ -642,7 +644,7 @@ class Seeker {
       '<div><span class="time">' +
         timeStr() +
         ":</span>" +
-        Lang.get("service.log_cleared") +
+        language.get("service.log_cleared") +
         "</div>"
     );
   }

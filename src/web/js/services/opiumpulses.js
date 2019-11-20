@@ -13,7 +13,7 @@ class OpiumPulses extends Seeker {
 		delete this.settings.pages;
 		super.init();
 
-		if(Lang.current() === 'ru_RU')
+		if(language.current() === 'ru_RU')
 			this.log('В данный момент программа присоединяется только к бесплатным раздачам');
 		else
 			this.log('currently program let join to free giveaways');
@@ -75,7 +75,7 @@ class OpiumPulses extends Seeker {
 								return;
 
 							$.get("http://www.opiumpulses.com" + eLink, function(){
-								_this.log(Lang.get('service.entered_in') + _this.logLink("http://www.opiumpulses.com" + link, name));
+								_this.log(language.get('service.entered_in') + _this.logLink("http://www.opiumpulses.com" + link, name));
 							});
 						});
 					}

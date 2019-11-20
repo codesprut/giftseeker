@@ -3,11 +3,14 @@ const remote = require("electron").remote;
 const ipc = require("electron").ipcRenderer;
 const shared = remote.getGlobal("sharedData");
 
+// const language = require("../../app/language");
+// const settings = require("../../app/settings");
+
 const Request = shared.Request; // request-promise(пока только в tf2r) - думаю отказаться в пользу request
 const autoUpdater = shared.autoUpdater;
 
-let Config = shared.Config;
-let Lang = shared.Lang;
+let language = shared.language;
+let settings = shared.settings;
 let GSuser = remote.getGlobal("user");
 
 let Browser = shared.Browser;
@@ -27,14 +30,14 @@ $(function() {
   autoUpdater.on("download-progress", (progress, speed, percent) => {
     updateIcon.attr(
       "title",
-      Lang.get("ui.upd_progress") + " - " + percent + "%"
+      language.get("ui.upd_progress") + " - " + percent + "%"
     );
   });
 
   autoUpdater.on("update-downloaded", () => {
     updateIcon
       .addClass("downloaded")
-      .attr("title", Lang.get("ui.upd_downloaded"));
+      .attr("title", language.get("ui.upd_downloaded"));
   });
 
   // Основной воркер главного окна
@@ -50,20 +53,20 @@ $(function() {
 
     switch (item.attr("type")) {
       case "checkbox":
-        item.prop("checked", Config.get(item.attr("id")));
+        item.prop("checked", settings.get(item.attr("id")));
         break;
     }
   });
 
   // Переключение типа отображения иконок сервисов
   let menu_switcher = $(".list_type");
-  if (Config.get("menu_as_list")) menu_switcher.addClass("state");
+  if (settings.get("menu_as_list")) menu_switcher.addClass("state");
 
   // Смена окон по окончании рендеринга
   authWindow.hide();
   mainWindow.show();
 
-  if (Config.get("start_minimized")) mainWindow.hide();
+  if (settings.get("start_minimized")) mainWindow.hide();
   else mainWindow.focus();
 
   // EVENTS
@@ -90,7 +93,7 @@ $(function() {
 
     icons.css("top", maxTop + "px");
 
-    Config.set("menu_as_list", $(this).hasClass("state"));
+    settings.set("menu_as_list", $(this).hasClass("state"));
   });
 
   // Переключение основных пунктов меню
@@ -148,7 +151,7 @@ $(function() {
       return;
     }
 
-    Config.set(changed.attr("id"), value);
+    settings.set(changed.attr("id"), value);
   });
 
   ipc.on("change-lang", function() {
@@ -184,11 +187,11 @@ function intervalSchedules() {
 
 function reloadLangStrings() {
   $("[data-lang]").each(function() {
-    $(this).html(Lang.get($(this).attr("data-lang")));
+    $(this).html(language.get($(this).attr("data-lang")));
   });
 
   $("[data-lang-title]").each(function() {
-    $(this).attr("title", Lang.get($(this).attr("data-lang-title")));
+    $(this).attr("title", language.get($(this).attr("data-lang-title")));
   });
 }
 
@@ -197,23 +200,26 @@ function profileSection() {
 
   $(".build .version").text(currentBuild);
 
-  let lang_select = $("select#lang");
-  let lang_list = Lang.list();
+  const languageSwitch = $("select#lang");
+  const languagesList = language.listAvailable();
 
   // Наполняем языковой селект, либо удаляем его
-  if (Lang.count() <= 1) lang_select.remove();
+  if (language.count() <= 1) languageSwitch.remove();
   else {
-    for (let lang in lang_list) {
+    for (let lang in languagesList) {
       let option = $(document.createElement("option"))
-        .attr("id", lang_list[lang].lang_culture)
+        .attr("id", languagesList[lang].lang_culture)
         .val(lang)
         .text(
-          "[" + lang_list[lang].lang_culture + "] " + lang_list[lang].lang_name
+          "[" +
+            languagesList[lang].lang_culture +
+            "] " +
+            languagesList[lang].lang_name
         );
 
-      if (Lang.current() === lang) option.prop("selected", true);
+      if (language.current() === lang) option.prop("selected", true);
 
-      lang_select.append(option);
+      languageSwitch.append(option);
     }
   }
 
@@ -229,7 +235,7 @@ function profileSection() {
   $(document.createElement("button"))
     .addClass("open-website")
     .attr("data-lang", "profile.forum")
-    .text(Lang.get("profile.forum"))
+    .text(language.get("profile.forum"))
     .css("margin-left", "7px")
     .attr("data-link", "http://iknows.ru/forums/gs/")
     .appendTo(info_links);
@@ -237,7 +243,7 @@ function profileSection() {
   $(document.createElement("button"))
     .addClass("open-website")
     .attr("data-lang", "profile.donation")
-    .text(Lang.get("profile.donation"))
+    .text(language.get("profile.donation"))
     .css("margin-left", "7px")
     .attr("data-link", "https://giftseeker.ru/donation")
     .appendTo(info_links);
@@ -252,7 +258,7 @@ function renderUser(userData) {
 
 function openWebsite(url) {
   Browser.loadURL(url);
-  Browser.setTitle("GS Browser - " + Lang.get("auth.browser_loading"));
+  Browser.setTitle("GS Browser - " + language.get("auth.browser_loading"));
 
   Browser.show();
 }

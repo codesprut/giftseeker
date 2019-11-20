@@ -6,5 +6,6 @@ const execPath = isPortable
 module.exports = {
   isPortable,
   execPath,
-  devMode: process.argv[1] === "."
+  devMode: process.argv[1] === ".",
+  EOL: require("os").EOL
 };
