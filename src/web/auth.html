@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GiftSeeker</title>
+    <link
+      href="https://use.fontawesome.com/releases/v5.0.8/css/all.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+    <script>
+      const currentBuild = require("electron").remote.app.getVersion();
+    </script>
+  </head>
+  <body id="auth_window">
+    <div id="head_decor"></div>
+    <div id="head">
+      <div class="logo">
+        GiftSeeker
+      </div>
+      <div class="window-buttons">
+        <span
+          onclick="$('#choice-lang').addClass('visible')"
+          class="language fa fa-globe"
+          data-lang-title="auth.lng_choice_title"
+        ></span>
+        <span onclick="window.close()" class="closer fa fa-times"></span>
+      </div>
+    </div>
+    <div id="content" class="no-selectable">
+      <div class="status-text"></div>
+      <button
+        id="auth_button"
+        class="seeker-button"
+        data-lang="auth.steam_login"
+      ></button>
+      <div class="delimeter-or">
+        <span data-lang="auth.or">or</span>
+      </div>
+      <button
+        id="cookies_button"
+        class="seeker-button disabled"
+        data-lang="auth.enter_cookies"
+      ></button>
+    </div>
+    <div id="choice-lang" class="no-selectable">
+      <div data-lang="auth.no_avail_trans" class="no-available-langs"></div>
+      <div data-lang="auth.choose_lang" class="label"></div>
+      <div class="input-wrap select">
+        <select class="setter" id="lang"> </select>
+      </div>
+      <button
+        id="languages_button"
+        class="seeker-button"
+        data-lang="auth.go_back"
+        onclick="$('#choice-lang').removeClass('visible')"
+      ></button>
+    </div>
+    <script>
+      window.$ = window.jQuery = require("./js/libs/jquery.min.js");
+    </script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>

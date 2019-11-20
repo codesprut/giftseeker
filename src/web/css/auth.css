@@ -1,0 +1,138 @@
+body {
+  background-color: #111b29;
+}
+
+#head {
+  border: none;
+  height: 110px;
+  line-height: 110px;
+  position: relative;
+  z-index: 5;
+}
+
+#head_decor {
+  height: 6px;
+  width: 150px;
+  z-index: 6;
+}
+
+#head .logo {
+  position: relative;
+  z-index: 1;
+  height: inherit;
+  line-height: inherit;
+  width: 100%;
+  -webkit-app-region: drag;
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(to bottom, #0088cd, #00adfe);
+  -webkit-background-clip: text;
+  color: #0088cd;
+}
+
+.window-buttons {
+  width: 100%;
+  top: 0;
+  right: 0;
+  height: auto;
+  padding: 10px 10px 0;
+  -webkit-app-region: drag;
+}
+.window-buttons span {
+  float: left;
+  font-size: 16px !important;
+  -webkit-app-region: no-drag;
+  margin: 0;
+}
+.window-buttons span.language {
+  float: left;
+}
+.window-buttons span.closer {
+  float: right;
+}
+
+.seeker-button {
+  display: block;
+  margin: 0 auto;
+  width: 90%;
+  height: 36px;
+}
+
+#content {
+  position: relative;
+  padding-top: 50px;
+  height: auto;
+  border: none;
+  z-index: 2;
+}
+#content .status-text {
+  font-size: 14px;
+  color: gray;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0 50px;
+  text-align: center;
+  width: 100%;
+}
+#content .delimeter-or {
+  width: 90%;
+  margin: 24px auto;
+  text-align: center;
+  height: 1px;
+  background: #343942;
+  position: relative;
+}
+#content .delimeter-or span {
+  font-size: 14px;
+  color: #5a5e65;
+  font-weight: bold;
+  display: block;
+  width: 70px;
+  height: 20px;
+  background: #111b29;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  margin: auto;
+}
+
+#choice-lang {
+  text-align: center;
+  padding-top: 140px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #111b29;
+  z-index: 4;
+  display: none;
+}
+#choice-lang.visible {
+  display: block;
+  color: gray;
+  font-size: 16px;
+}
+#choice-lang .no-available-langs {
+  display: none;
+}
+#choice-lang .label {
+  color: #9ec5ea;
+  font-size: 16px;
+}
+#choice-lang .input-wrap {
+  position: relative;
+  line-height: 20px;
+  padding: 15px 0;
+}
+#choice-lang .input-wrap .setter {
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  padding: 0 10px;
+}

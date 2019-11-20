@@ -109,7 +109,7 @@ function checkAuth() {
 }
 
 function loadProgram() {
-  mainWindow.loadFile("./web/index.html");
+  mainWindow.loadFile("./src/web/index.html");
 }
 
 function reloadLangStrings() {
