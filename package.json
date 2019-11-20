@@ -17,14 +17,14 @@
     "artifactName": "${productName}Setup.${ext}",
     "copyright": "Copyright © 2019 ${author}",
     "linux": {
-      "icon": "icon.ico"
+      "icon": "./src/resources/images/icon.ico"
     },
     "win": {
       "target": [
         "nsis-web",
         "portable"
       ],
-      "icon": "icon.ico"
+      "icon": "./src/resources/images/icon.ico"
     },
     "portable": {
       "artifactName": "${productName}.${ext}"
