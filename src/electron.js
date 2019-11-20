@@ -7,44 +7,42 @@ const {
   session,
   Tray,
   BrowserWindow,
-  ipcMain,
-  ipcRenderer
+  ipcMain
 } = require("electron");
 const { autoUpdater } = require("electron-updater");
 const autoLaunch = require("auto-launch");
-const storage = require("electron-json-storage");
 const fs = require("fs");
 const request = require("request-promise");
 
+const config = require("./app/config");
+const ENV = require("./app/environment");
+const storage = require("electron-json-storage");
 const settings = require("./app/settings");
 
 const iconPath = __dirname + "/src/resources/images/icon.ico";
 
-const devMode = process.argv[1] === ".";
-const isPortable = process.env.PORTABLE_EXECUTABLE_DIR !== undefined;
 const gotTheLock = app.requestSingleInstanceLock();
 
 let appLoaded = false;
 
 let authWindow = null;
 let mainWindow = null;
-let Browser = null;
+let browserWindow = null;
 let _session = null;
 let Lang = null;
 let tray = null;
 let user = null;
-let execPath = process.execPath.match(/.*\\/i)[0];
-
-if (isPortable) execPath = process.env.PORTABLE_EXECUTABLE_DIR + "\\";
 
 app.disableHardwareAcceleration();
 
-storage.setDataPath(execPath + "data");
+storage.setDataPath(config.storagePath);
 
-let autostart = new autoLaunch({ name: "GiftSeeker" });
+const autostart = new autoLaunch({ name: config.appName });
 
-// Если произошёл повторный запуск процесса то переводим фокус на окно программы
-app.on("second-instance", (commandLine, workingDirectory) => {
+if (!gotTheLock) return app.quit();
+
+// Go focus into window if second instance started
+app.on("second-instance", () => {
   if (mainWindow) {
     if (mainWindow.isMinimized()) mainWindow.restore();
 
@@ -53,8 +51,6 @@ app.on("second-instance", (commandLine, workingDirectory) => {
     mainWindow.focus();
   }
 });
-
-if (!gotTheLock) return app.quit();
 
 ipcMain.on("save-user", function(event, data) {
   user = data;
@@ -70,13 +66,14 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-settings.on("change", (configKey, newValue) => {
-  if (configKey === "start_with_os") autoStartControl(newValue);
-});
-
 app.on("ready", () => {
+  settings.on("change", (configKey, newValue) => {
+    if (configKey === "start_with_os") autoStartControl(newValue);
+  });
+  settings.init();
+
   Lang = new LanguageClass();
-  _session = session.fromPartition("persist:GiftSeeker");
+  _session = session.fromPartition(`persist:${config.appName}`);
   _session.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36"
   );
@@ -84,7 +81,7 @@ app.on("ready", () => {
   authWindow = new BrowserWindow({
     width: 280,
     height: 340,
-    title: "GiftSeeker",
+    title: config.appName,
     icon: iconPath,
     show: false,
     center: true,
@@ -92,7 +89,7 @@ app.on("ready", () => {
     frame: false,
     webPreferences: {
       session: _session,
-      devTools: devMode,
+      devTools: ENV.devMode,
       nodeIntegration: true
     }
   });
@@ -102,7 +99,7 @@ app.on("ready", () => {
   mainWindow = new BrowserWindow({
     width: 730,
     height: 500,
-    title: "GiftSeeker",
+    title: config.appName,
     icon: iconPath,
     show: false,
     center: true,
@@ -110,21 +107,21 @@ app.on("ready", () => {
     frame: false,
     webPreferences: {
       session: _session,
-      devTools: devMode,
+      devTools: ENV.devMode,
       nodeIntegration: true
     }
   });
 
   mainWindow.setMenu(null);
 
-  if (devMode) {
+  if (ENV.devMode) {
     authWindow.webContents.openDevTools({ mode: "detach" });
     mainWindow.webContents.openDevTools({ mode: "detach" });
   }
 
   //### Browser for websites
 
-  Browser = new BrowserWindow({
+  browserWindow = new BrowserWindow({
     parent: mainWindow,
     icon: iconPath,
     title: "GS Browser",
@@ -142,14 +139,14 @@ app.on("ready", () => {
     }
   });
 
-  Browser.loadFile("./src/web/blank.html");
+  browserWindow.loadFile("./src/web/blank.html");
 
-  Browser.setMenu(null);
+  browserWindow.setMenu(null);
 
-  Browser.on("close", e => {
+  browserWindow.on("close", e => {
     e.preventDefault();
-    Browser.loadFile("./src/web/blank.html");
-    Browser.hide();
+    browserWindow.loadFile("./src/web/blank.html");
+    browserWindow.hide();
 
     if (mainWindow.hidden) authWindow.focus();
     else mainWindow.focus();
@@ -179,21 +176,20 @@ app.on("ready", () => {
     mainWindow = null;
   });
 
-  // Работа с треем
   tray = new Tray(nativeImage.createFromPath(iconPath));
   const trayMenu = Menu.buildFromTemplate([
     {
       label: "Open Website",
       click: () => {
-        Browser.loadURL("https://giftseeker.ru/");
-        Browser.show();
+        browserWindow.loadURL(config.websiteUrl);
+        browserWindow.show();
       }
     },
     { type: "separator" },
     { role: "quit" }
   ]);
 
-  tray.setToolTip("GiftSeeker " + app.getVersion());
+  tray.setToolTip(`${config.appName} ${app.getVersion()}`);
   tray.setContextMenu(trayMenu);
   tray.on("click", () => {
     if (user === null)
@@ -201,17 +197,17 @@ app.on("ready", () => {
     else mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
-  // Ссылки в глобальное пространство
+  // Variables shared with browser windows
   global.sharedData = {
-    isPortable: isPortable,
+    isPortable: ENV.isPortable,
     autoUpdater: autoUpdater,
-    devMode: devMode,
+    devMode: ENV.devMode,
     shell: shell,
     TrayIcon: tray,
     ipcMain: ipcMain,
     Lang: Lang,
     Config: settings,
-    Browser: Browser,
+    Browser: browserWindow,
     authWindow: authWindow,
     mainWindow: mainWindow,
     Request: request
@@ -236,7 +232,7 @@ function startApp() {
 }
 
 function autoStartControl(startWithOs) {
-  if (startWithOs === true && !devMode) {
+  if (startWithOs === true && !ENV.devMode) {
     autostart.enable().catch(() => {});
     return;
   }
@@ -244,8 +240,8 @@ function autoStartControl(startWithOs) {
   autostart.disable().catch(() => {});
 }
 
-function log(logThis) {
-  if (devMode) console.log(logThis);
+function log(...logThis) {
+  if (ENV.devMode) console.log(...logThis);
 }
 
 class LanguageClass {
@@ -255,7 +251,7 @@ class LanguageClass {
     this.langsCount = 0;
 
     // Проверяем наличие локализаций в директории с данными, если чего-то не хватает то скачиваем
-    request({ uri: "https://giftseeker.ru/api/langs_new", json: true })
+    request({ uri: `${config.websiteUrl}api/langs_new`, json: true })
       .then(data => {
         if (!data.response) {
           startApp();
@@ -269,7 +265,7 @@ class LanguageClass {
           const { name, size } = language;
 
           let loadLang = () => {
-            request({ uri: "https://giftseeker.ru/trans/" + name })
+            request({ uri: `${config.websiteUrl}trans/${name}` })
               .then(lang => {
                 fs.writeFile(
                   storage.getDataPath() + "/" + name,

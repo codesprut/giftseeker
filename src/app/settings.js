@@ -27,15 +27,18 @@ const on = (eventName, callback) => {
   eventEmitter.on(eventName, callback);
 };
 
-storage.get("configs", (error, data) => {
-  if (error) throw error;
+const init = () => {
+  storage.get("configs", (error, data) => {
+    if (error) throw error;
 
-  settings = data;
-  set("inits", get("inits", 0) + 1);
-});
+    settings = data;
+    set("inits", get("inits", 0) + 1);
+  });
+};
 
 module.exports = {
   get,
   set,
-  on
+  on,
+  init
 };
