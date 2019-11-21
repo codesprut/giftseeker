@@ -106,7 +106,7 @@ class Follx extends Seeker {
                   if (data.response) {
                     _this.setValue(data.points);
                     _this.log(
-                      Lang.get("service.entered_in") + _this.logLink(link, name)
+                      language.get("service.entered_in") + _this.logLink(link, name)
                     );
                   }
                 }

@@ -84,7 +84,7 @@ class TF2R extends Seeker {
             }).then(function(body) {
               if (body.status === "ok")
                 _this.log(
-                  Lang.get("service.entered_in") + _this.logLink(link, name)
+                  language.get("service.entered_in") + _this.logLink(link, name)
                 );
             });
           }

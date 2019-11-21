@@ -126,7 +126,7 @@ class IndieGala extends Seeker {
                   success: function(data) {
                     if (data.status === "ok") {
                       _this.setValue(data.new_amount);
-                      _this.log(Lang.get("service.entered_in") + name);
+                      _this.log(language.get("service.entered_in") + name);
                     }
                   }
                 });

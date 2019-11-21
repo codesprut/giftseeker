@@ -256,7 +256,3 @@ function autoStartControl(startWithOs) {
 
   autostart.disable().catch(() => {});
 }
-
-function log(...logThis) {
-  if (ENV.devMode) console.log(...logThis);
-}

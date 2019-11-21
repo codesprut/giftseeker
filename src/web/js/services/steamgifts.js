@@ -298,7 +298,7 @@ class SteamGifts extends Seeker {
           success: function(data) {
             if (data.type === "success") {
               _this.log(
-                Lang.get("service.entered_in") +
+                language.get("service.entered_in") +
                   _this.logLink(GA.link, GA.name) +
                   ". " +
                   _this.trans("cost") +

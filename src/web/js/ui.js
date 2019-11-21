@@ -1,4 +1,7 @@
 "use strict";
+
+window.$ = window.jQuery = require("jquery");
+
 const remote = require("electron").remote;
 const ipc = require("electron").ipcRenderer;
 const shared = remote.getGlobal("sharedData");
