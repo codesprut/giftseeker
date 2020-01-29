@@ -29,7 +29,6 @@ let authWindow = null;
 let mainWindow = null;
 let browserWindow = null;
 let _session = null;
-let tray = null;
 let user = null;
 
 app.disableHardwareAcceleration();
@@ -175,7 +174,7 @@ app.on("ready", () => {
     mainWindow = null;
   });
 
-  tray = new Tray(nativeImage.createFromPath(config.appIcon));
+  const tray = new Tray(nativeImage.createFromPath(config.appIcon));
   const trayMenu = Menu.buildFromTemplate([
     {
       label: "Open Website",
@@ -207,8 +206,8 @@ app.on("ready", () => {
     language,
     settings,
     Browser: browserWindow,
-    authWindow: authWindow,
-    mainWindow: mainWindow,
+    authWindow,
+    mainWindow,
     Request: request
   };
 

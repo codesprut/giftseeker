@@ -5,5 +5,5 @@ module.exports = {
   websiteUrl: "https://giftseeker.ru/",
   storagePath: ENV.execPath + "data",
   defaultLanguage: "ru_RU",
-  appIcon: __dirname + "/src/resources/images/icon.ico"
+  appIcon: __dirname + "/../resources/images/icon.ico"
 };
