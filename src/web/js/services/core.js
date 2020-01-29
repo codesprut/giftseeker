@@ -2,20 +2,18 @@
 
 class Seeker {
   constructor() {
-    this.intervalVar = undefined;
     this.totalTicks = 0;
 
     this.usrUpdTimer = 60;
 
     this.started = false;
-    this.waitAuth = false;
 
     this.cookies = "";
     this.domain = "giftseeker.ru";
     this.websiteUrl = "https://giftseeker.ru";
     this.authLink = "https://giftseeker.ru";
     this.wonsUrl = "https://giftseeker.ru";
-    this.authContent = "";
+    this.authContent = null;
 
     this.withValue = true;
     this.curr_value = 0;
@@ -59,6 +57,8 @@ class Seeker {
     this.renderSettings();
 
     this.updateCookies();
+
+    this.serviceSchedule();
 
     if (settings.get("autostart")) this.startSeeker(true);
   }
@@ -187,7 +187,7 @@ class Seeker {
           if (this.started)
             this.buttonState(
               window.timeToStr(
-                this.doTimer() - (this.totalTicks % this.doTimer())
+                this.entryInterval() - (this.totalTicks % this.entryInterval())
               )
             );
         }
@@ -209,16 +209,13 @@ class Seeker {
   }
 
   authCheck(callback) {
-    let authContent = this.authContent;
-
     $.ajax({
       url: this.websiteUrl,
       timeout: this.getTimeout,
-      success: function(html) {
-        if (html.indexOf(authContent) >= 0) callback(1);
-        else callback(0);
+      success: html => {
+        callback(html.indexOf(this.authContent) >= 0 ? 1 : 0);
       },
-      error: function() {
+      error: () => {
         callback(-1);
       }
     });
@@ -231,7 +228,7 @@ class Seeker {
 
     this.authCheck(authState => {
       if (authState === 1) {
-        this.runTimer();
+        this.setStateStarted();
       } else if (authState === -1) {
         this.log(language.get("service.connection_error"), true);
         this.buttonState(language.get("service.btn_start"));
@@ -245,58 +242,24 @@ class Seeker {
           this.log(language.get("service.cant_start"), true);
         } else {
           this.buttonState(language.get("service.btn_awaiting"), "disabled");
-          this.waitAuth = true;
-
-          Browser.webContents.on("did-finish-load", () => {
-            if (
-              this.waitAuth &&
-              Browser.getURL().indexOf(this.websiteUrl) >= 0
-            ) {
-              Browser.webContents.executeJavaScript(
-                'document.querySelector("body").innerHTML',
-                body => {
-                  if (body.indexOf(this.authContent) >= 0) {
-                    Browser.close();
-                    this.waitAuth = false;
-                  }
-                }
-              );
-            }
-          });
-
-          Browser.setTitle(
-            "GS Browser - " + language.get("auth.browser_loading")
-          );
-          Browser.loadURL(this.authLink);
-
-          Browser.once("close", () => {
-            Browser.webContents.removeAllListeners("did-finish-load");
-
-            this.waitAuth = false;
-            this.authCheck(authState => {
-              if (authState === 1) this.runTimer();
-              else this.buttonState(language.get("service.btn_start"));
-            });
-          });
-          Browser.show();
+          this.runBrowserForAuth();
         }
       }
     });
   }
 
   stopSeeker(bad) {
-    let status = bad ? "bad" : "normal";
+    const status = bad ? "bad" : "normal";
     if (!this.started) return false;
 
     this.started = false;
     this.setStatus(status);
-    clearInterval(this.intervalVar);
 
     this.log(language.get("service.stopped"));
     this.buttonState(language.get("service.btn_start"));
   }
 
-  runTimer() {
+  setStateStarted() {
     this.totalTicks = 0;
     this.started = true;
 
@@ -304,38 +267,38 @@ class Seeker {
     this.log(language.get("service.started"));
 
     this.updateUserInfo();
+  }
 
-    if (this.intervalVar) clearInterval(this.intervalVar);
-
-    this.intervalVar = setInterval(() => {
-      if (!this.started) clearInterval(this.intervalVar);
-
-      // Обновление инфы о пользователе
+  serviceSchedule() {
+    setInterval(() => {
       if (this.totalTicks !== 0 && this.totalTicks % this.usrUpdTimer === 0)
         this.updateUserInfo();
 
-      // Выполнение основного действия
-      if (this.totalTicks % this.doTimer() === 0) {
-        this.authCheck(authState => {
-          if (authState === 1) {
-            this.updateCookies();
-            this.seekService();
-          } else if (authState === 0) {
-            this.log(language.get("service.session_expired"), true);
-            this.stopSeeker(true);
-          } else {
-            this.log(language.get("service.connection_lost"), true);
-            this.stopSeeker(true);
-          }
-        });
+      if (this.started) {
+        if (this.totalTicks % this.entryInterval() === 0) {
+          this.authCheck(authState => {
+            if (authState === 1) {
+              this.updateCookies();
+              this.seekService();
+            } else if (authState === 0) {
+              this.log(language.get("service.session_expired"), true);
+              this.stopSeeker(true);
+            } else {
+              this.log(language.get("service.connection_lost"), true);
+              this.stopSeeker(true);
+            }
+          });
+        }
+
+        if (!this.mainButton.hasClass("hovered"))
+          this.buttonState(
+            window.timeToStr(
+              this.entryInterval() - (this.totalTicks % this.entryInterval())
+            )
+          );
       }
 
-      if (!this.mainButton.hasClass("hovered"))
-        this.buttonState(
-          window.timeToStr(this.doTimer() - (this.totalTicks % this.doTimer()))
-        );
-
-      this.totalTicks++;
+      this.totalTicks = this.totalTicks < 32760 ? this.totalTicks + 1 : 0;
     }, 1000);
   }
 
@@ -356,9 +319,42 @@ class Seeker {
     });
   }
 
+  runBrowserForAuth() {
+    let awaitAuth = true;
+
+    Browser.webContents.on("did-finish-load", () => {
+      if (awaitAuth && Browser.getURL().indexOf(this.websiteUrl) >= 0) {
+        Browser.webContents
+          .executeJavaScript('document.querySelector("body").innerHTML')
+          .then(body => {
+            if (body.indexOf(this.authContent) >= 0) {
+              Browser.close();
+              awaitAuth = false;
+            }
+          });
+      }
+    });
+
+    Browser.setTitle("GS Browser - " + language.get("auth.browser_loading"));
+    Browser.loadURL(this.authLink);
+
+    Browser.once("close", () => {
+      Browser.webContents.removeAllListeners("did-finish-load");
+
+      awaitAuth = false;
+      this.authCheck(authState => {
+        if (authState === 1) this.setStateStarted();
+        else this.buttonState(language.get("service.btn_start"));
+      });
+    });
+    Browser.show();
+  }
+
   renderSettings() {
-    for (let control in this.settings) {
-      let input = this.settings[control];
+    for (const control in this.settings) {
+      if (!this.settings.hasOwnProperty(control)) continue;
+
+      const input = this.settings[control];
 
       switch (input.type) {
         case "number":
@@ -577,10 +573,10 @@ class Seeker {
       (error, cookies) => {
         let newCookies = "";
 
-        for (let one in cookies) {
+        for (const cookie of cookies) {
           if (newCookies.length !== 0) newCookies += "; ";
 
-          newCookies += cookies[one].name + "=" + cookies[one].value;
+          newCookies += cookie.name + "=" + cookie.value;
         }
 
         this.cookies = newCookies;
@@ -589,17 +585,17 @@ class Seeker {
   }
 
   interval() {
-    let min = this.getConfig(
+    const min = this.getConfig(
       "interval_from",
       this.settings.interval_from.default
     );
-    let max =
+    const max =
       this.getConfig("interval_to", this.settings.interval_to.default) + 1;
 
     return (Math.floor(Math.random() * (max - min)) + min) * 1000;
   }
 
-  doTimer() {
+  entryInterval() {
     return this.getConfig("timer", 10) * 60;
   }
 
