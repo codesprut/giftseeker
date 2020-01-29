@@ -7,6 +7,7 @@ class Seeker {
     this.usrUpdTimer = 60;
 
     this.started = false;
+    this.reconnectTimeout = null;
 
     this.cookies = "";
     this.domain = "giftseeker.ru";
@@ -232,8 +233,10 @@ class Seeker {
       } else if (authState === -1) {
         this.log(language.get("service.connection_error"), true);
         this.buttonState(language.get("service.btn_start"));
+
         if (autostart) {
           this.setStatus("bad");
+          this.runReconnectTimeout();
         }
       } else {
         if (autostart) {
@@ -248,8 +251,8 @@ class Seeker {
     });
   }
 
-  stopSeeker(bad) {
-    const status = bad ? "bad" : "normal";
+  stopSeeker(withError, reconnect) {
+    const status = withError ? "bad" : "normal";
     if (!this.started) return false;
 
     this.started = false;
@@ -257,6 +260,16 @@ class Seeker {
 
     this.log(language.get("service.stopped"));
     this.buttonState(language.get("service.btn_start"));
+
+    if (reconnect) this.runReconnectTimeout();
+  }
+
+  runReconnectTimeout() {
+    this.log(language.get("service.reconnect_in_5_min"));
+    clearTimeout(this.reconnectTimeout);
+    this.reconnectTimeout = setTimeout(() => {
+      this.startSeeker(true);
+    }, 300000);
   }
 
   setStateStarted() {
@@ -285,7 +298,7 @@ class Seeker {
               this.stopSeeker(true);
             } else {
               this.log(language.get("service.connection_lost"), true);
-              this.stopSeeker(true);
+              this.stopSeeker(true, true);
             }
           });
         }
