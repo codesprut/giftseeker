@@ -237,10 +237,10 @@ function profileSection() {
 
   $(document.createElement("button"))
     .addClass("open-website")
-    .attr("data-lang", "profile.forum")
-    .text(language.get("profile.forum"))
+    .attr("data-lang", "profile.steam_group")
+    .text(language.get("profile.steam_group"))
     .css("margin-left", "7px")
-    .attr("data-link", "http://iknows.ru/forums/gs/")
+    .attr("data-link", "https://steamcommunity.com/groups/GiftSeeker")
     .appendTo(info_links);
 
   $(document.createElement("button"))
