@@ -204,6 +204,7 @@ app.on("ready", () => {
     TrayIcon: tray,
     ipcMain,
     language,
+    config,
     settings,
     Browser: browserWindow,
     authWindow,

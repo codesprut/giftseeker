@@ -2,13 +2,12 @@
 window.$ = window.jQuery = require("jquery");
 const { remote, ipcRenderer } = require("electron");
 
-const shared = remote.getGlobal("sharedData");
-
-const { language, settings, mainWindow, Browser } = shared;
+const { language, config, mainWindow, Browser, ipcMain } = remote.getGlobal(
+  "sharedData"
+);
 
 const status = $(".status-text");
 const buttons = $("#auth_button");
-//let buttons = $('#content .seeker-button');
 
 function onShow() {
   reloadLangStrings();
@@ -16,10 +15,10 @@ function onShow() {
 }
 
 $(function() {
-  shared.ipcMain.on("change-lang", function() {
+  ipcMain.on("change-lang", function() {
     reloadLangStrings();
   });
-  shared.ipcMain.on("window-shown", function() {
+  ipcMain.on("window-shown", function() {
     buttons.removeClass("disabled");
   });
 
@@ -58,12 +57,12 @@ $(function() {
   $("#auth_button").click(function(e) {
     e.preventDefault();
 
-    Browser.loadURL(`${settings.websiteUrl}logIn`);
+    Browser.loadURL(`${config.websiteUrl}logIn`);
     Browser.show();
     Browser.setTitle("GS Browser - " + language.get("auth.browser_loading"));
 
     Browser.webContents.on("did-finish-load", () => {
-      if (Browser.getURL() === settings.websiteUrl) {
+      if (Browser.getURL() === config.websiteUrl) {
         Browser.webContents
           .executeJavaScript('document.querySelector("body").innerHTML')
           .then(body => {
@@ -85,7 +84,7 @@ function checkAuth() {
   status.text(language.get("auth.check"));
 
   $.ajax({
-    url: `${settings.websiteUrl}api/userData`,
+    url: `${config.websiteUrl}api/userData`,
     data: { ver: currentBuild },
     dataType: "json",
     success: function(data) {

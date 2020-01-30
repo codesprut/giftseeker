@@ -7,6 +7,7 @@ const {
   Request,
   language,
   settings,
+  config,
   Browser,
   authWindow,
   mainWindow,
@@ -117,7 +118,7 @@ $(() => {
 
     $.ajax({
       method: "get",
-      url: `${settings.websiteUrl}logout`,
+      url: `${config.websiteUrl}logout`,
       success: function() {
         mainWindow.hide();
         mainWindow.loadURL(__dirname + "/blank.html");
@@ -165,7 +166,7 @@ function intervalSchedules() {
   // user info update
   if (intervalTicks !== 0 && intervalTicks % 300 === 0) {
     $.ajax({
-      url: `${settings.websiteUrl}api/userData`,
+      url: `${config.websiteUrl}api/userData`,
       data: { ver: currentBuild },
       dataType: "json",
       success: data => {
@@ -221,7 +222,7 @@ function profileSection() {
   $(document.createElement("button"))
     .addClass("open-website")
     .text("GiftSeeker.RU")
-    .attr("data-link", settings.websiteUrl)
+    .attr("data-link", config.websiteUrl)
     .appendTo(infoLinks);
 
   $(document.createElement("button"))
@@ -237,7 +238,7 @@ function profileSection() {
     .attr("data-lang", "profile.donation")
     .text(language.get("profile.donation"))
     .css("margin-left", "7px")
-    .attr("data-link", `${settings.websiteUrl}donation`)
+    .attr("data-link", `${config.websiteUrl}donation`)
     .appendTo(infoLinks);
 }
 
