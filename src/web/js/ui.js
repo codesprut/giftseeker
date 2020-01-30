@@ -3,6 +3,7 @@
 window.$ = window.jQuery = require("jquery");
 
 const { remote, ipcRenderer } = require("electron");
+const accountData = remote.getGlobal("user");
 const {
   Request,
   language,
@@ -189,7 +190,7 @@ function reloadLangStrings() {
 }
 
 function profileSection() {
-  renderUser(remote.getGlobal("user"));
+  renderUser(accountData);
 
   $(".build .version").text(currentBuild);
 
@@ -242,11 +243,11 @@ function profileSection() {
     .appendTo(infoLinks);
 }
 
-function renderUser(userData) {
+function renderUser(accountData) {
   $(".content-item .info .avatar").css({
-    "background-image": 'url("' + userData.avatar + '")'
+    "background-image": 'url("' + accountData.avatar + '")'
   });
-  $(".content-item .info .username").html(userData.username);
+  $(".content-item .info .username").html(accountData.username);
 }
 
 function openWebsite(url) {

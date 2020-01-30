@@ -23,7 +23,7 @@ class Follx extends Seeker {
     };
 
     $.ajax({
-      url: "https://follx.com/users/" + GSuser.steamid,
+      url: `https://follx.com/users/${accountData.steamid}`,
       success: function(data) {
         let html = $(data);
 
@@ -106,7 +106,8 @@ class Follx extends Seeker {
                   if (data.response) {
                     _this.setValue(data.points);
                     _this.log(
-                      language.get("service.entered_in") + _this.logLink(link, name)
+                      language.get("service.entered_in") +
+                        _this.logLink(link, name)
                     );
                   }
                 }
