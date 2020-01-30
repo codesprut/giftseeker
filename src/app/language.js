@@ -1,5 +1,5 @@
 const storage = require("electron-json-storage");
-const request = require("request-promise");
+const request = require("request-promise-native");
 const config = require("./config");
 const settings = require("./settings");
 const fs = require("fs");
