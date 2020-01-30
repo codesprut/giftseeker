@@ -2,29 +2,23 @@
 
 window.$ = window.jQuery = require("jquery");
 
-const remote = require("electron").remote;
-const ipc = require("electron").ipcRenderer;
-const shared = remote.getGlobal("sharedData");
+const { remote, ipcRenderer } = require("electron");
+const {
+  Request,
+  language,
+  settings,
+  Browser,
+  authWindow,
+  mainWindow,
+  autoUpdater,
+  isPortable
+} = remote.getGlobal("sharedData");
 
-// const language = require("../../app/language");
-// const settings = require("../../app/settings");
+const updateIcon = $("div.update-available");
+let intervalTicks = 0,
+  updateAvail = false;
 
-const Request = shared.Request; // request-promise(пока только в tf2r) - думаю отказаться в пользу request
-const autoUpdater = shared.autoUpdater;
-
-let language = shared.language;
-let settings = shared.settings;
-let GSuser = remote.getGlobal("user");
-
-let Browser = shared.Browser;
-let authWindow = shared.authWindow;
-let mainWindow = shared.mainWindow;
-
-let intervalTicks = 0;
-let updateIcon = $("div.update-available");
-let updateAvail = false;
-
-$(function() {
+$(() => {
   autoUpdater.on("update-available", () => {
     updateAvail = true;
     updateIcon.addClass("progress");
@@ -123,12 +117,12 @@ $(function() {
 
     $.ajax({
       method: "get",
-      url: "https://giftseeker.ru/logout",
+      url: `${settings.websiteUrl}logout`,
       success: function() {
         mainWindow.hide();
         mainWindow.loadURL(__dirname + "/blank.html");
 
-        ipc.send("save-user", null);
+        ipcRenderer.send("save-user", null);
         authWindow.show();
       },
       error: function() {
@@ -140,24 +134,22 @@ $(function() {
 
   // Изменение настроек
   setters.change(function() {
-    let changed = $(this);
+    const changed = $(this);
     let value = changed.val();
 
-    switch (changed.attr("type")) {
-      case "checkbox":
-        value = changed.prop("checked");
-        break;
+    if (changed.attr("type") === "checkbox") {
+      value = changed.prop("checked");
     }
 
     if (changed.attr("id") === "lang") {
-      ipc.send("change-lang", value);
+      ipcRenderer.send("change-lang", value);
       return;
     }
 
     settings.set(changed.attr("id"), value);
   });
 
-  ipc.on("change-lang", function() {
+  ipcRenderer.on("change-lang", function() {
     reloadLangStrings();
   });
 
@@ -167,19 +159,16 @@ $(function() {
 });
 
 function intervalSchedules() {
-  // Проверяем обновления
-  if (intervalTicks % 300 === 0 && !shared.isPortable && !updateAvail)
+  if (intervalTicks % 300 === 0 && !isPortable && !updateAvail)
     autoUpdater.checkForUpdatesAndNotify();
 
-  // TrayIcon.removeAllListeners('balloon-click');
-
-  // Обновляем инфо о юзере
+  // user info update
   if (intervalTicks !== 0 && intervalTicks % 300 === 0) {
     $.ajax({
-      url: "https://giftseeker.ru/api/userData",
+      url: `${settings.websiteUrl}api/userData`,
       data: { ver: currentBuild },
       dataType: "json",
-      success: function(data) {
+      success: data => {
         if (data.response) renderUser(data.response);
       }
     });
@@ -199,14 +188,14 @@ function reloadLangStrings() {
 }
 
 function profileSection() {
-  renderUser(GSuser);
+  renderUser(remote.getGlobal("user"));
 
   $(".build .version").text(currentBuild);
 
   const languageSwitch = $("select#lang");
   const languagesList = language.listAvailable();
 
-  // Наполняем языковой селект, либо удаляем его
+  // fill language select
   if (language.count() <= 1) languageSwitch.remove();
   else {
     for (let lang in languagesList) {
@@ -226,14 +215,14 @@ function profileSection() {
     }
   }
 
-  // Ссылки внизу
-  let info_links = $(".content-item .info-links");
+  // profile bottom links
+  const infoLinks = $(".content-item .info-links");
 
   $(document.createElement("button"))
     .addClass("open-website")
     .text("GiftSeeker.RU")
-    .attr("data-link", "https://giftseeker.ru/")
-    .appendTo(info_links);
+    .attr("data-link", settings.websiteUrl)
+    .appendTo(infoLinks);
 
   $(document.createElement("button"))
     .addClass("open-website")
@@ -241,15 +230,15 @@ function profileSection() {
     .text(language.get("profile.steam_group"))
     .css("margin-left", "7px")
     .attr("data-link", "https://steamcommunity.com/groups/GiftSeeker")
-    .appendTo(info_links);
+    .appendTo(infoLinks);
 
   $(document.createElement("button"))
     .addClass("open-website")
     .attr("data-lang", "profile.donation")
     .text(language.get("profile.donation"))
     .css("margin-left", "7px")
-    .attr("data-link", "https://giftseeker.ru/donation")
-    .appendTo(info_links);
+    .attr("data-link", `${settings.websiteUrl}donation`)
+    .appendTo(infoLinks);
 }
 
 function renderUser(userData) {

@@ -1,12 +1,10 @@
 "use strict";
 window.$ = window.jQuery = require("jquery");
-const remote = require("electron").remote;
-const ipc = require("electron").ipcRenderer;
+const { remote, ipcRenderer } = require("electron");
+
 const shared = remote.getGlobal("sharedData");
 
-const language = shared.language;
-const mainWindow = shared.mainWindow;
-const Browser = shared.Browser;
+const { language, settings, mainWindow, Browser } = shared;
 
 const status = $(".status-text");
 const buttons = $("#auth_button");
@@ -53,19 +51,19 @@ $(function() {
     }
 
     languageSelect.change(function() {
-      ipc.send("change-lang", $(this).val());
+      ipcRenderer.send("change-lang", $(this).val());
     });
   }
 
   $("#auth_button").click(function(e) {
     e.preventDefault();
 
-    Browser.loadURL("https://giftseeker.ru/logIn");
+    Browser.loadURL(`${settings.websiteUrl}logIn`);
     Browser.show();
     Browser.setTitle("GS Browser - " + language.get("auth.browser_loading"));
 
     Browser.webContents.on("did-finish-load", () => {
-      if (Browser.getURL() === "https://giftseeker.ru/") {
+      if (Browser.getURL() === settings.websiteUrl) {
         Browser.webContents.executeJavaScript(
           'document.querySelector("body").innerHTML',
           body => {
@@ -88,7 +86,7 @@ function checkAuth() {
   status.text(language.get("auth.check"));
 
   $.ajax({
-    url: "https://giftseeker.ru/api/userData",
+    url: `${settings.websiteUrl}api/userData`,
     data: { ver: currentBuild },
     dataType: "json",
     success: function(data) {
@@ -98,7 +96,7 @@ function checkAuth() {
         return;
       }
 
-      ipc.send("save-user", data.response);
+      ipcRenderer.send("save-user", data.response);
 
       status.text(language.get("auth.session") + data.response.username);
 
