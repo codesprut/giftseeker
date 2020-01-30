@@ -64,16 +64,15 @@ $(function() {
 
     Browser.webContents.on("did-finish-load", () => {
       if (Browser.getURL() === settings.websiteUrl) {
-        Browser.webContents.executeJavaScript(
-          'document.querySelector("body").innerHTML',
-          body => {
+        Browser.webContents
+          .executeJavaScript('document.querySelector("body").innerHTML')
+          .then(body => {
             if (body.indexOf("/account") >= 0) {
               Browser.webContents.removeAllListeners("did-finish-load");
               Browser.close();
               checkAuth();
             }
-          }
-        );
+          });
       }
     });
   });
