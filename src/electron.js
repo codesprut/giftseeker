@@ -103,6 +103,8 @@ app.on("ready", () => {
     center: true,
     resizable: false,
     frame: false,
+    backgroundThrottling: false,
+    webSecurity: false,
     webPreferences: {
       session: _session,
       devTools: ENV.devMode,
@@ -130,6 +132,8 @@ app.on("ready", () => {
     modal: true,
     show: false,
     center: true,
+    webSecurity: false,
+    alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: false,
       session: _session,
