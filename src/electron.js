@@ -73,7 +73,7 @@ app.on("ready", () => {
 
   _session = session.fromPartition(`persist:${config.appName}`);
   _session.setUserAgent(
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36"
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 12_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/80.0.3987.88 Mobile/15E148 Safari/605.1"
   );
 
   authWindow = new BrowserWindow({
@@ -103,12 +103,12 @@ app.on("ready", () => {
     center: true,
     resizable: false,
     frame: false,
-    backgroundThrottling: false,
-    webSecurity: false,
     webPreferences: {
       session: _session,
       devTools: ENV.devMode,
-      nodeIntegration: true
+      nodeIntegration: true,
+      backgroundThrottling: false,
+      webSecurity: false
     }
   });
 
@@ -126,18 +126,19 @@ app.on("ready", () => {
     icon: config.appIcon,
     title: "GS Browser",
     width: 1024,
-    height: 600,
+    height: 700,
     minWidth: 600,
     minHeight: 500,
     modal: true,
     show: false,
     center: true,
-    webSecurity: false,
     alwaysOnTop: true,
     webPreferences: {
-      nodeIntegration: false,
       session: _session,
-      devTools: false
+      nodeIntegration: false,
+      devTools: false,
+      webSecurity: false,
+      webviewTag: true
     }
   });
 
