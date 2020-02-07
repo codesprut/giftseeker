@@ -174,7 +174,7 @@ class IndieGala extends Seeker {
       },
       json: true
     })
-      .then(response => response.body)
+      .then(response => response)
       .catch(() => {});
   }
 }

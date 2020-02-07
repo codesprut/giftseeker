@@ -5,7 +5,7 @@ const request = options => {
     req(options, (error, response, body) => {
       if (error) reject(error);
 
-      resolve(response);
+      resolve(body);
     });
   });
 };
