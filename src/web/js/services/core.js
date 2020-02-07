@@ -581,20 +581,13 @@ class Seeker {
   }
 
   updateCookies() {
-    mainWindow.webContents.session.cookies.get(
-      { domain: this.domain },
-      (error, cookies) => {
-        let newCookies = "";
-
-        for (const cookie of cookies) {
-          if (newCookies.length !== 0) newCookies += "; ";
-
-          newCookies += cookie.name + "=" + cookie.value;
-        }
-
-        this.cookies = newCookies;
-      }
-    );
+    Browser.webContents.session.cookies
+      .get({ domain: this.domain })
+      .then(cookies => {
+        this.cookies = cookies
+          .map(cookie => cookie.name + "=" + cookie.value)
+          .join("; ");
+      });
   }
 
   interval() {
@@ -669,6 +662,10 @@ class Seeker {
         "</div>"
     );
     this.logWrap.scrollTop(this.logWrap[0].scrollHeight);
+  }
+
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   // ### "Виртуальные методы" - реализуются в потомках
