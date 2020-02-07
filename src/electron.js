@@ -12,7 +12,7 @@ const {
 } = require("electron");
 const { autoUpdater } = require("electron-updater");
 const autoLaunch = require("auto-launch");
-const request = require("request-promise-native");
+const request = require("./infrastructure/request-promise");
 
 const config = require("./app/config");
 const ENV = require("./app/environment");
