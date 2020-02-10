@@ -31,9 +31,9 @@
       <div class="window-buttons">
         <span
           class="minimizer fa fa-window-minimize"
-          onclick="remote.BrowserWindow.getFocusedWindow().hide()"
+          onclick="minimizeWindow()"
         ></span>
-        <span class="closer fa fa-times" onclick="window.close()"></span>
+        <span class="closer fa fa-times" onclick="closeWindow()"></span>
       </div>
     </div>
     <div id="content">
@@ -69,6 +69,14 @@
           <div class="input-wrap checkbox">
             <input id="start_minimized" class="setter" type="checkbox" />
             <label for="start_minimized" data-lang="profile.start_minimized">
+            </label>
+          </div>
+          <div class="input-wrap checkbox">
+            <input id="minimize_on_close" class="setter" type="checkbox" />
+            <label
+              for="minimize_on_close"
+              data-lang="profile.minimize_on_close"
+            >
             </label>
           </div>
           <div class="input-wrap checkbox">

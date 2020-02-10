@@ -256,3 +256,16 @@ function openWebsite(url) {
 
   Browser.show();
 }
+
+const minimizeWindow = () => {
+  remote.BrowserWindow.getFocusedWindow().hide();
+};
+
+const closeWindow = () => {
+  if (settings.get("minimize_on_close")) {
+    minimizeWindow();
+    return;
+  }
+
+  window.close();
+};
