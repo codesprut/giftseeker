@@ -4,7 +4,6 @@ const {
   nativeImage,
   shell,
   Menu,
-  session,
   Tray,
   BrowserWindow,
   ipcMain,
@@ -28,7 +27,6 @@ let appLoaded = false;
 let authWindow = null;
 let mainWindow = null;
 let browserWindow = null;
-let _session = null;
 let user = null;
 
 app.disableHardwareAcceleration();
@@ -66,15 +64,12 @@ app.on("window-all-closed", () => {
 });
 
 app.on("ready", () => {
+  const programSession = require("./app/session");
+
   settings.on("change", (configKey, newValue) => {
     if (configKey === "start_with_os") autoStartControl(newValue);
   });
   settings.init();
-
-  _session = session.fromPartition(`persist:${config.appName}`);
-  _session.setUserAgent(
-    "Mozilla/5.0 (iPhone; CPU iPhone OS 12_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/80.0.3987.88 Mobile/15E148 Safari/605.1"
-  );
 
   authWindow = new BrowserWindow({
     width: 280,
@@ -86,7 +81,7 @@ app.on("ready", () => {
     resizable: false,
     frame: false,
     webPreferences: {
-      session: _session,
+      session: programSession,
       devTools: ENV.devMode,
       nodeIntegration: true
     }
@@ -104,7 +99,7 @@ app.on("ready", () => {
     resizable: false,
     frame: false,
     webPreferences: {
-      session: _session,
+      session: programSession,
       devTools: ENV.devMode,
       nodeIntegration: true,
       backgroundThrottling: false,
@@ -134,7 +129,7 @@ app.on("ready", () => {
     center: true,
     alwaysOnTop: true,
     webPreferences: {
-      session: _session,
+      session: programSession,
       nodeIntegration: false,
       devTools: false,
       webSecurity: false,
