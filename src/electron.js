@@ -13,9 +13,8 @@ const { autoUpdater } = require("electron-updater");
 const autoLaunch = require("auto-launch");
 const request = require("./infrastructure/request-promise");
 
-const config = require("./app/config");
 const ENV = require("./app/environment");
-const storage = require("electron-json-storage");
+const config = require("./app/config");
 const settings = require("./app/settings");
 
 const language = require("./app/language");
@@ -30,8 +29,6 @@ let browserWindow = null;
 let user = null;
 
 app.disableHardwareAcceleration();
-
-storage.setDataPath(config.storagePath);
 
 const autostart = new autoLaunch({ name: config.appName });
 
@@ -69,7 +66,6 @@ app.on("ready", () => {
   settings.on("change", (configKey, newValue) => {
     if (configKey === "start_with_os") autoStartControl(newValue);
   });
-  settings.init();
 
   authWindow = new BrowserWindow({
     width: 280,
