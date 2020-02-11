@@ -92,6 +92,7 @@ app.on("ready", () => {
     height: 500,
     minHeight: 400,
     maxHeight: 760,
+    backgroundColor: "#111b29",
     title: config.appName,
     icon: config.appIcon,
     show: false,
