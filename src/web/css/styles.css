@@ -332,7 +332,44 @@ a:hover {
 }
 
 .services_switcher.wide {
-  width: 200px;
+  width: 160px;
+}
+
+.services_switcher .expander {
+  background: #030b15;
+  width: 100%;
+  z-index: 5;
+  position: absolute;
+  bottom: 0;
+  height: 40px;
+  line-height: 40px;
+  font-size: 20px;
+  padding-left: 10px;
+  color: gray;
+}
+
+.services_switcher .expander .span-wrap {
+  display: inline;
+}
+
+.services_switcher .expander span {
+  cursor: pointer;
+}
+
+.services_switcher .expander span + span {
+  display: none;
+}
+
+.services_switcher .expander .span-wrap:hover span {
+  color: #fff;
+}
+
+.services_switcher.wide .expander span:first-child {
+  display: none;
+}
+
+.services_switcher.wide .expander span + span {
+  display: inline;
 }
 
 .services-icons {
@@ -355,7 +392,6 @@ a:hover {
   overflow: hidden;
 }
 .service-icon.active {
-  position: relative;
   background: rgba(255, 255, 255, 0.2);
 }
 .service-icon.active:after {
@@ -380,6 +416,12 @@ a:hover {
 .service-icon .service-name {
   display: none;
   text-align: center;
+  position: absolute;
+  left: 60px;
+  font-size: 13px;
+  color: lightgray;
+  z-index: 5;
+  top: 0;
 }
 .services_switcher.wide .service-icon .service-name {
   display: block;

@@ -46,8 +46,7 @@ $(() => {
   reloadLangStrings();
   settingsSection();
 
-  // Восстановление сохранённых настроек
-  let setters = $(".settings .setter").each(function() {
+  const setters = $(".settings .setter").each(function() {
     let item = $(this);
 
     switch (item.attr("type")) {
@@ -57,43 +56,45 @@ $(() => {
     }
   });
 
-  // Переключение типа отображения иконок сервисов
-  let menu_switcher = $(".list_type");
-  if (settings.get("menu_as_list")) menu_switcher.addClass("state");
-
-  // Смена окон по окончании рендеринга
   authWindow.hide();
   mainWindow.show();
 
+  const servicesSwitcher = document.querySelector(".services_switcher");
+  const servicesIcons = document.querySelector(".services-icons");
+
+  if (settings.get("wide_services_switcher"))
+    servicesSwitcher.classList.add("wide");
+
+  document.querySelector(
+    ".services_switcher .expander .span-wrap"
+  ).onclick = () => {
+    servicesSwitcher.style.transition = "width 0.3s";
+    servicesSwitcher.classList.toggle("wide");
+
+    const wideSwitcher = servicesSwitcher.classList.contains("wide");
+
+    settings.set("wide_services_switcher", wideSwitcher);
+  };
+
+  servicesSwitcher.onmousewheel = ev => {
+    const expanderHeight = 40;
+    const scrollStep = ev.wheelDelta > 0 ? 20 : -20;
+
+    let scrollTop = parseInt(servicesIcons.style.top || 0);
+    const iconsHeight = servicesIcons.offsetHeight;
+    const switcherHeight = servicesSwitcher.offsetHeight;
+    const minScroll = switcherHeight - iconsHeight - expanderHeight;
+
+    scrollTop += scrollStep;
+
+    if (scrollTop < minScroll) scrollTop = minScroll;
+    if (scrollTop > 0) scrollTop = 0;
+
+    servicesIcons.style.top = `${scrollTop}px`;
+  };
+
   if (settings.get("start_minimized")) mainWindow.hide();
   else mainWindow.focus();
-
-  // EVENTS
-
-  let icons = $(".services-icons");
-  let maxTop = parseInt(icons.css("top").replace("px", ""));
-
-  $(".services_switcher").bind("mousewheel", function(e) {
-    let scroll = e.originalEvent.wheelDelta / 120 > 0 ? 20 : -20;
-
-    let height = icons.height();
-    let minTop = $(this).height() - height;
-    let top = parseInt(icons.css("top").replace("px", ""));
-    let newTop = top + scroll;
-
-    if ((scroll > 0 && newTop <= maxTop) || (scroll < 0 && newTop >= minTop))
-      top = newTop;
-
-    icons.css("top", top + "px");
-  });
-
-  menu_switcher.click(function() {
-    $(this).toggleClass("state");
-
-    icons.css("top", maxTop + "px");
-
-    settings.set("menu_as_list", $(this).hasClass("state"));
-  });
 
   // Переключение основных пунктов меню
   $(".menu li span").click(function() {
