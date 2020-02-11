@@ -44,7 +44,7 @@ $(() => {
 
   // UI LOAD
   reloadLangStrings();
-  profileSection();
+  settingsSection();
 
   // Восстановление сохранённых настроек
   let setters = $(".settings .setter").each(function() {
@@ -113,8 +113,7 @@ $(() => {
       .addClass("active");
   });
 
-  // Клик по кнопке выхода из авторизованного аккаунта
-  $(".seeker-button.logout").click(function() {
+  $(".logout-button").click(function() {
     let clicked = $(this).addClass("disabled");
 
     $.ajax({
@@ -189,7 +188,7 @@ function reloadLangStrings() {
   });
 }
 
-function profileSection() {
+function settingsSection() {
   renderUser(accountData);
 
   $(".build .version").text(currentBuild);
@@ -217,7 +216,7 @@ function profileSection() {
     }
   }
 
-  // profile bottom links
+  // settings bottom links
   const infoLinks = $(".content-item .info-links");
 
   $(document.createElement("button"))
@@ -228,26 +227,26 @@ function profileSection() {
 
   $(document.createElement("button"))
     .addClass("open-website")
-    .attr("data-lang", "profile.steam_group")
-    .text(language.get("profile.steam_group"))
+    .attr("data-lang", "settings.steam_group")
+    .text(language.get("settings.steam_group"))
     .css("margin-left", "7px")
     .attr("data-link", "https://steamcommunity.com/groups/GiftSeeker")
     .appendTo(infoLinks);
 
   $(document.createElement("button"))
     .addClass("open-website")
-    .attr("data-lang", "profile.donation")
-    .text(language.get("profile.donation"))
+    .attr("data-lang", "settings.donation")
+    .text(language.get("settings.donation"))
     .css("margin-left", "7px")
     .attr("data-link", `${config.websiteUrl}donation`)
     .appendTo(infoLinks);
 }
 
 function renderUser(accountData) {
-  $(".content-item .info .avatar").css({
+  $("#head .user-bar .avatar").css({
     "background-image": 'url("' + accountData.avatar + '")'
   });
-  $(".content-item .info .username").html(accountData.username);
+  $("#head .user-bar .username").html(accountData.username);
 }
 
 function openWebsite(url) {

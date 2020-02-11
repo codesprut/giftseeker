@@ -19,10 +19,10 @@
       <div class="logo"></div>
       <ul class="menu">
         <li class="active" data-id="services">
-          <span data-lang="ui.menu1"> </span>
+          <span data-lang="ui.menu.services"> </span>
         </li>
-        <li data-id="profile">
-          <span data-lang="ui.menu2"> </span>
+        <li data-id="settings">
+          <span data-lang="ui.menu.settings"> </span>
         </li>
       </ul>
       <div class="update-available" data-lang-title="ui.upd_progress">
@@ -35,6 +35,13 @@
         ></span>
         <span class="closer fa fa-times" onclick="closeWindow()"></span>
       </div>
+      <div class="user-bar">
+        <div class="avatar"></div>
+        <div class="btn username no-active"></div>
+        <div class="btn logout-button">
+          <span class="fa fa-sign-out-alt"></span>
+        </div>
+      </div>
     </div>
     <div id="content">
       <div class="content-item active" data-id="services">
@@ -43,15 +50,9 @@
         </div>
         <div class="services-panels"></div>
       </div>
-      <div class="content-item" data-id="profile">
+      <div class="content-item" data-id="settings">
         <div class="info no-selectable">
-          <div class="avatar"></div>
-          <div class="username"></div>
           <div class="info-links"></div>
-          <button
-            class="seeker-button logout"
-            data-lang="profile.logout_btn"
-          ></button>
         </div>
         <div class="settings">
           <div class="input-wrap select">
@@ -59,28 +60,28 @@
           </div>
           <div class="input-wrap checkbox">
             <input id="start_with_os" class="setter" type="checkbox" />
-            <label for="start_with_os" data-lang="profile.start_with_os">
+            <label for="start_with_os" data-lang="settings.start_with_os">
             </label>
           </div>
           <div class="input-wrap checkbox">
             <input id="start_minimized" class="setter" type="checkbox" />
-            <label for="start_minimized" data-lang="profile.start_minimized">
+            <label for="start_minimized" data-lang="settings.start_minimized">
             </label>
           </div>
           <div class="input-wrap checkbox">
             <input id="minimize_on_close" class="setter" type="checkbox" />
             <label
               for="minimize_on_close"
-              data-lang="profile.minimize_on_close"
+              data-lang="settings.minimize_on_close"
             >
             </label>
           </div>
           <div class="input-wrap checkbox">
             <input id="autostart" class="setter" type="checkbox" />
-            <label for="autostart" data-lang="profile.autostart"> </label>
+            <label for="autostart" data-lang="settings.autostart"> </label>
           </div>
           <div class="build no-selectable">
-            <span data-lang="profile.build_version"></span>
+            <span data-lang="settings.build_version"></span>
             <span class="version"></span>
           </div>
         </div>
