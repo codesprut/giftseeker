@@ -27,11 +27,11 @@ const set = (key, newValue) => {
     storage.set("configs", settings);
   }, 500);
 
-  if (oldValue !== newValue) eventEmitter.emit("change", key, newValue);
+  if (oldValue !== newValue) eventEmitter.emit("change" + key, newValue);
 };
 
-const on = (eventName, callback) => {
-  eventEmitter.on(eventName, callback);
+const on = (eventName, key, callback) => {
+  eventEmitter.on(eventName + key, callback);
 };
 
 const init = () => {

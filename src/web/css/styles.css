@@ -305,6 +305,21 @@ a:hover {
   text-align: center;
 }
 
+label[for="useragent"] {
+  font-size: 16px;
+  line-height: 25px;
+}
+
+textarea#useragent {
+  display: block;
+  width: 100%;
+  height: 70px;
+  resize: none;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px;
+}
+
 .services_switcher {
   background-color: #030b15;
   width: 70px;

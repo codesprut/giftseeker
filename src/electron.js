@@ -61,12 +61,11 @@ app.on("window-all-closed", () => {
 });
 
 app.on("ready", async () => {
+  await settings.init();
   const programSession = require("./app/session");
 
-  await settings.init();
-
-  settings.on("change", (configKey, newValue) => {
-    if (configKey === "start_with_os") autoStartControl(newValue);
+  settings.on("change", "start_with_os", startWithOs => {
+    autoStartControl(startWithOs);
   });
 
   authWindow = new BrowserWindow({

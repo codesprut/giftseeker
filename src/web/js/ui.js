@@ -61,8 +61,14 @@ $(() => {
 
   let windowHeight = window.offsetHeight;
   const expanderHeight = 40;
+  const userAgentArea = document.querySelector("textarea#useragent");
   const servicesSwitcher = document.querySelector(".services_switcher");
   const servicesIcons = document.querySelector(".services-icons");
+
+  userAgentArea.placeholder = config.defaultUseragent;
+  userAgentArea.value = Browser.webContents.session.getUserAgent();
+  userAgentArea.onchange = () =>
+    settings.set("user_agent", userAgentArea.value);
 
   if (settings.get("wide_services_switcher"))
     servicesSwitcher.classList.add("wide");
