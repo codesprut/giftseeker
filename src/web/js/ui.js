@@ -59,6 +59,8 @@ $(() => {
   authWindow.hide();
   mainWindow.show();
 
+  let windowHeight = window.offsetHeight;
+  const expanderHeight = 40;
   const servicesSwitcher = document.querySelector(".services_switcher");
   const servicesIcons = document.querySelector(".services-icons");
 
@@ -76,10 +78,7 @@ $(() => {
     settings.set("wide_services_switcher", wideSwitcher);
   };
 
-  servicesSwitcher.onmousewheel = ev => {
-    const expanderHeight = 40;
-    const scrollStep = ev.wheelDelta > 0 ? 20 : -20;
-
+  const servicesSwitcherScroll = scrollStep => {
     let scrollTop = parseInt(servicesIcons.style.top || 0);
     const iconsHeight = servicesIcons.offsetHeight;
     const switcherHeight = servicesSwitcher.offsetHeight;
@@ -92,6 +91,18 @@ $(() => {
 
     servicesIcons.style.top = `${scrollTop}px`;
   };
+
+  window.onresize = () => {
+    const newHeight = window.innerHeight;
+    const difference = newHeight - windowHeight || 0;
+
+    if (difference > 0) servicesSwitcherScroll(difference);
+
+    windowHeight = window.innerHeight;
+  };
+
+  servicesSwitcher.onmousewheel = ev =>
+    servicesSwitcherScroll(ev.wheelDelta > 0 ? 20 : -20);
 
   if (settings.get("start_minimized")) mainWindow.hide();
   else mainWindow.focus();
