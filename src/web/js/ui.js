@@ -46,7 +46,7 @@ $(() => {
   reloadLangStrings();
   settingsSection();
 
-  const setters = $(".settings .setter").each(function() {
+  const setters = $("[data-id=settings] .setter").each(function() {
     let item = $(this);
 
     switch (item.attr("type")) {
