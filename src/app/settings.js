@@ -15,6 +15,8 @@ const eventEmitter = new events.EventEmitter();
 
 let settings = {};
 
+let saveToStorageTimeout = null;
+
 const get = (key, defaultValue) => {
   if (settings[key] !== undefined) return settings[key];
 
@@ -28,7 +30,11 @@ const set = (key, newValue) => {
 
   settings[key] = newValue;
 
-  storage.set("configs", settings);
+  clearTimeout(saveToStorageTimeout);
+
+  saveToStorageTimeout = setTimeout(() => {
+    storage.set("configs", settings);
+  }, 500);
 
   if (oldValue !== newValue) eventEmitter.emit("change", key, newValue);
 };
