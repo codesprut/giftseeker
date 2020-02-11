@@ -86,13 +86,17 @@ app.on("ready", () => {
   authWindow.setMenu(null);
 
   mainWindow = new BrowserWindow({
-    width: 730,
+    width: 750,
+    minWidth: 650,
+    maxWidth: 1024,
     height: 500,
+    minHeight: 400,
+    maxHeight: 760,
     title: config.appName,
     icon: config.appIcon,
     show: false,
     center: true,
-    resizable: false,
+    resizable: true,
     frame: false,
     webPreferences: {
       session: programSession,
