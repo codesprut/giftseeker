@@ -200,7 +200,7 @@ a:hover {
   display: none;
 }
 .content-item.active {
-  display: block;
+  display: flex;
 }
 
 .content-item[data-id="profile"] .info {
@@ -266,13 +266,16 @@ a:hover {
 
 .services_switcher {
   background-color: #030b15;
-  width: 100px;
+  width: 70px;
   height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
+  position: relative;
   border-right: 1px solid #28313e;
   overflow: hidden;
+  flex-shrink: 0;
+}
+
+.services_switcher.wide {
+  width: 200px;
 }
 
 .services-icons {
@@ -280,133 +283,71 @@ a:hover {
   position: absolute;
   z-index: 1;
   width: 100%;
-  top: 34px;
+  top: 0;
   left: 0;
 }
 
 .service-icon {
-  border: 1px solid transparent;
   cursor: pointer;
   position: relative;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 10px;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  padding: 5px 0 0 20px;
   font-size: 12px;
+  overflow: hidden;
 }
 .service-icon.active {
-  border-color: #1a62a1;
-  background: rgba(26, 98, 160, 0.3);
+  position: relative;
+  background: rgba(255, 255, 255, 0.2);
+}
+.service-icon.active:after {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #10a1de;
 }
 .service-icon:hover:not(.active) {
   background: rgba(255, 255, 255, 0.3);
   border-color: #fff;
 }
 .service-icon .bg {
-  margin: 10px auto 0;
-  width: 42px;
-  height: 42px;
+  width: 30px;
+  height: 30px;
   background: center center/contain no-repeat;
 }
 .service-icon .service-name {
-  display: block;
+  display: none;
   text-align: center;
+}
+.services_switcher.wide .service-icon .service-name {
+  display: block;
 }
 .service-icon .service-status {
-  width: 16px;
-  height: 16px;
-  line-height: 16px;
-  text-align: center;
-  font-size: 16px;
+  width: 20px;
+  height: 30px;
+  transform: rotate(45deg);
   position: absolute;
-  right: 2px;
-  bottom: 2px;
-  background: center/contain no-repeat;
+  right: -10px;
+  bottom: -15px;
 }
-.service-icon .service-status span {
-  display: none;
-  color: lightgray;
+.service-icon .service-status {
+  background-color: lightgray;
 }
-.service-icon .service-status[data-status="good"] span:first-child {
-  display: inline;
-  color: lightgreen;
+.service-icon .service-status[data-status="good"] {
+  background-color: lightgreen;
 }
-.service-icon .service-status[data-status="normal"] span + span {
-  display: inline;
-}
-.service-icon .service-status[data-status="bad"] span + span {
-  display: inline;
-  color: orangered;
-}
-
-.list_type {
-  cursor: pointer;
-  width: 100%;
-  height: 34px;
-  padding: 3px 4px 4px;
-  text-align: center;
-  font-size: 0;
-  background-color: #030b15;
-  position: relative;
-  z-index: 5;
-}
-.list_type span {
-  vertical-align: top;
-  color: gray;
-  display: inline-block;
-  width: 48.5%;
-  height: 100%;
-  line-height: 25px;
-  border: 1px solid #28313e;
-  font-size: 18px;
-}
-.list_type span:first-child {
-  margin-right: 2px;
-  font-size: 16px;
-}
-.list_type:not(.state) span:first-child {
-  color: #fff;
-}
-.list_type.state span + span {
-  color: #fff;
-}
-
-.list_type.state + .services-icons {
-  padding-top: 0;
-}
-.list_type.state + .services-icons .service-icon {
-  width: 90px;
-  height: 20px;
-  margin: 0 auto 5px;
-}
-.list_type.state + .services-icons .service-icon .bg {
-  display: none; /*width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin: 0 4px 0 2px;*/
-}
-.list_type.state + .services-icons .service-icon .service-name {
-  left: 22px;
-  top: 0;
-  line-height: 20px;
-  display: inline-block;
-  vertical-align: middle;
-}
-.list_type.state + .services-icons .service-icon:hover,
-.list_type.state + .services-icons .service-icon.active {
-  color: #9ec5ea;
-  border-color: transparent;
-  background: transparent;
-}
-.list_type.state + .services-icons .service-icon .service-status {
-  font-size: 14px;
-  position: absolute;
-  right: 0;
-  bottom: 0;
+.service-icon .service-status[data-status="bad"] {
+  background-color: orangered;
 }
 
 .services-panels {
   padding: 6px 15px 10px;
-  position: absolute;
-  left: 100px;
-  top: 0;
-  width: 630px;
+  width: 100%;
   height: 100%;
   overflow: hidden;
 }

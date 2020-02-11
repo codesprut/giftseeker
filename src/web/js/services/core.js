@@ -80,9 +80,6 @@ class Seeker {
     this.statusIcon = $(document.createElement("div"))
       .addClass("service-status")
       .attr("data-status", "normal")
-      .html(
-        '<span class="fa fa-play"></span>' + '<span class="fa fa-pause"></span>'
-      )
       .appendTo(this.icon);
 
     $(document.createElement("span"))
