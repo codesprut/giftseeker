@@ -97,6 +97,8 @@ app.on("ready", () => {
     show: false,
     center: true,
     resizable: true,
+    fullscreenable: false,
+    maximizable: false,
     frame: false,
     webPreferences: {
       session: programSession,
