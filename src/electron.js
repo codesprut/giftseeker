@@ -60,8 +60,10 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-app.on("ready", () => {
+app.on("ready", async () => {
   const programSession = require("./app/session");
+
+  await settings.init();
 
   settings.on("change", (configKey, newValue) => {
     if (configKey === "start_with_os") autoStartControl(newValue);
@@ -85,13 +87,33 @@ app.on("ready", () => {
 
   authWindow.setMenu(null);
 
+  const { minWidth, maxWidth, minHeight, maxHeight } = config.window;
+
+  const windowWidth = (() => {
+    const defaultWidth = config.window.defaultWidth;
+    const width = settings.get("window_width", defaultWidth);
+
+    if (width < minWidth || width > maxWidth) return defaultWidth;
+
+    return width;
+  })();
+
+  const windowHeight = (() => {
+    const defaultHeight = config.window.defaultHeight;
+    const height = settings.get("window_height", defaultHeight);
+
+    if (height < minHeight || height > maxHeight) return defaultHeight;
+
+    return height;
+  })();
+
   mainWindow = new BrowserWindow({
-    width: 750,
-    minWidth: 650,
-    maxWidth: 1024,
-    height: 500,
-    minHeight: 400,
-    maxHeight: 760,
+    width: windowWidth,
+    height: windowHeight,
+    minWidth: minWidth,
+    maxWidth: maxWidth,
+    minHeight: minHeight,
+    maxHeight: maxHeight,
     backgroundColor: "#111b29",
     title: config.appName,
     icon: config.appIcon,
@@ -154,6 +176,12 @@ app.on("ready", () => {
   });
 
   //### end browser for websites
+  mainWindow.on("resize", () => {
+    const [newWidth, newHeight] = mainWindow.getContentSize();
+
+    settings.set("window_width", newWidth);
+    settings.set("window_height", newHeight);
+  });
 
   authWindow.on("show", () => {
     authWindow.webContents.executeJavaScript("onShow()");

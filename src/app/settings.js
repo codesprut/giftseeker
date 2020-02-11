@@ -2,15 +2,6 @@ const config = require("./config");
 const storage = require("electron-json-storage");
 const events = require("events");
 
-storage.setDataPath(config.storagePath);
-
-storage.get("configs", (error, data) => {
-  if (error) throw error;
-
-  settings = data;
-  set("inits", get("inits", 0) + 1);
-});
-
 const eventEmitter = new events.EventEmitter();
 
 let settings = {};
@@ -43,7 +34,22 @@ const on = (eventName, callback) => {
   eventEmitter.on(eventName, callback);
 };
 
+const init = () => {
+  return new Promise(resolve => {
+    storage.setDataPath(config.storagePath);
+
+    storage.get("configs", (error, data) => {
+      if (error) resolve(error);
+
+      settings = data;
+      set("inits", get("inits", 0) + 1);
+      resolve(true);
+    });
+  });
+};
+
 module.exports = {
+  init,
   get,
   set,
   on
