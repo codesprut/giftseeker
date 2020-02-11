@@ -2,7 +2,7 @@
 
 window.$ = window.jQuery = require("jquery");
 
-const { remote, ipcRenderer } = require("electron");
+const { remote, ipcRenderer, shell } = require("electron");
 const accountData = remote.getGlobal("user");
 const {
   Request,
@@ -172,9 +172,7 @@ $(() => {
     reloadLangStrings();
   });
 
-  $(document).on("click", ".open-website[data-link]", function() {
-    openWebsite($(this).attr("data-link"));
-  });
+  $(".open-website[data-link]").click(e => openWebsite(e.target.dataset.link));
 });
 
 function intervalSchedules() {
@@ -267,12 +265,14 @@ function renderUser(accountData) {
   $("#head .user-bar .username").html(accountData.username);
 }
 
-function openWebsite(url) {
+const openWebsite = url => {
+  if (settings.get("use_system_browser")) return shell.openExternal(url);
+
   Browser.loadURL(url);
   Browser.setTitle("GS Browser - " + language.get("auth.browser_loading"));
 
   Browser.show();
-}
+};
 
 const minimizeWindow = () => {
   remote.BrowserWindow.getFocusedWindow().hide();

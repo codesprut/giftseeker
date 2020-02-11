@@ -151,7 +151,6 @@ app.on("ready", async () => {
     modal: true,
     show: false,
     center: true,
-    alwaysOnTop: true,
     webPreferences: {
       session: programSession,
       nodeIntegration: false,
