@@ -1,3 +1,4 @@
+const OS = require("os");
 const isPortable = process.env.PORTABLE_EXECUTABLE_DIR !== undefined;
 const execPath = isPortable
   ? `${process.env.PORTABLE_EXECUTABLE_DIR}\\`
@@ -7,5 +8,6 @@ module.exports = {
   isPortable,
   execPath,
   devMode: process.argv[1] === ".",
-  EOL: require("os").EOL
+  EOL: OS.EOL,
+  homedir: OS.homedir()
 };

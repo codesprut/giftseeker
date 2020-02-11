@@ -1,9 +1,16 @@
 const ENV = require("./environment");
 
+const appName = "GiftSeeker";
+const installableStorage = ENV.homedir + "/" + appName;
+const portableStorage = ENV.execPath + "data";
+
+const storagePath = ENV.isPortable ? portableStorage : installableStorage;
+
 module.exports = {
-  appName: "GiftSeeker",
+  appName: appName,
   websiteUrl: "https://giftseeker.ru/",
-  storagePath: ENV.execPath + "data",
+  storagePath: storagePath,
+  oldStoragePath: portableStorage,
   defaultLanguage: "ru_RU",
   appIcon: __dirname + "/../resources/images/icon.ico",
   window: {
