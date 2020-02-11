@@ -1,6 +1,6 @@
 {
   "name": "giftseeker",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "author": "CodeSprut",
   "license": "ISC",
   "description": "Steam raffles autojoiner",
@@ -48,6 +48,7 @@
     "electron-json-storage": "4.1.8",
     "electron-updater": "4.2.0",
     "jquery": "3.4.1",
-    "request": "2.88.0"
+    "request": "2.88.0",
+    "tippy.js": "5.2.0"
   }
 }

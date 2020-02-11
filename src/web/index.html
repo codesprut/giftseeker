@@ -38,7 +38,11 @@
       <div class="user-bar">
         <div class="avatar"></div>
         <div class="btn username no-active"></div>
-        <div class="btn logout-button">
+        <div
+          class="btn logout-button"
+          data-tippy-content="Sign out"
+          data-tippy-translate="ui.logout"
+        >
           <span class="fa fa-sign-out-alt"></span>
         </div>
       </div>
@@ -68,7 +72,11 @@
           </div>
           <div class="input-wrap checkbox">
             <input id="use_system_browser" class="setter" type="checkbox" />
-            <label for="use_system_browser" data-lang="settings.use_system_browser"> </label>
+            <label
+              for="use_system_browser"
+              data-lang="settings.use_system_browser"
+            >
+            </label>
           </div>
           <div class="input-wrap checkbox">
             <input id="start_with_os" class="setter" type="checkbox" />

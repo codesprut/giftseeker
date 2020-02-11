@@ -1,6 +1,7 @@
 "use strict";
 
 window.$ = window.jQuery = require("jquery");
+const tippy = require("tippy.js").default;
 
 const { remote, ipcRenderer, shell } = require("electron");
 const accountData = remote.getGlobal("user");
@@ -20,7 +21,14 @@ const updateIcon = $("div.update-available");
 let intervalTicks = 0,
   updateAvail = false;
 
+const tippyOptions = {
+  placement: "bottom-end",
+  arrow: true
+};
+
 $(() => {
+  tippy("[data-tippy-content]", tippyOptions);
+
   autoUpdater.on("update-available", () => {
     updateAvail = true;
     updateIcon.addClass("progress");
@@ -201,6 +209,19 @@ function reloadLangStrings() {
 
   $("[data-lang-title]").each(function() {
     $(this).attr("title", language.get($(this).attr("data-lang-title")));
+  });
+
+  $("[data-tippy-translate]").each((i, element) => {
+    const languageKey = element.dataset.tippyTranslate;
+    const translation = language.get(languageKey);
+
+    if (!element._tippy) {
+      element.dataset.tippyContent = translation;
+      tippy(element, tippyOptions);
+      return;
+    }
+
+    element._tippy.setContent(translation);
   });
 }
 

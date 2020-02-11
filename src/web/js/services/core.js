@@ -393,9 +393,9 @@ class Seeker {
               input.default +
               "</div>" +
               '<div class="button btn-up"><span class="fa fa-plus"></span></div>' +
-              '<div class="label" title="' +
+              '<div class="label" data-tippy-content="' +
               language.get(input.trans + "_title") +
-              '" data-lang-title="' +
+              '" data-tippy-translate="' +
               input.trans +
               '_title" data-lang="' +
               input.trans +
@@ -520,10 +520,10 @@ class Seeker {
             .appendTo(this.settingsChecks);
 
           checkboxWrap.html(
-            '<label title="' +
+            '<label data-tippy-content="' +
               input.trans +
               "_title" +
-              '" data-lang-title="' +
+              '" data-tippy-translate="' +
               input.trans +
               '_title">' +
               '<input type="checkbox"/>' +
