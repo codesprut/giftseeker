@@ -30,10 +30,3 @@ window.timeToStr = function(time) {
 
   return str;
 };
-
-window.async = function(func, callback) {
-  setTimeout(function() {
-    func();
-    if (callback) callback();
-  }, 1);
-};

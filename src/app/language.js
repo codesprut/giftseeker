@@ -18,7 +18,7 @@ const downloadTranslation = async name => {
   );
 };
 
-const updatedTranslations = async () => {
+const updateTranslations = async () => {
   const { response } = await request({
     uri: `${config.websiteUrl}api/langs_new`,
     json: true
@@ -46,12 +46,7 @@ const updatedTranslations = async () => {
   }
 };
 
-const init = async () => {
-  if (!fs.existsSync(storage.getDataPath()))
-    throw new Error(`Could not find storage directory`);
-
-  await updatedTranslations();
-
+const loadTranslations = async () => {
   const languagesList = [];
   const storageFiles = fs.readdirSync(storage.getDataPath());
 
@@ -62,23 +57,29 @@ const init = async () => {
   }
 
   if (!languagesList.length)
-    throw new Error(`No downloaded translations found`);
+    throw new Error(`No translations found on storage`);
 
   return await new Promise((resolve, reject) => {
     storage.getMany(languagesList, (error, loadedFiles) => {
       if (error) reject(new Error(`Can't load selected translation`));
-
-      let selectedLanguage = config.defaultLanguage;
-
-      if (loadedFiles.lang[current()] === undefined)
-        selectedLanguage = loadedFiles[0];
-
-      settings.set("lang", selectedLanguage);
-
-      languages = loadedFiles.lang;
-      resolve();
+      resolve(loadedFiles.lang);
     });
   });
+};
+
+const init = async () => {
+  if (!fs.existsSync(storage.getDataPath()))
+    throw new Error(`Could not find storage directory`);
+
+  await updateTranslations();
+  languages = await loadTranslations();
+
+  let selectedLanguage = current();
+
+  if (!languages[selectedLanguage])
+    selectedLanguage = Object.keys(loadedFiles.lang)[0];
+
+  settings.set("lang", selectedLanguage);
 };
 
 const get = key => {
@@ -95,6 +96,8 @@ const get = key => {
 };
 
 const change = setLang => {
+  if (!languages[setLang]) return;
+
   settings.set("lang", setLang);
   // TODO: emit event
 };
@@ -108,7 +111,13 @@ const count = () => {
 };
 
 const listAvailable = () => {
-  return languages;
+  const list = [];
+  for (const language of Object.keys(languages)) {
+    const { culture, name } = languages[language].lang;
+    list.push({ culture, name });
+  }
+
+  return list;
 };
 
 module.exports = {

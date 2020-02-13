@@ -33,18 +33,14 @@ $(function() {
       .next()
       .css("display", "none");
   } else {
-    for (let lang in languagesList) {
-      let option = $(document.createElement("option"))
-        .attr("id", languagesList[lang].lang_culture)
-        .val(lang)
-        .text(
-          "[" +
-            languagesList[lang].lang_culture +
-            "] " +
-            languagesList[lang].lang_name
-        );
+    for (const lang of languagesList) {
+      const option = $(document.createElement("option"))
+        .attr("id", lang.culture)
+        .val(lang.culture)
+        .text("[" + lang.culture + "] " + lang.name);
 
-      if (language.current() === lang) option.prop("selected", true);
+      if (language.current() === lang.culture)
+        option.prop("selected", true);
 
       languageSelect.append(option);
     }

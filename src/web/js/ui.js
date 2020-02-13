@@ -21,14 +21,7 @@ const updateIcon = $("div.update-available");
 let intervalTicks = 0,
   updateAvail = false;
 
-const tippyOptions = {
-  placement: "bottom-end",
-  arrow: true
-};
-
 $(() => {
-  tippy("[data-tippy-content]", tippyOptions);
-
   autoUpdater.on("update-available", () => {
     updateAvail = true;
     updateIcon.addClass("progress");
@@ -51,8 +44,8 @@ $(() => {
   setInterval(intervalSchedules, 1000);
 
   // UI LOAD
-  reloadLangStrings();
   settingsSection();
+  reloadLangStrings();
 
   const setters = $("[data-id=settings] .setter").each(function() {
     let item = $(this);
@@ -217,7 +210,10 @@ function reloadLangStrings() {
 
     if (!element._tippy) {
       element.dataset.tippyContent = translation;
-      tippy(element, tippyOptions);
+      tippy(element, {
+        placement: "bottom-end",
+        arrow: true
+      });
       return;
     }
 
@@ -236,18 +232,14 @@ function settingsSection() {
   // fill language select
   if (language.count() <= 1) languageSwitch.remove();
   else {
-    for (let lang in languagesList) {
-      let option = $(document.createElement("option"))
-        .attr("id", languagesList[lang].lang_culture)
-        .val(lang)
-        .text(
-          "[" +
-            languagesList[lang].lang_culture +
-            "] " +
-            languagesList[lang].lang_name
-        );
+    for (const lang of languagesList) {
+      const option = $(document.createElement("option"))
+        .attr("id", lang.culture)
+        .val(lang.culture)
+        .text("[" + lang.culture + "] " + lang.name);
 
-      if (language.current() === lang) option.prop("selected", true);
+      if (language.current() === lang.culture)
+        option.prop("selected", true);
 
       languageSwitch.append(option);
     }
@@ -265,7 +257,6 @@ function settingsSection() {
   $(document.createElement("button"))
     .addClass("open-website")
     .attr("data-lang", "settings.steam_group")
-    .text(language.get("settings.steam_group"))
     .css("margin-left", "7px")
     .attr("data-link", "https://steamcommunity.com/groups/GiftSeeker")
     .appendTo(infoLinks);
@@ -273,7 +264,6 @@ function settingsSection() {
   $(document.createElement("button"))
     .addClass("open-website")
     .attr("data-lang", "settings.donation")
-    .text(language.get("settings.donation"))
     .css("margin-left", "7px")
     .attr("data-link", `${config.websiteUrl}donation`)
     .appendTo(infoLinks);
