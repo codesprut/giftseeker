@@ -64,17 +64,20 @@ const init = async () => {
   if (!languagesList.length)
     throw new Error(`No downloaded translations found`);
 
-  storage.getMany(languagesList, function(error, loadedFiles) {
-    if (error) throw new Error(`Can't load selected translation`);
+  return await new Promise((resolve, reject) => {
+    storage.getMany(languagesList, (error, loadedFiles) => {
+      if (error) reject(new Error(`Can't load selected translation`));
 
-    let selectedLanguage = config.defaultLanguage;
+      let selectedLanguage = config.defaultLanguage;
 
-    if (loadedFiles.lang[current()] === undefined)
-      selectedLanguage = loadedFiles[0];
+      if (loadedFiles.lang[current()] === undefined)
+        selectedLanguage = loadedFiles[0];
 
-    settings.set("lang", selectedLanguage);
+      settings.set("lang", selectedLanguage);
 
-    languages = loadedFiles.lang;
+      languages = loadedFiles.lang;
+      resolve();
+    });
   });
 };
 
