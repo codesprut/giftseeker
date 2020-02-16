@@ -14,7 +14,8 @@ const {
   authWindow,
   mainWindow,
   autoUpdater,
-  isPortable
+  isPortable,
+  currentBuild
 } = remote.getGlobal("sharedData");
 
 const updateIcon = $("div.update-available");

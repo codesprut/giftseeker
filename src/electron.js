@@ -216,7 +216,7 @@ app.on("ready", async () => {
     { role: "quit" }
   ]);
 
-  tray.setToolTip(`${config.appName} ${app.getVersion()}`);
+  tray.setToolTip(`${config.appName} ${ENV.currentBuild}`);
   tray.setContextMenu(trayMenu);
   tray.on("click", () => {
     if (user === null)
@@ -228,6 +228,7 @@ app.on("ready", async () => {
   global.sharedData = {
     isPortable: ENV.isPortable,
     autoUpdater,
+    currentBuild: ENV.currentBuild,
     devMode: ENV.devMode,
     shell,
     TrayIcon: tray,

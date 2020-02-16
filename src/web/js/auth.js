@@ -2,9 +2,14 @@
 window.$ = window.jQuery = require("jquery");
 const { remote, ipcRenderer } = require("electron");
 
-const { language, config, mainWindow, Browser, ipcMain } = remote.getGlobal(
-  "sharedData"
-);
+const {
+  language,
+  config,
+  mainWindow,
+  Browser,
+  ipcMain,
+  currentBuild
+} = remote.getGlobal("sharedData");
 
 const status = $(".status-text");
 const buttons = $("#auth_button");
@@ -39,8 +44,7 @@ $(function() {
         .val(lang.culture)
         .text("[" + lang.culture + "] " + lang.name);
 
-      if (language.current() === lang.culture)
-        option.prop("selected", true);
+      if (language.current() === lang.culture) option.prop("selected", true);
 
       languageSelect.append(option);
     }
