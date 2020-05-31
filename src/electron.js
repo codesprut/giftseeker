@@ -79,6 +79,7 @@ app.on("ready", async () => {
     frame: false,
     webPreferences: {
       session: programSession,
+      enableRemoteModule: true,
       devTools: ENV.devMode,
       nodeIntegration: true
     }
@@ -124,6 +125,7 @@ app.on("ready", async () => {
     frame: false,
     webPreferences: {
       session: programSession,
+      enableRemoteModule: true,
       devTools: ENV.devMode,
       nodeIntegration: true,
       backgroundThrottling: false,
