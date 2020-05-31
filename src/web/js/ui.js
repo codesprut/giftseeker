@@ -174,7 +174,9 @@ $(() => {
     reloadLangStrings();
   });
 
-  $(".open-website[data-link]").click(e => openWebsite(e.target.dataset.link));
+  $(document).on("click", ".open-website[data-link]", e =>
+    openWebsite(e.target.dataset.link)
+  );
 });
 
 function intervalSchedules() {
