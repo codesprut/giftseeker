@@ -4,7 +4,7 @@ class IndieGala extends Seeker {
   constructor() {
     super();
 
-    this.authContent = "My Libraries";
+    this.authContent = "My library";
 
     this.domain = "indiegala.com";
     this.websiteUrl = "https://www.indiegala.com";
@@ -16,8 +16,8 @@ class IndieGala extends Seeker {
 
   async authCheck(callback) {
     const authState = await this.indieGalaUser()
-      .then(user => (user.steamnick ? 1 : 0))
-      .catch(() => -1);
+      .then(user => (user.username ? 1 : 0))
+      .catch((err) => err.status === 200 ? 0 : -1);
 
     callback(authState);
   }
@@ -25,8 +25,8 @@ class IndieGala extends Seeker {
   async getUserInfo(callback) {
     const userData = await this.indieGalaUser()
       .then(user => ({
-        avatar: user.steamavatar,
-        username: user.steamnick,
+        avatar: user.userimage,
+        username: user.username,
         value: user.silver_coins_tot
       }))
       .catch(() => ({
