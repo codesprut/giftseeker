@@ -253,7 +253,7 @@ a:hover {
 }
 
 #content {
-  height: 100%;
+  height: calc(100% - 80px);
   border-bottom: 1px solid #28313e;
   background: #111b29;
 }
@@ -264,10 +264,6 @@ a:hover {
   display: none;
 }
 .content-item.active {
-  display: flex;
-}
-
-.content-item[data-id="settings"] {
   display: flex;
 }
 
