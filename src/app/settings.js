@@ -1,4 +1,4 @@
-const config = require("./config");
+const config = require("../electron/config");
 const storage = require("electron-json-storage");
 const events = require("events");
 const fs = require("fs");

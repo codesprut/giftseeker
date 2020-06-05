@@ -5,7 +5,7 @@
   "license": "ISC",
   "description": "Steam raffles autojoiner",
   "homepage": "https://giftseeker.ru/",
-  "main": "./src/electron.js",
+  "main": "src/electron/start.js",
   "scripts": {
     "start": "electron .",
     "build-win": "electron-builder --x64 --ia32",

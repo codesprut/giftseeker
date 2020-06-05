@@ -1,4 +1,4 @@
-@import url("../../../node_modules/tippy.js/dist/tippy.css");
+@import url("../../../../node_modules/tippy.js/dist/tippy.css");
 
 html {
   position: absolute;
@@ -99,7 +99,7 @@ a:hover {
 }
 
 #head .logo {
-  background: url("../../resources/images/icon.ico") center/70% no-repeat;
+  background: url("../../../resources/images/icon.ico") center/70% no-repeat;
   width: 80px;
   height: 80px;
   position: absolute;

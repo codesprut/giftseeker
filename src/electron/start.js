@@ -11,13 +11,13 @@ const {
 } = require("electron");
 const { autoUpdater } = require("electron-updater");
 const autoLaunch = require("auto-launch");
-const request = require("./infrastructure/request-promise");
+const request = require("../app/request-promise");
 
-const ENV = require("./app/environment");
-const config = require("./app/config");
-const settings = require("./app/settings");
+const ENV = require("./environment");
+const config = require("./config");
+const settings = require("../app/settings");
 
-const language = require("./app/language");
+const language = require("../app/language");
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -62,7 +62,7 @@ app.on("window-all-closed", () => {
 
 app.on("ready", async () => {
   await settings.init();
-  const programSession = require("./app/session");
+  const programSession = require("../app/session");
 
   settings.on("change", "start_with_os", startWithOs => {
     autoStartControl(startWithOs);
@@ -162,13 +162,13 @@ app.on("ready", async () => {
     }
   });
 
-  browserWindow.loadFile("./src/web/blank.html");
+  browserWindow.loadFile("./src/electron/web/blank.html");
 
   browserWindow.setMenu(null);
 
   browserWindow.on("close", e => {
     e.preventDefault();
-    browserWindow.loadFile("./src/web/blank.html");
+    browserWindow.loadFile("./src/electron/web/blank.html");
     browserWindow.hide();
 
     if (mainWindow.hidden) authWindow.focus();
@@ -253,7 +253,7 @@ function startApp() {
   language
     .init()
     .then(() => {
-      authWindow.loadFile("./src/web/auth.html");
+      authWindow.loadFile("./src/electron/web/auth.html");
 
       authWindow.on("ready-to-show", function() {
         authWindow.show();

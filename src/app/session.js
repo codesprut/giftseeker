@@ -1,6 +1,6 @@
 const { session } = require("electron");
 
-const { appName, defaultUseragent } = require("./config");
+const { appName, defaultUseragent } = require("../electron/config");
 const settings = require("./settings");
 
 const userAgent = settings.get("user_agent") || defaultUseragent;
