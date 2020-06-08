@@ -13,9 +13,7 @@ module.exports = class Seeker {
 
   constructor(params) {
     this.withValue = params.withValue || true;
-    this.requestTimeout = params.requestTimeout || 15000;
 
-    this.cookies = params.cookies;
     this.domain = params.domain;
     this.websiteUrl = params.websiteUrl;
     this.authPageUrl = params.authPageUrl;
@@ -53,7 +51,15 @@ module.exports = class Seeker {
       }
     };
 
-    // this.updateCookies();
+    this.http = axios.create({
+      timeout: params.requestTimeout || 5000,
+      responseType: "text",
+      withCredentials: true,
+      headers: {
+        "User-Agent": settings.get("user_agent"),
+        Cookie: this.getConfig("cookie")
+      }
+    });
 
     this.serviceWorker();
 
@@ -61,13 +67,15 @@ module.exports = class Seeker {
   }
 
   async authCheck() {
-    return await axios
-      .get(this.websiteUrl, {
-        responseType: "text",
-        headers: { "User-Agent": settings.get("user_agent") }
-      })
+    return await this.http
+      .get(this.websiteUrl)
       .then(res => (res.data.indexOf(this.authContent) >= 0 ? 1 : 0))
       .catch(err => (err.status === 200 ? 0 : -1));
+  }
+
+  setCookie(cookie) {
+    this.setConfig("cookie", cookie);
+    this.http.defaults.headers.common["Cookie"] = cookie;
   }
 
   startSeeker(autostart) {
@@ -132,7 +140,6 @@ module.exports = class Seeker {
         if (this.totalTicks % this.entryInterval() === 0) {
           this.authCheck(authState => {
             if (authState === 1) {
-              // this.updateCookies();
               this.seekService();
             } else if (authState === 0) {
               this.log(language.get("service.session_expired"), true);
@@ -165,8 +172,6 @@ module.exports = class Seeker {
     //   }
     // });
   }
-
-  updateCookies() {}
 
   interval() {
     const min = this.getConfig(
@@ -201,7 +206,8 @@ module.exports = class Seeker {
   }
 
   getConfig(key, def) {
-    if (def === undefined) def = this.settings[key].default;
+    if (def === undefined && this.settings[key])
+      def = this.settings[key].default;
 
     return settings.get(this.constructor.name.toLowerCase() + "_" + key, def);
   }
