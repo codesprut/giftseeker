@@ -60,25 +60,14 @@ module.exports = class Seeker {
     // if (settings.get("autostart")) this.startSeeker(true);
   }
 
-  authCheck() {
-    // const authState = await this.indieGalaUser()
-    //   .then(user => (user.username ? 1 : 0))
-    //   .catch((err) => err.status === 200 ? 0 : -1);
-    //
-    // callback(authState);
-
-
-
-    // $.ajax({
-    //   url: this.websiteUrl,
-    //   timeout: this.requestTimeout,
-    //   success: html => {
-    //     callback(html.indexOf(this.authContent) >= 0 ? 1 : 0);
-    //   },
-    //   error: () => {
-    //     callback(-1);
-    //   }
-    // });
+  async authCheck() {
+    return await axios
+      .get(this.websiteUrl, {
+        responseType: "text",
+        headers: { "User-Agent": settings.get("user_agent") }
+      })
+      .then(res => (res.data.indexOf(this.authContent) >= 0 ? 1 : 0))
+      .catch(err => (err.status === 200 ? 0 : -1));
   }
 
   startSeeker(autostart) {
