@@ -12,6 +12,8 @@ module.exports = class Seeker {
   status = statuses.PAUSED;
 
   constructor(params) {
+    this.name = this.constructor.name.toLowerCase();
+
     this.withValue = params.withValue || true;
 
     this.domain = params.domain;
@@ -67,7 +69,7 @@ module.exports = class Seeker {
   }
 
   async authCheck() {
-    return await this.http
+    return this.http
       .get(this.websiteUrl)
       .then(res => (res.data.indexOf(this.authContent) >= 0 ? 1 : 0))
       .catch(err => (err.status === 200 ? 0 : -1));
@@ -78,29 +80,29 @@ module.exports = class Seeker {
     this.http.defaults.headers.common["Cookie"] = cookie;
   }
 
-  startSeeker(autostart) {
+  start(autostart) {
     if (this.isStarted()) return false;
 
-    this.authCheck(authState => {
-      if (authState === 1) {
-        this.setStateStarted();
-      } else if (authState === -1) {
-        this.log(language.get("service.connection_error"), true);
-
-        if (autostart) {
-          this.setStatus(statuses.ERROR);
-          this.runReconnectTimeout();
-        }
-      } else {
-        if (autostart) {
-          this.setStatus(statuses.ERROR);
-          this.log(language.get("service.cant_start"), true);
-        }
-        // else {
-        //   this.runBrowserForAuth();
-        // }
-      }
-    });
+    // this.authCheck(authState => {
+    //   if (authState === 1) {
+    //     this.setStateStarted();
+    //   } else if (authState === -1) {
+    //     this.log(language.get("service.connection_error"), true);
+    //
+    //     if (autostart) {
+    //       this.setStatus(statuses.ERROR);
+    //       this.runReconnectTimeout();
+    //     }
+    //   } else {
+    //     if (autostart) {
+    //       this.setStatus(statuses.ERROR);
+    //       this.log(language.get("service.cant_start"), true);
+    //     }
+    //     // else {
+    //     //   this.runBrowserForAuth();
+    //     // }
+    //   }
+    // });
   }
 
   stopSeeker(withError, reconnect) {
@@ -118,7 +120,7 @@ module.exports = class Seeker {
     this.log(language.get("service.reconnect_in_5_min"));
     clearTimeout(this.reconnectTimeout);
     this.reconnectTimeout = setTimeout(() => {
-      this.startSeeker(true);
+      this.start(true);
     }, 300000);
   }
 
@@ -209,21 +211,19 @@ module.exports = class Seeker {
     if (def === undefined && this.settings[key])
       def = this.settings[key].default;
 
-    return settings.get(this.constructor.name.toLowerCase() + "_" + key, def);
+    return settings.get(this.name + "_" + key, def);
   }
 
   setConfig(key, val) {
-    return settings.set(this.constructor.name.toLowerCase() + "_" + key, val);
+    return settings.set(this.name + "_" + key, val);
   }
 
   transPath(key) {
-    return "service." + this.constructor.name.toLowerCase() + "." + key;
+    return "service." + this.name + "." + key;
   }
 
   trans(key) {
-    return language.get(
-      "service." + this.constructor.name.toLowerCase() + "." + key
-    );
+    return language.get("service." + this.name + "." + key);
   }
 
   log(text, logType) {
