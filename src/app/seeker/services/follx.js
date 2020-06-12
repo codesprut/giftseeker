@@ -1,6 +1,6 @@
 const Seeker = require("../core");
 
-module.exports = class Follx extends Seeker {
+class Follx extends Seeker {
   constructor() {
     super({
       websiteUrl: "https://follx.com",
@@ -118,4 +118,6 @@ module.exports = class Follx extends Seeker {
   //   giveawayEnter();
   // });
   // }
-};
+}
+
+module.exports = new Follx();

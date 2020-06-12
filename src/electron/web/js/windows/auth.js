@@ -108,7 +108,7 @@ function checkAuth() {
 }
 
 function loadProgram() {
-  mainWindow.loadFile("./src/electron/web/index.html");
+  mainWindow.loadFile("./src/electron/web/main.html");
 }
 
 function reloadLangStrings() {

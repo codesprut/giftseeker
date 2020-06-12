@@ -36,6 +36,14 @@ class Icon {
   }
 }
 
+class Panel {
+  setActive() {}
+
+  appendTo(element) {
+    // element.appendChild(this.icon);
+  }
+}
+
 const createIcon = (serviceName, defaultStatus) => {
   const icon = new Icon(serviceName);
   icon.setStatus(defaultStatus);
@@ -43,6 +51,6 @@ const createIcon = (serviceName, defaultStatus) => {
   return icon;
 };
 
-const createPanel = () => {};
+const createPanel = () => new Panel();
 
 export { createIcon, createPanel };
