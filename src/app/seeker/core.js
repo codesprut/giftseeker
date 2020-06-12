@@ -12,7 +12,8 @@ module.exports = class Seeker {
   status = statuses.PAUSED;
 
   constructor(params) {
-    this.name = this.constructor.name.toLowerCase();
+    this.name = this.constructor.name;
+    this.lowerCaseName = this.name.toLowerCase();
 
     this.withValue = params.withValue || true;
 
@@ -211,19 +212,19 @@ module.exports = class Seeker {
     if (def === undefined && this.settings[key])
       def = this.settings[key].default;
 
-    return settings.get(this.name + "_" + key, def);
+    return settings.get(this.lowerCaseName + "_" + key, def);
   }
 
   setConfig(key, val) {
-    return settings.set(this.name + "_" + key, val);
+    return settings.set(this.lowerCaseName + "_" + key, val);
   }
 
   transPath(key) {
-    return "service." + this.name + "." + key;
+    return "service." + this.lowerCaseName + "." + key;
   }
 
   trans(key) {
-    return language.get("service." + this.name + "." + key);
+    return language.get("service." + this.lowerCaseName + "." + key);
   }
 
   log(text, logType) {

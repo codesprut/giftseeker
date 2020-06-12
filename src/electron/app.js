@@ -226,6 +226,8 @@ app.on("ready", async () => {
     else mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
+  const Follx = require("../app/seeker/services/follx");
+
   // Variables shared with browser windows
   global.sharedData = {
     isPortable: ENV.isPortable,
@@ -241,6 +243,7 @@ app.on("ready", async () => {
     Browser: browserWindow,
     authWindow,
     mainWindow,
+    services: { Follx },
     Request: request
   };
 
