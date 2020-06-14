@@ -13,7 +13,6 @@ module.exports = class Seeker {
 
   constructor(params) {
     this.name = this.constructor.name;
-    this.lowerCaseName = this.name.toLowerCase();
 
     this.withValue = params.withValue || true;
 
@@ -212,19 +211,19 @@ module.exports = class Seeker {
     if (def === undefined && this.settings[key])
       def = this.settings[key].default;
 
-    return settings.get(this.lowerCaseName + "_" + key, def);
+    return settings.get(this.name.toLowerCase() + "_" + key, def);
   }
 
   setConfig(key, val) {
-    return settings.set(this.lowerCaseName + "_" + key, val);
+    return settings.set(this.name.toLowerCase() + "_" + key, val);
   }
 
   transPath(key) {
-    return "service." + this.lowerCaseName + "." + key;
+    return "service." + this.name.toLowerCase() + "." + key;
   }
 
   trans(key) {
-    return language.get("service." + this.lowerCaseName + "." + key);
+    return language.get(this.transPath(key));
   }
 
   log(text, logType) {
