@@ -1,5 +1,5 @@
 export default class ServiceIcon {
-  constructor(serviceName) {
+  constructor(serviceName, defaultStatus) {
     this.icon = document.createElement("div");
     this.icon.classList.add("service-icon");
 
@@ -17,6 +17,8 @@ export default class ServiceIcon {
     this.icon.appendChild(this.bg);
     this.icon.appendChild(this.statusIcon);
     this.icon.appendChild(this.nameLabel);
+
+    this.setStatus(defaultStatus);
   }
 
   appendTo(element) {

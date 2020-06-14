@@ -194,12 +194,8 @@ module.exports = class Seeker {
     this.status = status;
   }
 
-  getStatus() {
-    return this.status;
-  }
-
   isStarted() {
-    return this.getStatus() === statuses.STARTED;
+    return this.status === statuses.STARTED;
   }
 
   setValue(new_value) {
@@ -218,12 +214,12 @@ module.exports = class Seeker {
     return settings.set(this.name.toLowerCase() + "_" + key, val);
   }
 
-  transPath(key) {
-    return "service." + this.name.toLowerCase() + "." + key;
+  translationKey(subKey) {
+    return "service." + this.name.toLowerCase() + "." + subKey;
   }
 
-  trans(key) {
-    return language.get(this.transPath(key));
+  translate(key) {
+    return language.get(this.translationKey(key));
   }
 
   log(text, logType) {

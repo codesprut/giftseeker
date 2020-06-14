@@ -7,12 +7,12 @@ const iconsWrap = document.querySelector(".services-icons");
 const panelsWrap = document.querySelector(".services-panels");
 
 for (const service of services) {
-  service.icon = new ServiceIcon(service.name, service.getStatus());
-  service.panel = new ServicePanel(
-    service.name,
-    service.settings,
-    service.withValue
-  );
+  service.icon = new ServiceIcon(service.name, service.status);
+  service.panel = new ServicePanel(service.name, service.settings, {
+    enabled: service.withValue,
+    current: service.currentValue,
+    translationKey: service.translationKey("value_label")
+  });
 
   service.icon.appendTo(iconsWrap);
   service.panel.appendTo(panelsWrap);
