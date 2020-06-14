@@ -136,7 +136,7 @@ app.on("ready", async () => {
   mainWindow.setMenu(null);
 
   if (ENV.devMode) {
-    authWindow.webContents.openDevTools({ mode: "detach" });
+    //authWindow.webContents.openDevTools({ mode: "detach" });
     mainWindow.webContents.openDevTools({ mode: "detach" });
   }
 
@@ -227,6 +227,7 @@ app.on("ready", async () => {
   });
 
   const Follx = require("../app/seeker/services/follx");
+  const Steamgifts = require("../app/seeker/services/steamgifts");
 
   // Variables shared with browser windows
   global.sharedData = {
@@ -243,7 +244,7 @@ app.on("ready", async () => {
     Browser: browserWindow,
     authWindow,
     mainWindow,
-    services: { Follx },
+    services: [Follx, Steamgifts],
     Request: request
   };
 

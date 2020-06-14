@@ -125,14 +125,6 @@ $(() => {
       .addClass("active");
   });
 
-  // Переключение вкладок внутри сервиса - переключаем сразу во всех сервисах
-  $(document).on("click", ".service-panel > ul li", function() {
-    $(".service-panel > ul li, .in-service-panel").removeClass("active");
-    $('.in-service-panel[data-id="' + $(this).attr("data-id") + '"]')
-      .add('.service-panel > ul li[data-id="' + $(this).attr("data-id") + '"]')
-      .addClass("active");
-  });
-
   $(".logout-button").click(function() {
     let clicked = $(this).addClass("disabled");
 
@@ -241,8 +233,7 @@ function settingsSection() {
         .val(lang.culture)
         .text("[" + lang.culture + "] " + lang.name);
 
-      if (language.current() === lang.culture)
-        option.prop("selected", true);
+      if (language.current() === lang.culture) option.prop("selected", true);
 
       languageSwitch.append(option);
     }
