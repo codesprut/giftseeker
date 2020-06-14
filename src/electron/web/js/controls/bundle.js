@@ -8,6 +8,6 @@ const createIcon = (serviceName, defaultStatus) => {
   return icon;
 };
 
-const createPanel = () => new ServicePanel();
+const createPanel = serviceName => new ServicePanel(serviceName);
 
 export { createIcon, createPanel };
