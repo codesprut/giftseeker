@@ -17,7 +17,7 @@ class IndieGala extends Seeker {
   async authCheck(callback) {
     const authState = await this.indieGalaUser()
       .then(user => (user.username ? 1 : 0))
-      .catch((err) => err.status === 200 ? 0 : -1);
+      .catch(err => (err.status === 200 ? 0 : -1));
 
     callback(authState);
   }
@@ -46,8 +46,10 @@ class IndieGala extends Seeker {
           uniq_param: new Date().getTime(),
           show_coins: "True"
         },
-        dataType: "json",
-        success: response => resolve(response),
+        success: response => {
+          const withoutHtmlNode = response.replace(/<html.*html>/gs, "");
+          resolve(JSON.parse(withoutHtmlNode));
+        },
         error: error => reject(error)
       });
     });
