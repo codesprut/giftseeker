@@ -75,17 +75,13 @@ class IndieGala extends Seeker {
 
     for (const giveaway of giveawaysList) {
       if (currentLevel < giveaway.requiredLevel) continue;
-      if (giveaway.entered) continue;
 
       await this.sleep(this.interval());
 
-      const entryAttempt = await this.giveawayEnter(
-        giveaway.id,
-        giveaway.price
-      );
+      const entryAttempt = await this.giveawayEnter(giveaway.id);
 
       if (entryAttempt.status === "ok") {
-        this.setValue(entryAttempt.new_amount);
+        this.setValue(entryAttempt.silver_tot);
         this.log(
           language.get("service.entered_in") +
             this.logLink(giveaway.detailUrl, giveaway.name)
@@ -97,21 +93,10 @@ class IndieGala extends Seeker {
   getGiveawaysList(page) {
     return new Promise(resolve => {
       $.ajax({
-        url: "https://www.indiegala.com/giveaways/ajax_data/list",
-        data: {
-          page_param: page,
-          order_type_param: "expiry",
-          order_value_param: "asc",
-          filter_type_param: "level",
-          filter_value_param: "all"
-        },
+        url: `${this.websiteUrl}/giveaways/${page}/expiry/asc/level/all`,
         method: "GET",
-        dataType: "json",
-        success: response => {
-          if (response.status !== "ok") resolve([]);
-
-          resolve(this.parseGiveaways(response.content));
-        },
+        dataType: "html",
+        success: html => resolve(this.parseGiveaways(html)),
         error: () => resolve([])
       });
     });
@@ -121,48 +106,49 @@ class IndieGala extends Seeker {
     if (!html || !this.started) return [];
 
     const giveaways = [];
-    const tickets = $(html).find(".tickets-col");
+    const tickets = $(html).find(".items-list-item");
 
     for (const ticketHtml of tickets) {
       const ticket = $(ticketHtml);
+      const ticketLink = ticket.find("h5 a");
+      const ticketType = ticket.find(".items-list-item-type");
 
-      const id = ticket.find(".ticket-right .relative").attr("rel");
-      const name = ticket.find("h2 a").text();
-      const price = Number(ticket.find(".ticket-price strong").text());
-      const single = ticket.find(".extra-type .fa-clone").length === 0;
-      const detailUrl = `https://www.indiegala.com/giveaways/detail/${id}`;
-      const requiredLevel = parseInt(ticket.find(".type-level span").text());
-      let entered = false;
-      let entries = 0;
+      const id = ticketLink.attr("href").match(/\d+/)[0];
+      const name = ticketLink.text();
+      const price = Number(
+        ticket.find(".items-list-item-data-button a").data("price")
+      );
+      const single = ticketType.text().indexOf("single") === 0;
+      const detailUrl = this.websiteUrl + ticketLink.attr("href");
+      const requiredLevel = (() => {
+        const levelSpan = ticketType.find("span");
+        if (levelSpan.length === -1) return 0;
+        return Number(levelSpan.text().replace("Lev. ", ""));
+      })();
 
-      if (single) {
-        entered = ticket.find(".giv-coupon").length === 0;
-        entries = entered ? 1 : 0;
-      } else {
-        entries = parseInt(ticket.find(".giv-coupon .palette-color-11").text());
-        entered = entries > 0;
+      if (!single) continue;
+
+      if (giveaways.filter(ga => ga.id === id).length === 0) {
+        giveaways.push({
+          id,
+          name,
+          price,
+          single,
+          detailUrl,
+          requiredLevel
+        });
       }
-
-      giveaways.push({
-        id,
-        name,
-        price,
-        single,
-        detailUrl,
-        requiredLevel,
-        entered,
-        entries
-      });
     }
 
     return giveaways;
   }
 
-  giveawayEnter(id, price) {
+  giveawayEnter(id) {
     return Request({
+      uri: `${this.websiteUrl}/giveaways/join`,
+      body: { id },
       method: "POST",
-      uri: `${this.websiteUrl}/giveaways/new_entry`,
-      form: JSON.stringify({ giv_id: id, ticket_price: price }),
+      json: true,
       headers: {
         authority: "www.indiegala.com",
         accept: "application/json, text/javascript, */*; q=0.01",
@@ -173,8 +159,7 @@ class IndieGala extends Seeker {
         "sec-fetch-mode": "cors",
         "x-requested-with": "XMLHttpRequest",
         "user-agent": Browser.webContents.session.getUserAgent()
-      },
-      json: true
+      }
     })
       .then(response => response)
       .catch(() => {});
