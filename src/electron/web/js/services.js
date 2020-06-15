@@ -29,6 +29,17 @@ for (const service of services) {
   service.panel.setMenuItemClickCallback(pageCode => {
     for (const service of services) service.panel.selectPage(pageCode);
   });
+
+  service.panel.userPanel.mainButton.onclick = async ev => {
+    if (ev.target.classList.contains("disabled")) return;
+
+    ev.target.classList.add("disabled");
+
+    if (service.started) await service.stop();
+    else await service.start();
+
+    ev.target.classList.remove("disabled");
+  };
 }
 
 services[0].icon.setActive();

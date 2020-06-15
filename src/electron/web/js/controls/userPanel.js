@@ -3,6 +3,7 @@ const { language } = remote.getGlobal("sharedData");
 
 export default class UserPanel {
   constructor(value) {
+    this.value = value;
     this.panel = document.createElement("div");
     this.panel.classList.add("service-user-panel");
 
@@ -32,10 +33,23 @@ export default class UserPanel {
       this.userInfo.appendChild(valueWrap);
       valueWrap.appendChild(this.valueLabel);
     }
+
+    this.mainButton = document.createElement("button");
+    this.mainButton.classList.add("seeker-button", "start-button");
+    this.mainButton.innerText = language.get("service.btn_start");
+
+    this.panel.appendChild(this.mainButton);
   }
 
-  setValue(value) {
-    this.valueLabel.innerText = value;
+  updateInfo(data) {
+    this.avatar.style.backgroundImage = `url('${data.avatar}')`;
+    this.username.innerText = data.username;
+
+    this.setValue(data.value);
+  }
+
+  setValue(newValue) {
+    if (newValue && this.value.enabled) this.valueLabel.innerText = newValue;
   }
 
   appendTo(element) {

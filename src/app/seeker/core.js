@@ -80,8 +80,12 @@ module.exports = class Seeker {
     this.http.defaults.headers.common["Cookie"] = cookie;
   }
 
-  start(autostart) {
+  async start(autostart) {
     if (this.isStarted()) return false;
+
+    const authState = await this.authCheck();
+
+    console.log(authState);
 
     // this.authCheck(authState => {
     //   if (authState === 1) {
@@ -105,7 +109,7 @@ module.exports = class Seeker {
     // });
   }
 
-  stopSeeker(withError, reconnect) {
+  async stop(withError, reconnect) {
     const status = withError ? statuses.ERROR : statuses.PAUSED;
     if (!this.isStarted()) return false;
 
@@ -145,10 +149,10 @@ module.exports = class Seeker {
               this.seekService();
             } else if (authState === 0) {
               this.log(language.get("service.session_expired"), true);
-              this.stopSeeker(true);
+              this.stop(true);
             } else {
               this.log(language.get("service.connection_lost"), true);
-              this.stopSeeker(true, true);
+              this.stop(true, true);
             }
           });
         }
