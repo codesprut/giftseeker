@@ -93,13 +93,35 @@ class IndieGala extends Seeker {
   getGiveawaysList(page) {
     return new Promise(resolve => {
       $.ajax({
-        url: `${this.websiteUrl}/giveaways/${page}/expiry/asc/level/all`,
+        url: `${this.websiteUrl}/giveaways/ajax/${page}/price/asc/level/all`,
         method: "GET",
         dataType: "html",
-        success: html => resolve(this.parseGiveaways(html)),
+        success: response => {
+          const clearResponse = this.clearHtmlTags(response, [
+            "script"
+          ]).replace(/\n/g, "\\n");
+
+          resolve(this.parseGiveaways(JSON.parse(clearResponse).html));
+        },
         error: () => resolve([])
       });
     });
+  }
+
+  clearHtmlTags(html, tags = []) {
+    let result = html;
+
+    for (const tag of tags) {
+      const tagQty = html.split(`<${tag}`).length - 1;
+
+      const regExp = new RegExp(`<${tag}.*?>.*?</${tag}>`);
+
+      for (let i = 0; i < tagQty; i++) {
+        result = result.replace(regExp, "");
+      }
+    }
+
+    return result;
   }
 
   parseGiveaways(html) {
