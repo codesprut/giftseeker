@@ -85,7 +85,8 @@ for (const service of services) {
 
   serviceButton.onmouseenter = () => {
     serviceButton.classList.add("hovered");
-    serviceButton.innerText = language.get("service.btn_stop");
+    if (service.isStarted())
+      serviceButton.innerText = language.get("service.btn_stop");
   };
 
   serviceButton.onmouseleave = () => serviceButton.classList.remove("hovered");
