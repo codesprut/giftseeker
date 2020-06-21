@@ -196,6 +196,9 @@ module.exports = class Seeker {
   }
 
   setStatus(status) {
+    if (this.status === status) return;
+
+    this.events.emit("status.changed", status);
     this.status = status;
   }
 

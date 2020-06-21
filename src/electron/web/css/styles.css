@@ -434,10 +434,10 @@ textarea#useragent {
 .service-icon .service-status {
   background-color: lightgray;
 }
-.service-icon .service-status[data-status="good"] {
+.service-icon .service-status[data-status="started"] {
   background-color: lightgreen;
 }
-.service-icon .service-status[data-status="bad"] {
+.service-icon .service-status[data-status="error"] {
   background-color: orangered;
 }
 

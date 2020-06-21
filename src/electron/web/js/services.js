@@ -40,6 +40,10 @@ for (const service of services) {
     service.panel.logger.add(text, type);
   });
 
+  service.on("status.changed", status => {
+    service.icon.statusIcon.dataset.status = status;
+  });
+
   service.panel.userPanel.mainButton.onclick = async ev => {
     const button = ev.target;
     if (button.classList.contains("disabled")) return;
