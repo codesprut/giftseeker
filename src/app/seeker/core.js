@@ -66,6 +66,10 @@ module.exports = class Seeker {
       }
     });
 
+    settings.on("change", "user_agent", userAgent => {
+      this.http.defaults.headers.common["User-Agent"] = userAgent;
+    });
+
     this.serviceWorker();
   }
 
