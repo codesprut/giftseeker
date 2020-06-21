@@ -1,6 +1,7 @@
 const settings = require("../settings");
 const language = require("../language");
 const statuses = require("./statuses");
+const events = require("events");
 const axios = require("axios");
 
 module.exports = class Seeker {
@@ -21,6 +22,8 @@ module.exports = class Seeker {
     this.authPageUrl = params.authPageUrl;
     this.winsPageUrl = params.winsPageUrl;
     this.authContent = params.authContent;
+
+    this.events = new events.EventEmitter();
 
     this.settings = {
       timer: {
@@ -64,6 +67,10 @@ module.exports = class Seeker {
     });
 
     this.serviceWorker();
+  }
+
+  on(eventName, callback) {
+    this.events.on(eventName, callback);
   }
 
   async authCheck() {
@@ -220,8 +227,8 @@ module.exports = class Seeker {
     return language.get(this.translationKey(key));
   }
 
-  log(text, logType) {
-    console.log(text, logType);
+  log(text, type) {
+    this.events.emit("log", { text, type });
   }
 
   sleep(ms) {

@@ -1,5 +1,5 @@
 const { remote } = require("electron");
-const { services, settings } = remote.getGlobal("sharedData");
+const { services, settings, language } = remote.getGlobal("sharedData");
 import ServiceIcon from "./controls/serviceIcon.js";
 import ServicePanel from "./controls/servicePanel.js";
 import browser from "./browser.js";
@@ -34,6 +34,10 @@ for (const service of services) {
 
   service.panel.setMenuItemClickCallback(pageCode => {
     for (const service of services) service.panel.selectPage(pageCode);
+  });
+
+  service.on("log", ({ text, type }) => {
+    service.panel.logger.add(text, type);
   });
 
   service.panel.userPanel.mainButton.onclick = async ev => {
