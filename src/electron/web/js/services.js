@@ -42,7 +42,15 @@ for (const service of services) {
 
   service.on("status.changed", status => {
     service.icon.statusIcon.dataset.status = status;
+
+    service.panel.userPanel.mainButton.innerText = language.get(
+      `service.btn_${service.isStarted() ? "stop" : "start"}`
+    );
   });
+
+  service.on("userinfo.updated", userInfo =>
+    service.panel.userPanel.updateInfo(userInfo)
+  );
 
   service.panel.userPanel.mainButton.onclick = async ev => {
     const button = ev.target;

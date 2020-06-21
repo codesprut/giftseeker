@@ -51,6 +51,8 @@ export default class UserPanel {
   }
 
   updateInfo(data) {
+    this.userInfo.classList.add("visible");
+
     this.avatar.style.backgroundImage = `url('${data.avatar}')`;
     this.username.innerText = data.username;
 
