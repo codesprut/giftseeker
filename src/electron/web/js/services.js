@@ -1,14 +1,15 @@
 const { remote } = require("electron");
-const { services } = remote.getGlobal("sharedData");
+const { services, settings } = remote.getGlobal("sharedData");
 import ServiceIcon from "./controls/serviceIcon.js";
 import ServicePanel from "./controls/servicePanel.js";
+import browser from "./browser.js";
 
 const iconsWrap = document.querySelector(".services-icons");
 const panelsWrap = document.querySelector(".services-panels");
 
 for (const service of services) {
   service.icon = new ServiceIcon(service.name, service.status);
-  service.panel = new ServicePanel(service.name, service.settings, {
+  service.panel = new ServicePanel(service.name, service.websiteUrl, service.settings, {
     enabled: service.withValue,
     current: service.currentValue,
     translationKey: service.translationKey("value_label")

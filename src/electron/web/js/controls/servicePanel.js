@@ -2,7 +2,7 @@ import Logger from "./logger.js";
 import UserPanel from "./userPanel.js";
 
 export default class ServicePanel {
-  constructor(serviceName, settings, value) {
+  constructor(serviceName, websiteUrl, settings, value) {
     this.pages = [];
     this.panel = document.createElement("div");
     this.panel.classList.add("service-panel");
@@ -14,7 +14,7 @@ export default class ServicePanel {
     this.logger = new Logger();
     this.logger.appendTo(logsPage);
 
-    this.userPanel = new UserPanel(value);
+    this.userPanel = new UserPanel(websiteUrl, value);
     this.userPanel.appendTo(this.panel);
   }
 

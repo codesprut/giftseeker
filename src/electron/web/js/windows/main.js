@@ -3,7 +3,7 @@
 window.$ = window.jQuery = require("jquery");
 const tippy = require("tippy.js").default;
 
-const { remote, ipcRenderer, shell } = require("electron");
+const { remote, ipcRenderer } = require("electron");
 const accountData = remote.getGlobal("user");
 const {
   Request,
@@ -165,10 +165,6 @@ $(() => {
   ipcRenderer.on("change-lang", function() {
     reloadLangStrings();
   });
-
-  $(document).on("click", ".open-website[data-link]", e =>
-    openWebsite(e.target.dataset.link)
-  );
 });
 
 function intervalSchedules() {
@@ -269,15 +265,6 @@ function renderUser(accountData) {
   });
   $("#head .user-bar .username").html(accountData.username);
 }
-
-const openWebsite = url => {
-  if (settings.get("use_system_browser")) return shell.openExternal(url);
-
-  Browser.loadURL(url);
-  Browser.setTitle("GS Browser - " + language.get("auth.browser_loading"));
-
-  Browser.show();
-};
 
 const minimizeWindow = () => {
   remote.BrowserWindow.getFocusedWindow().hide();

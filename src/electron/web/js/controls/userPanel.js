@@ -1,8 +1,10 @@
 const { remote } = require("electron");
 const { language } = remote.getGlobal("sharedData");
 
+import browser from "../browser.js";
+
 export default class UserPanel {
-  constructor(value) {
+  constructor(websiteUrl, value) {
     this.value = value;
     this.panel = document.createElement("div");
     this.panel.classList.add("service-user-panel");
@@ -15,10 +17,17 @@ export default class UserPanel {
     this.username = document.createElement("span");
     this.username.classList.add("username");
 
+    this.websiteLink = document.createElement("button");
+    this.websiteLink.classList.add("open-website");
+    this.websiteLink.dataset.lang = "service.open_website";
+    this.websiteLink.innerText = language.get("service.open_website");
+    this.websiteLink.onclick = () => browser.openUrl(websiteUrl);
+
     this.userInfo.appendChild(this.avatar);
     this.userInfo.appendChild(this.username);
 
     this.panel.appendChild(this.userInfo);
+    this.panel.appendChild(this.websiteLink);
 
     if (value.enabled) {
       const valueWrap = document.createElement("span");
