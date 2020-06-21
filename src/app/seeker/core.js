@@ -133,55 +133,55 @@ module.exports = class Seeker {
     }, 300000);
   }
 
-  setStateStarted() {
+  async setStateStarted() {
     this.totalTicks = 0;
 
     this.setStatus(statuses.STARTED);
     this.log(language.get("service.started"));
 
-    // this.updateUserInfo();
+    this.updateUserInfo();
   }
 
   serviceWorker() {
-    setInterval(() => {
-      if (this.totalTicks !== 0 && this.totalTicks % this.usrUpdTimer === 0)
+    setInterval(async () => {
+      if (this.totalTicks % this.updateUserInterval === 0)
         this.updateUserInfo();
 
       if (this.isStarted()) {
         if (this.totalTicks % this.entryInterval() === 0) {
-          this.authCheck(authState => {
-            if (authState === 1) {
+          const authState = await this.authCheck();
+
+          switch (authState) {
+            case 1:
               this.seekService();
-            } else if (authState === 0) {
+              break;
+            case 0:
               this.log(language.get("service.session_expired"), true);
               this.stop(true);
-            } else {
+              break;
+            case -1:
               this.log(language.get("service.connection_lost"), true);
               this.stop(true, true);
-            }
-          });
+              break;
+          }
         }
       }
 
       this.totalTicks = this.totalTicks < 32760 ? this.totalTicks + 1 : 0;
+      this.events.emit("tick", this.totalTicks);
     }, 1000);
   }
 
-  updateUserInfo() {
-    // this.authCheck(authState => {
-    //   if (authState === 1) {
-    //     this.getUserInfo(userData => {
-    //       this.userInfo
-    //         .find(".avatar")
-    //         .css("background-image", "url('" + userData.avatar + "')");
-    //       this.userInfo.find(".username").text(userData.username);
-    //
-    //       if (this.withValue) this.setValue(userData.value);
-    //
-    //       this.userInfo.addClass("visible");
-    //     });
-    //   }
-    // });
+  async updateUserInfo() {
+    const authState = await this.authCheck();
+
+    if (authState === 1) {
+      const userInfo = await this.getUserInfo();
+
+      this.events.emit("userinfo.updated", userInfo);
+
+      this.setValue(userInfo.value);
+    }
   }
 
   interval() {
@@ -212,6 +212,8 @@ module.exports = class Seeker {
 
   setValue(new_value) {
     if (!this.withValue) return;
+
+    this.events.emit("value.changed", new_value);
     this.curr_value = parseInt(new_value);
   }
 
@@ -244,14 +246,14 @@ module.exports = class Seeker {
 
   // ### "Виртуальные методы" - реализуются в потомках
   // Основной метод
-  seekService() {}
+  async seekService() {}
 
   // Получение данных о юзере - аватар, имя, валюта
-  getUserInfo(callback) {
-    callback({
+  async getUserInfo() {
+    return {
       avatar: "https://giftseeker.ru/favicon.ico",
       username: "GS User",
       value: 0
-    });
+    };
   }
 };
