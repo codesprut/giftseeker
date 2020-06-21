@@ -64,8 +64,6 @@ module.exports = class Seeker {
     });
 
     this.serviceWorker();
-
-    // if (settings.get("autostart")) this.startSeeker(true);
   }
 
   async authCheck() {
@@ -85,28 +83,24 @@ module.exports = class Seeker {
 
     const authState = await this.authCheck();
 
-    console.log(authState);
+    switch (authState) {
+      case 1:
+        this.setStateStarted();
+        break;
+      case 0 && autostart:
+        this.setStatus(statuses.ERROR);
+        this.log(language.get("service.cant_start"), true);
+        break;
+      case -1:
+        this.log(language.get("service.connection_error"), true);
+        if (autostart) {
+          this.setStatus(statuses.ERROR);
+          this.runReconnectTimeout();
+        }
+        break;
+    }
 
-    // this.authCheck(authState => {
-    //   if (authState === 1) {
-    //     this.setStateStarted();
-    //   } else if (authState === -1) {
-    //     this.log(language.get("service.connection_error"), true);
-    //
-    //     if (autostart) {
-    //       this.setStatus(statuses.ERROR);
-    //       this.runReconnectTimeout();
-    //     }
-    //   } else {
-    //     if (autostart) {
-    //       this.setStatus(statuses.ERROR);
-    //       this.log(language.get("service.cant_start"), true);
-    //     }
-    //     // else {
-    //     //   this.runBrowserForAuth();
-    //     // }
-    //   }
-    // });
+    return authState;
   }
 
   async stop(withError, reconnect) {

@@ -9,11 +9,16 @@ const panelsWrap = document.querySelector(".services-panels");
 
 for (const service of services) {
   service.icon = new ServiceIcon(service.name, service.status);
-  service.panel = new ServicePanel(service.name, service.websiteUrl, service.settings, {
-    enabled: service.withValue,
-    current: service.currentValue,
-    translationKey: service.translationKey("value_label")
-  });
+  service.panel = new ServicePanel(
+    service.name,
+    service.websiteUrl,
+    service.settings,
+    {
+      enabled: service.withValue,
+      current: service.currentValue,
+      translationKey: service.translationKey("value_label")
+    }
+  );
 
   service.icon.appendTo(iconsWrap);
   service.panel.appendTo(panelsWrap);
@@ -32,15 +37,31 @@ for (const service of services) {
   });
 
   service.panel.userPanel.mainButton.onclick = async ev => {
-    if (ev.target.classList.contains("disabled")) return;
+    const button = ev.target;
+    if (button.classList.contains("disabled")) return;
 
-    ev.target.classList.add("disabled");
+    button.classList.add("disabled");
 
     if (service.started) await service.stop();
-    else await service.start();
+    else {
+      const authState = await service.start();
 
-    ev.target.classList.remove("disabled");
+      if (authState === 0) {
+        const cookies = await browser.runForAuth(
+          service.websiteUrl,
+          service.authPageUrl,
+          service.authContent
+        );
+
+        service.setCookie(cookies);
+        await service.start();
+      }
+    }
+
+    button.classList.remove("disabled");
   };
+
+  if (settings.get("autostart")) service.start(true);
 }
 
 services[0].icon.setActive();
