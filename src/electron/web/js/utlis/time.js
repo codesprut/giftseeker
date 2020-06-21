@@ -19,6 +19,18 @@ class Time {
       .replace("s", seconds);
   }
 
+  elapsed(timestamp) {
+    const hours = Math.floor(timestamp / 60 / 60);
+    const minutes = Math.floor((timestamp - hours * 60) / 60);
+    const seconds = timestamp % 60;
+
+    return "hh:mm:ss"
+      .replace("hh", this.leadZero(hours))
+      .replace("mm", this.leadZero(minutes))
+      .replace("ss", this.leadZero(seconds))
+      .replace(/00\D/g, "");
+  }
+
   leadZero(number) {
     return number > 9 ? number : "0" + number;
   }
