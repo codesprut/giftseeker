@@ -3,6 +3,7 @@ const { services, settings, language } = remote.getGlobal("sharedData");
 import ServiceIcon from "./controls/serviceIcon.js";
 import ServicePanel from "./controls/servicePanel.js";
 import browser from "./browser.js";
+import time from "./utlis/time.js";
 
 const iconsWrap = document.querySelector(".services-icons");
 const panelsWrap = document.querySelector(".services-panels");
@@ -19,6 +20,8 @@ for (const service of services) {
       translationKey: service.translationKey("value_label")
     }
   );
+
+  const serviceButton = service.panel.userPanel.mainButton;
 
   service.icon.appendTo(iconsWrap);
   service.panel.appendTo(panelsWrap);
@@ -43,7 +46,7 @@ for (const service of services) {
   service.on("status.changed", status => {
     service.icon.statusIcon.dataset.status = status;
 
-    service.panel.userPanel.mainButton.innerText = language.get(
+    serviceButton.innerText = language.get(
       `service.btn_${service.isStarted() ? "stop" : "start"}`
     );
   });
@@ -52,7 +55,19 @@ for (const service of services) {
     service.panel.userPanel.updateInfo(userInfo)
   );
 
-  service.panel.userPanel.mainButton.onclick = async ev => {
+  service.on("value.changed", newValue =>
+    service.panel.userPanel.setValue(newValue)
+  );
+
+  service.on("tick", totalTicks => {
+    const timeElapsed =
+      service.workerInterval() - (totalTicks % service.workerInterval());
+
+    if (service.isStarted() && !serviceButton.classList.contains("hovered"))
+      serviceButton.innerText = time.elapsed(timeElapsed);
+  });
+
+  serviceButton.onclick = async ev => {
     const button = ev.target;
     if (button.classList.contains("disabled")) return;
 
@@ -76,6 +91,13 @@ for (const service of services) {
 
     button.classList.remove("disabled");
   };
+
+  serviceButton.onmouseenter = () => {
+    serviceButton.classList.add("hovered");
+    serviceButton.innerText = language.get("service.btn_stop");
+  };
+
+  serviceButton.onmouseleave = () => serviceButton.classList.remove("hovered");
 
   if (settings.get("autostart")) service.start(true);
   service.runWorker();

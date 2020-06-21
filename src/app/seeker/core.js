@@ -146,7 +146,7 @@ module.exports = class Seeker {
         this.updateUserInfo();
 
       if (this.isStarted()) {
-        if (this.totalTicks % this.entryInterval() === 0) {
+        if (this.totalTicks % this.workerInterval() === 0) {
           const authState = await this.authCheck();
 
           switch (authState) {
@@ -182,7 +182,7 @@ module.exports = class Seeker {
     }
   }
 
-  interval() {
+  entryInterval() {
     const min = this.getConfig(
       "interval_from",
       this.settings.interval_from.default
@@ -193,7 +193,7 @@ module.exports = class Seeker {
     return (Math.floor(Math.random() * (max - min)) + min) * 1000;
   }
 
-  entryInterval() {
+  workerInterval() {
     return this.getConfig("timer", 10) * 60;
   }
 
