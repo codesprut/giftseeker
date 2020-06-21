@@ -1,20 +1,32 @@
 import Logger from "./logger.js";
 import UserPanel from "./userPanel.js";
+import Setting from "./setting.js";
 
 export default class ServicePanel {
-  constructor(serviceName, websiteUrl, settings, value) {
+  constructor(service) {
     this.pages = [];
     this.panel = document.createElement("div");
     this.panel.classList.add("service-panel");
-    this.panel.setAttribute("id", serviceName.toLowerCase());
+    this.panel.setAttribute("id", service.name.toLowerCase());
 
     const logsPage = this.addPage("logs");
     const settingsPage = this.addPage("settings");
 
+    this.renderSettings(
+      settingsPage,
+      service.settings,
+      service.getConfig,
+      service.setConfig
+    );
+
     this.logger = new Logger();
     this.logger.appendTo(logsPage);
 
-    this.userPanel = new UserPanel(websiteUrl, value);
+    this.userPanel = new UserPanel(service.websiteUrl, {
+      enabled: service.withValue,
+      current: service.currentValue,
+      translationKey: service.translationKey("value_label")
+    });
     this.userPanel.appendTo(this.panel);
   }
 
@@ -38,6 +50,30 @@ export default class ServicePanel {
     this.menuItemCallback = callback;
   }
 
+  renderSettings(settingsPage, settings, getSetting, setSetting) {
+    const numbersPanel = document.createElement("div");
+    numbersPanel.classList.add("settings-numbers");
+
+    const checkboxesPanel = document.createElement("div");
+    checkboxesPanel.classList.add("settings-checkbox");
+
+    settingsPage.appendChild(numbersPanel);
+    settingsPage.appendChild(checkboxesPanel);
+
+    for (const settingKey in settings) {
+      const control = new Setting(
+        settingKey,
+        settings[settingKey],
+        getSetting,
+        setSetting
+      );
+
+      control.appendTo(
+        control.type === "checkbox" ? checkboxesPanel : numbersPanel
+      );
+    }
+  }
+
   addPage(pageCode) {
     if (!this.menuItems) {
       this.menuItems = document.createElement("ul");
@@ -55,7 +91,7 @@ export default class ServicePanel {
     };
 
     pageItem.classList.add(
-      "service-logs",
+      `service-${pageCode}`,
       "in-service-panel",
       "styled-scrollbar"
     );
