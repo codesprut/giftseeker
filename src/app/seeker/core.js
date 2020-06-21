@@ -242,11 +242,8 @@ module.exports = class Seeker {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // ### "Виртуальные методы" - реализуются в потомках
-  // Основной метод
   async seekService() {}
 
-  // Получение данных о юзере - аватар, имя, валюта
   async getUserInfo() {
     return {
       avatar: "https://giftseeker.ru/favicon.ico",
