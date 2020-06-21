@@ -69,8 +69,6 @@ module.exports = class Seeker {
     settings.on("change", "user_agent", userAgent => {
       this.http.defaults.headers.common["User-Agent"] = userAgent;
     });
-
-    this.serviceWorker();
   }
 
   on(eventName, callback) {
@@ -142,7 +140,7 @@ module.exports = class Seeker {
     this.updateUserInfo();
   }
 
-  serviceWorker() {
+  runWorker() {
     setInterval(async () => {
       if (this.totalTicks % this.updateUserInterval === 0)
         this.updateUserInfo();

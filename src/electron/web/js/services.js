@@ -70,6 +70,7 @@ for (const service of services) {
   };
 
   if (settings.get("autostart")) service.start(true);
+  service.runWorker();
 }
 
 services[0].icon.setActive();
