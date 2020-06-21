@@ -42,7 +42,7 @@ for (const service of services) {
 
     button.classList.add("disabled");
 
-    if (service.started) await service.stop();
+    if (service.isStarted()) await service.stop();
     else {
       const authState = await service.start();
 
