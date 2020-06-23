@@ -67,7 +67,7 @@ module.exports = class Seeker {
     });
 
     settings.on("change", "user_agent", userAgent => {
-      this.http.defaults.headers.common["User-Agent"] = userAgent;
+      this.http.defaults.headers["User-Agent"] = userAgent;
     });
   }
 
@@ -84,7 +84,7 @@ module.exports = class Seeker {
 
   setCookie(cookie) {
     this.setConfig("cookie", cookie);
-    this.http.defaults.headers.common["Cookie"] = cookie;
+    this.http.defaults.headers["Cookie"] = cookie;
   }
 
   async start(autostart) {
