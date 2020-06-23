@@ -1,4 +1,5 @@
 const Seeker = require("../core");
+const { parse } = require("node-html-parser");
 
 class Follx extends Seeker {
   constructor() {
@@ -7,6 +8,21 @@ class Follx extends Seeker {
       authPageUrl: "https://follx.com/logIn",
       winsPageUrl: "https://follx.com/giveaways/won",
       authContent: "/account"
+    });
+  }
+
+  async getUserInfo() {
+    return this.http.get(this.websiteUrl).then(response => {
+      const document = parse(response.data);
+
+      return {
+        avatar: document
+          .querySelector("span.avatar")
+          .toString()
+          .match(/http.*jpg/)[0],
+        username: document.querySelector(".username").structuredText,
+        value: document.querySelector(".energy span").structuredText
+      };
     });
   }
 
