@@ -1,13 +1,13 @@
+const { websiteUrl } = require("../electron/config");
 const storage = require("electron-json-storage");
 const request = require("./request-promise");
-const config = require("../electron/config");
 const settings = require("./settings");
 const fs = require("fs");
 
 let languages = {};
 
 const downloadTranslation = async name => {
-  await request({ uri: `${config.websiteUrl}trans/${name}` }).then(
+  await request({ uri: `${websiteUrl}trans/${name}` }).then(
     translationStrings => {
       fs.writeFile(
         storage.getDataPath() + "/" + name,
@@ -20,7 +20,7 @@ const downloadTranslation = async name => {
 
 const updateTranslations = async () => {
   const { response } = await request({
-    uri: `${config.websiteUrl}api/langs_new`,
+    uri: `${websiteUrl}api/langs_new`,
     json: true
   });
 
@@ -76,10 +76,10 @@ const init = async () => {
 
   let selectedLanguage = current();
 
-  if (!languages[selectedLanguage])
+  if (!languages[selectedLanguage]) {
     selectedLanguage = Object.keys(loadedFiles.lang)[0];
-
-  settings.set("lang", selectedLanguage);
+    settings.set("language", selectedLanguage);
+  }
 };
 
 const get = key => {
@@ -98,12 +98,11 @@ const get = key => {
 const change = setLang => {
   if (!languages[setLang]) return;
 
-  settings.set("lang", setLang);
-  // TODO: emit event
+  settings.set("language", setLang);
 };
 
 const current = () => {
-  return settings.get("lang", config.defaultLanguage);
+  return settings.get("language");
 };
 
 const count = () => {
