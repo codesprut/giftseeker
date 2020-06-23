@@ -1,4 +1,5 @@
 const Seeker = require("../core");
+const language = require("../../language");
 const { parse } = require("node-html-parser");
 
 class Follx extends Seeker {
@@ -26,114 +27,68 @@ class Follx extends Seeker {
     });
   }
 
-  // getUserInfo(callback) {
-  //   let userData = {
-  //     avatar: "https://follx.com/favicon.ico",
-  //     username: "Follx User",
-  //     value: 0
-  //   };
-  //
-  //   $.ajax({
-  //     url: `https://follx.com/users/${accountData.steamid}`,
-  //     success: function(data) {
-  //       let html = $(data);
-  //
-  //       userData.avatar = html.find(".card-cover img").attr("src");
-  //       userData.username = html
-  //         .find(".username")
-  //         .first()
-  //         .text();
-  //       userData.value = html
-  //         .find(".user .energy span")
-  //         .first()
-  //         .text();
-  //     },
-  //     complete: function() {
-  //       callback(userData);
-  //     }
-  //   });
-  // }
+  async seekService() {
+    let currentPage = 1;
+    const processPages = this.getConfig("pages", 1);
 
-  seekService() {
-    // let _this = this;
-    // let page = 1;
-    //
-    // let callback = function() {
-    //   page++;
-    //
-    //   if (page <= _this.getConfig("pages", 1))
-    //     _this.enterOnPage(page, callback);
-    // };
-    //
-    // this.enterOnPage(page, callback);
+    do {
+      await this.enterOnPage(currentPage);
+      currentPage++;
+    } while (currentPage <= processPages);
   }
 
-  // enterOnPage(page) {
-  // let _this = this;
-  // let CSRF = "";
-  //
-  // $.get("https://follx.com/giveaways?page=" + page, function(html) {
-  //   html = $("<div>" + html + "</div>");
-  //
-  //   CSRF = html.find('meta[name="csrf-token"]').attr("content");
-  //
-  //   if (CSRF.length < 10) {
-  //     _this.log(this.trans("token_error"), true);
-  //     _this.stopSeeker(true);
-  //     return;
-  //   }
-  //
-  //   let found_games = html.find(".giveaway_card");
-  //   let curr_giveaway = 0;
-  //
-  //   function giveawayEnter() {
-  //     if (found_games.length <= curr_giveaway || !_this.started) {
-  //       if (callback) callback();
-  //
-  //       return;
-  //     }
-  //
-  //     let next_after = _this.interval();
-  //     let card = found_games.eq(curr_giveaway),
-  //       link = card.find(".head_info a").attr("href"),
-  //       name = card.find(".head_info").attr("title"),
-  //       have = card.find(".giveaway-indicators > .have").length > 0,
-  //       entered = card.find(".entered").length > 0;
-  //
-  //     if (have || entered) next_after = 50;
-  //     else {
-  //       $.get(link, function(html) {
-  //         if (html.indexOf('data-action="enter"') > 0) {
-  //           $.ajax({
-  //             method: "post",
-  //             url: link + "/action",
-  //             data: "action=enter",
-  //             dataType: "json",
-  //             headers: {
-  //               "X-Requested-With": "XMLHttpRequest",
-  //               "X-CSRF-TOKEN": CSRF
-  //             },
-  //             success: function(data) {
-  //               if (data.response) {
-  //                 _this.setValue(data.points);
-  //                 _this.log(
-  //                   language.get("service.entered_in") +
-  //                     _this.logLink(link, name)
-  //                 );
-  //               }
-  //             }
-  //           });
-  //         }
-  //       });
-  //     }
-  //
-  //     curr_giveaway++;
-  //     setTimeout(giveawayEnter, next_after);
-  //   }
-  //
-  //   giveawayEnter();
-  // });
-  // }
+  async enterOnPage(page) {
+    const document = await this.http
+      .get(`${this.websiteUrl}/giveaways`, {
+        page
+      })
+      .then(response => parse(response.data));
+
+    const csrfToken = document
+      .querySelectorAll("meta")
+      .filter(node => node.getAttribute("name") === "csrf-token")[0]
+      .getAttribute("content");
+
+    const giveaways = document
+      .querySelectorAll(".giveaway_card")
+      .map(card => ({
+        url: card.querySelector(".head_info a").getAttribute("href"),
+        name: card.querySelector(".head_info").getAttribute("title"),
+        have: !!card.querySelector("span.have"),
+        entered: !!card.querySelector(".entered"),
+        entries: card.querySelector(".entries").structuredText
+      }))
+      .filter(ga => !ga.have && !ga.entered);
+
+    for (const giveaway of giveaways) {
+      if (!this.isStarted()) break;
+
+      const entered = await this.giveawayEnter(giveaway, csrfToken);
+      await this.sleep(this.entryInterval());
+
+      if (entered)
+        this.log({
+          text: `${language.get("service.entered_in")} #link#`,
+          anchor: giveaway.name,
+          url: giveaway.url
+        });
+    }
+  }
+
+  async giveawayEnter(giveaway, csrfToken) {
+    return this.http({
+      url: `${giveaway.url}/action`,
+      method: "post",
+      data: "action=enter",
+      responseType: "json",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRF-TOKEN": csrfToken
+      }
+    })
+      .then(res => res.data.entries > giveaway.entries)
+      .catch(() => false);
+  }
 }
 
 module.exports = new Follx();
