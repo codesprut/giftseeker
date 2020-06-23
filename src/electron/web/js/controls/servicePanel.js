@@ -60,13 +60,20 @@ export default class ServicePanel {
     settingsPage.appendChild(numbersPanel);
     settingsPage.appendChild(checkboxesPanel);
 
+    const controls = {};
+
     for (const settingKey in settings) {
-      const control = new Setting(
+      controls[settingKey] = new Setting(
         settingKey,
         settings[settingKey],
         getSetting,
         setSetting
       );
+    }
+
+    for (const controlKey in controls) {
+      const control = controls[controlKey];
+      if (control.isRange) control.setRange(controls[control.rangePart]);
 
       control.appendTo(
         control.type === "checkbox" ? checkboxesPanel : numbersPanel

@@ -35,15 +35,21 @@ module.exports = class Seeker {
       },
       interval_from: {
         type: "number",
+        range: true,
+        rangeType: 'min',
+        rangePart: 'interval_to',
         trans: "service.interval_from",
         min: 0,
-        max: this.getConfig("interval_to", 5),
+        max: 60,
         default: this.getConfig("interval_from", 3)
       },
       interval_to: {
         type: "number",
+        range: true,
+        rangeType: 'max',
+        rangePart: 'interval_from',
         trans: "service.interval_to",
-        min: this.getConfig("interval_from", 3),
+        min: 3,
         max: 60,
         default: this.getConfig("interval_to", 5)
       },

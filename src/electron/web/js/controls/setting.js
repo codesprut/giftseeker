@@ -5,9 +5,20 @@ export default class Setting {
   constructor(name, params, get, set) {
     this.name = name;
     this.type = params.type;
+    this.min = params.min;
+    this.max = params.max;
+    this.isRange = !!params.range;
+
+    if (this.isRange) {
+      this.rangeType = params.rangeType;
+      this.rangePart = params.rangePart;
+    }
 
     this.getValue = value => get(this.name, value);
-    this.setValue = value => set(this.name, value);
+    this.saveValue = value => {
+      if (this.range) this.range.update(value);
+      set(this.name, value);
+    };
 
     this.control = document.createElement("div");
     this.control.classList.add("input-wrap", "no-selectable");
@@ -30,7 +41,7 @@ export default class Setting {
     const checkBox = document.createElement("input");
     checkBox.type = "checkbox";
     checkBox.checked = this.getValue(params.default);
-    checkBox.onchange = () => this.setValue(checkBox.checked);
+    checkBox.onchange = () => this.saveValue(checkBox.checked);
 
     const label = document.createElement("span");
     label.dataset.lang = params.trans;
@@ -45,8 +56,8 @@ export default class Setting {
   createNumber(params) {
     const step = params.type === "number" ? 1 : 0.1;
 
-    if (params.default < params.min || params.default > params.max)
-      this.setValue(params.default);
+    if (params.default < this.min || params.default > this.max)
+      this.saveValue(params.default);
 
     this.control.classList.add("number");
 
@@ -74,8 +85,8 @@ export default class Setting {
     this.control.appendChild(this.buttonInc);
     this.control.appendChild(label);
 
-    if (params.default === params.max) this.buttonInc.classList.add("disabled");
-    if (params.default === params.min) this.buttonDec.classList.add("disabled");
+    if (params.default === this.max) this.buttonInc.classList.add("disabled");
+    if (params.default === this.min) this.buttonDec.classList.add("disabled");
 
     let pressed = false;
     let pressTimeout = undefined;
@@ -111,31 +122,49 @@ export default class Setting {
 
   incrementValue(params, step) {
     let value = this.getValue();
-    if (value < params.max) {
+    if (value < this.max) {
       value = value + step;
       this.buttonDec.classList.remove("disabled");
     }
 
     if (params.type === "float_number") value = parseFloat(value.toFixed(1));
 
-    if (value === params.max) this.buttonInc.classList.add("disabled");
+    if (value === this.max) this.buttonInc.classList.add("disabled");
 
     this.valueLabel.innerText = value;
-    this.setValue(value);
+    this.saveValue(value);
   }
 
   decrementValue(params, step) {
     let value = this.getValue();
-    if (value > params.min) {
+    if (value > this.min) {
       value = value - step;
       this.buttonInc.classList.remove("disabled");
     }
 
     if (params.type === "float_number") value = parseFloat(value.toFixed(1));
 
-    if (value === params.min) this.buttonDec.classList.add("disabled");
+    if (value === this.min) this.buttonDec.classList.add("disabled");
 
     this.valueLabel.innerText = value;
-    this.setValue(value);
+    this.saveValue(value);
+  }
+
+  setRange(control) {
+    this.range = control;
+
+    this.update(control.getValue());
+  }
+
+  update(rangeValue) {
+    const constraints = this.rangeType === "max" ? "min" : "max";
+
+    this[constraints] = rangeValue;
+
+    this.buttonDec.classList.remove("disabled");
+    this.buttonInc.classList.remove("disabled");
+
+    if (this.getValue() === this.min) this.buttonDec.classList.add("disabled");
+    if (this.getValue() === this.max) this.buttonInc.classList.add("disabled");
   }
 }
