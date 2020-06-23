@@ -36,8 +36,8 @@ module.exports = class Seeker {
       interval_from: {
         type: "number",
         range: true,
-        rangeType: 'min',
-        rangePart: 'interval_to',
+        rangeType: "min",
+        rangePart: "interval_to",
         trans: "service.interval_from",
         min: 0,
         max: 60,
@@ -46,8 +46,8 @@ module.exports = class Seeker {
       interval_to: {
         type: "number",
         range: true,
-        rangeType: 'max',
-        rangePart: 'interval_from',
+        rangeType: "max",
+        rangePart: "interval_from",
         trans: "service.interval_to",
         min: 3,
         max: 60,
@@ -179,7 +179,11 @@ module.exports = class Seeker {
     const authState = await this.authCheck();
 
     if (authState === 1) {
-      const userInfo = await this.getUserInfo();
+      const userInfo = await this.getUserInfo().catch(() => ({
+        avatar: `${this.websiteUrl}/favicon.ico`,
+        username: `${this.name} user`,
+        value: 0
+      }));
 
       this.events.emit("userinfo.updated", userInfo);
 
@@ -250,10 +254,6 @@ module.exports = class Seeker {
   async seekService() {}
 
   async getUserInfo() {
-    return {
-      avatar: "https://giftseeker.ru/favicon.ico",
-      username: "GS User",
-      value: 0
-    };
+    throw new Error("Not implemented");
   }
 };
