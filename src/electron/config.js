@@ -10,7 +10,6 @@ module.exports = {
   appName: appName,
   websiteUrl: "https://giftseeker.ru/",
   storagePath: storagePath,
-  oldStoragePath: portableStorage,
   defaultLanguage: "ru_RU",
   appIcon: __dirname + "/../resources/images/icon.ico",
   window: {
