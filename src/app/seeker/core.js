@@ -7,7 +7,7 @@ const axios = require("axios");
 module.exports = class Seeker {
   totalTicks = 0;
   currentValue = 0;
-  updateUserInterval = 60;
+  updateUserInterval = 300;
 
   reconnectTimeout = null;
   state = states.PAUSED;
@@ -138,17 +138,14 @@ module.exports = class Seeker {
 
   async setStateStarted() {
     this.totalTicks = 0;
-
     this.setState(states.STARTED);
     this.log(language.get("service.started"));
-
-    this.updateUserInfo();
   }
 
   runWorker() {
     setInterval(async () => {
       if (this.totalTicks % this.updateUserInterval === 0)
-        this.updateUserInfo();
+        await this.updateUserInfo();
 
       if (this.isStarted()) {
         if (this.totalTicks % this.workerInterval() === 0) {
