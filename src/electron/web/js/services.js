@@ -37,9 +37,18 @@ for (const service of services) {
   service.on("state.changed", state => {
     service.icon.setState(state);
 
-    serviceButton.innerText = language.get(
-      `service.btn_${service.isStarted() ? "stop" : "start"}`
-    );
+    let buttonTranslation = `service.btn_${
+      service.isStarted() ? "stop" : "start"
+    }`;
+
+    if (state === "process") {
+      serviceButton.classList.add("disabled");
+      buttonTranslation = `service.btn_checking`;
+    } else {
+      serviceButton.classList.remove("disabled");
+    }
+
+    serviceButton.innerText = language.get(buttonTranslation);
   });
 
   service.on("userinfo.updated", userInfo =>
@@ -58,17 +67,15 @@ for (const service of services) {
       serviceButton.innerText = time.elapsed(timeElapsed);
   });
 
-  serviceButton.onclick = async ev => {
-    const button = ev.target;
-    if (button.classList.contains("disabled")) return;
-
-    button.classList.add("disabled");
+  serviceButton.onclick = async () => {
+    if (serviceButton.classList.contains("disabled")) return;
 
     if (service.isStarted()) await service.stop();
     else {
       const authState = await service.start();
 
       if (authState === 0) {
+        serviceButton.innerText = language.get('service.btn_awaiting');
         const cookies = await browser.runForAuth(
           service.websiteUrl,
           service.authPageUrl,
@@ -79,8 +86,6 @@ for (const service of services) {
         await service.start();
       }
     }
-
-    button.classList.remove("disabled");
   };
 
   serviceButton.onmouseenter = () => {

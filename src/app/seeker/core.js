@@ -90,6 +90,7 @@ module.exports = class Seeker {
   async start(autostart) {
     if (this.isStarted()) return false;
 
+    this.setState(states.PROCESS);
     const authState = await this.authCheck();
 
     switch (authState) {
@@ -101,11 +102,9 @@ module.exports = class Seeker {
         this.log(language.get("service.cant_start"), true);
         break;
       case -1:
+        this.setState(states.ERROR);
         this.log(language.get("service.connection_error"), true);
-        if (autostart) {
-          this.setState(states.ERROR);
-          this.runReconnectTimeout();
-        }
+        if (autostart) this.runReconnectTimeout();
         break;
     }
 
