@@ -1,3 +1,4 @@
+const { defaultUseragent } = require("../../electron/config");
 const settings = require("../settings");
 const language = require("../language");
 const statuses = require("./statuses");
@@ -61,7 +62,7 @@ module.exports = class Seeker {
       responseType: "text",
       withCredentials: true,
       headers: {
-        "User-Agent": settings.get("user_agent"),
+        "User-Agent": settings.get("user_agent") || defaultUseragent,
         Cookie: this.getConfig("cookie")
       }
     });
