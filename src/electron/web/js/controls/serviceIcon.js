@@ -1,5 +1,5 @@
 export default class ServiceIcon {
-  constructor(serviceName, defaultStatus) {
+  constructor(serviceName, defaultState) {
     this.icon = document.createElement("div");
     this.icon.classList.add("service-icon");
 
@@ -7,18 +7,18 @@ export default class ServiceIcon {
     this.bg.classList.add("bg");
     this.bg.style.backgroundImage = `url('images/services/${serviceName}.png')`;
 
-    this.statusIcon = document.createElement("div");
-    this.statusIcon.classList.add("service-status");
+    this.stateIcon = document.createElement("div");
+    this.stateIcon.classList.add("service-state");
 
     this.nameLabel = document.createElement("span");
     this.nameLabel.classList.add("service-name");
     this.nameLabel.innerText = serviceName;
 
     this.icon.appendChild(this.bg);
-    this.icon.appendChild(this.statusIcon);
+    this.icon.appendChild(this.stateIcon);
     this.icon.appendChild(this.nameLabel);
 
-    this.setStatus(defaultStatus);
+    this.setState(defaultState);
   }
 
   appendTo(element) {
@@ -29,8 +29,8 @@ export default class ServiceIcon {
     this.icon.classList.add("active");
   }
 
-  setStatus(status) {
-    this.statusIcon.dataset.status = status;
+  setState(state) {
+    this.stateIcon.dataset.state = state;
   }
 
   onClick(callback) {

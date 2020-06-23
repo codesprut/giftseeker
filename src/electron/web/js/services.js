@@ -9,7 +9,7 @@ const iconsWrap = document.querySelector(".services-icons");
 const panelsWrap = document.querySelector(".services-panels");
 
 for (const service of services) {
-  service.icon = new ServiceIcon(service.name, service.status);
+  service.icon = new ServiceIcon(service.name, service.state);
   service.panel = new ServicePanel(service);
 
   const serviceButton = service.panel.userPanel.mainButton;
@@ -34,8 +34,8 @@ for (const service of services) {
     service.panel.logger.add(text, type);
   });
 
-  service.on("status.changed", status => {
-    service.icon.statusIcon.dataset.status = status;
+  service.on("state.changed", state => {
+    service.icon.setState(state);
 
     serviceButton.innerText = language.get(
       `service.btn_${service.isStarted() ? "stop" : "start"}`

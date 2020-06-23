@@ -423,7 +423,7 @@ textarea#useragent {
 .services_switcher.wide .service-icon .service-name {
   display: block;
 }
-.service-icon .service-status {
+.service-icon .service-state {
   width: 20px;
   height: 30px;
   transform: rotate(45deg);
@@ -431,13 +431,13 @@ textarea#useragent {
   right: -10px;
   bottom: -18px;
 }
-.service-icon .service-status {
+.service-icon .service-state {
   background-color: lightgray;
 }
-.service-icon .service-status[data-status="started"] {
+.service-icon .service-state[data-state="started"] {
   background-color: lightgreen;
 }
-.service-icon .service-status[data-status="error"] {
+.service-icon .service-state[data-state="error"] {
   background-color: orangered;
 }
 

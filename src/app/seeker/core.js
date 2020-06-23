@@ -1,6 +1,6 @@
 const settings = require("../settings");
 const language = require("../language");
-const statuses = require("./statuses");
+const states = require("./states");
 const events = require("events");
 const axios = require("axios");
 
@@ -10,7 +10,7 @@ module.exports = class Seeker {
   updateUserInterval = 60;
 
   reconnectTimeout = null;
-  status = statuses.PAUSED;
+  state = states.PAUSED;
 
   constructor(params) {
     this.name = this.constructor.name;
@@ -97,13 +97,13 @@ module.exports = class Seeker {
         this.setStateStarted();
         break;
       case authState === 0 && autostart:
-        this.setStatus(statuses.ERROR);
+        this.setState(states.ERROR);
         this.log(language.get("service.cant_start"), true);
         break;
       case -1:
         this.log(language.get("service.connection_error"), true);
         if (autostart) {
-          this.setStatus(statuses.ERROR);
+          this.setState(states.ERROR);
           this.runReconnectTimeout();
         }
         break;
@@ -113,10 +113,10 @@ module.exports = class Seeker {
   }
 
   async stop(withError, reconnect) {
-    const status = withError ? statuses.ERROR : statuses.PAUSED;
+    const state = withError ? states.ERROR : states.PAUSED;
     if (!this.isStarted()) return false;
 
-    this.setStatus(status);
+    this.setState(state);
 
     this.log(language.get("service.stopped"));
 
@@ -134,7 +134,7 @@ module.exports = class Seeker {
   async setStateStarted() {
     this.totalTicks = 0;
 
-    this.setStatus(statuses.STARTED);
+    this.setState(states.STARTED);
     this.log(language.get("service.started"));
 
     this.updateUserInfo();
@@ -197,15 +197,15 @@ module.exports = class Seeker {
     return this.getConfig("timer", 10) * 60;
   }
 
-  setStatus(status) {
-    if (this.status === status) return;
+  setState(state) {
+    if (this.state === state) return;
 
-    this.events.emit("status.changed", status);
-    this.status = status;
+    this.events.emit("state.changed", state);
+    this.state = state;
   }
 
   isStarted() {
-    return this.status === statuses.STARTED;
+    return this.state === states.STARTED;
   }
 
   setValue(new_value) {
