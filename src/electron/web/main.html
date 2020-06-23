@@ -106,5 +106,18 @@
     </div>
     <script src="js/windows/main.js"></script>
     <script type="module" src="js/services.js"></script>
+    <script type="module">
+      import browser from "./js/browser.js";
+      document.addEventListener(
+        "click",
+        ev => {
+          const clicked = ev.target;
+          if (!clicked.matches(".open-website")) return;
+
+          if (clicked.dataset.link) browser.openUrl(clicked.dataset.link);
+        },
+        false
+      );
+    </script>
   </body>
 </html>

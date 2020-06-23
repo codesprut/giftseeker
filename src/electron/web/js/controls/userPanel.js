@@ -20,8 +20,8 @@ export default class UserPanel {
     this.websiteLink = document.createElement("button");
     this.websiteLink.classList.add("open-website");
     this.websiteLink.dataset.lang = "service.open_website";
+    this.websiteLink.dataset.link = websiteUrl;
     this.websiteLink.innerText = language.get("service.open_website");
-    this.websiteLink.onclick = () => browser.openUrl(websiteUrl);
 
     this.userInfo.appendChild(this.avatar);
     this.userInfo.appendChild(this.username);
