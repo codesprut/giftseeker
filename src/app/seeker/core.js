@@ -144,32 +144,35 @@ module.exports = class Seeker {
 
   runWorker() {
     setInterval(async () => {
-      if (this.totalTicks % this.updateUserInterval === 0)
-        await this.updateUserInfo();
-
-      if (this.isStarted()) {
-        if (this.totalTicks % this.workerInterval() === 0) {
-          const authState = await this.authCheck();
-
-          switch (authState) {
-            case 1:
-              this.seekService();
-              break;
-            case 0:
-              this.log(language.get("service.session_expired"), true);
-              this.stop(true);
-              break;
-            case -1:
-              this.log(language.get("service.connection_lost"), true);
-              this.stop(true, true);
-              break;
-          }
-        }
-      }
-
+      this.serviceActions(this.totalTicks);
       this.totalTicks = this.totalTicks < 32760 ? this.totalTicks + 1 : 0;
       this.events.emit("tick", this.totalTicks);
     }, 1000);
+  }
+
+  async serviceActions(currentTick) {
+    if (currentTick % this.updateUserInterval === 0)
+      await this.updateUserInfo();
+
+    if (this.isStarted()) {
+      if (currentTick % this.workerInterval() === 0) {
+        const authState = await this.authCheck();
+
+        switch (authState) {
+          case 1:
+            this.seekService();
+            break;
+          case 0:
+            this.log(language.get("service.session_expired"), true);
+            this.stop(true);
+            break;
+          case -1:
+            this.log(language.get("service.connection_lost"), true);
+            this.stop(true, true);
+            break;
+        }
+      }
+    }
   }
 
   async updateUserInfo() {
