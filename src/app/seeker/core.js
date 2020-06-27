@@ -221,7 +221,7 @@ module.exports = class Seeker {
     if (!this.withValue) return;
 
     this.events.emit("value.changed", new_value);
-    this.curr_value = parseInt(new_value);
+    this.currentValue = parseInt(new_value);
   }
 
   getConfig(key, def) {
