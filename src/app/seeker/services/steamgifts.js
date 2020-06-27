@@ -134,6 +134,51 @@ class Steamgifts extends Seeker {
         ...giveaway,
         pinned: pinnedCodes.includes(giveaway.code)
       }));
+
+    if (this.getConfig("sort_by_chance", false))
+      giveaways.sort((a, b) => b.winChance - a.winChance);
+
+    const wishlistPage = pageUrl.indexOf("wishlist") > 0;
+    const ignoreSomeSetting = wishlistPage && this.getConfig("ignore_on_wish");
+
+    const minChance = this.getConfig("min_chance", 0);
+    const minTimeLeft = this.getConfig("ending", 0) * 60;
+    const minLevel = this.getConfig("min_level", 0);
+    const minCost = this.getConfig("min_cost", 0);
+    const maxCost = this.getConfig("max_cost", 0);
+    const pointsReserve = this.getConfig("points_reserve", 0);
+
+    for (const giveaway of giveaways) {
+      if (!this.isStarted()) return;
+      if (
+        (minChance > 0 && minChance < giveaway.winChance) ||
+        (minTimeLeft > 0 && minTimeLeft < giveaway.timeLeft) ||
+        giveaway.entered ||
+        !giveaway.levelPass ||
+        this.currentValue < giveaway.cost ||
+        (wishlistPage && giveaway.pinned)
+      )
+        continue;
+
+      if (
+        !ignoreSomeSetting &&
+        ((minCost !== 0 && giveaway.cost < minCost) ||
+          (maxCost !== 0 && giveaway.cost > maxCost) ||
+          (minLevel !== 0 && giveaway.level > minLevel))
+      )
+        continue;
+
+      const reserveExceeded = this.currentValue - giveaway.cost < pointsReserve;
+
+      if (
+        reserveExceeded &&
+        (!wishlistPage || !this.getConfig("reserve_on_wish"))
+      )
+        continue;
+
+      await this.enterGiveaway(giveaway, xsrfToken);
+      await this.sleep(this.entryInterval());
+    }
   }
 
   parseGiveaway(htmlNode) {
@@ -175,14 +220,24 @@ class Steamgifts extends Seeker {
       levelRequired: levelNode
         ? Number(levelNode.structuredText.replace(/[^0-9]/g, ""))
         : 0,
-      levelPass: !!htmlNode.querySelector(
+      levelPass: !htmlNode.querySelector(
         ".giveaway__column--contributor-level--negative"
       ),
       name: linkNode.structuredText,
       code: url.split("/")[2],
       entered: !!htmlNode.querySelector(".giveaway__row-inner-wrap.is-faded"),
-      chance: chance === Infinity ? 0 : chance
+      winChance: chance === Infinity ? 0 : chance
     };
+  }
+
+  async enterGiveaway(giveaway, xsrfToken) {
+    this.log({
+      text: `${language.get("service.entered_in")} #link#. ${this.translate(
+        "cost"
+      )} ${giveaway.cost} ${this.translate("chance")} ${giveaway.winChance}%`,
+      anchor: giveaway.name,
+      url: `${this.websiteUrl}${giveaway.url}`
+    });
   }
 }
 
