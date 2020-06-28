@@ -18,6 +18,7 @@ const config = require("./config");
 const settings = require("../app/settings");
 
 const language = require("../app/language");
+const services = require("../app/seeker/bundle");
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -226,9 +227,6 @@ app.on("ready", async () => {
     else mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 
-  const Follx = require("../app/seeker/services/follx");
-  const Steamgifts = require("../app/seeker/services/steamgifts");
-
   // Variables shared with browser windows
   global.sharedData = {
     isPortable: ENV.isPortable,
@@ -244,7 +242,7 @@ app.on("ready", async () => {
     Browser: browserWindow,
     authWindow,
     mainWindow,
-    services: [Follx, Steamgifts],
+    services,
     Request: request
   };
 
