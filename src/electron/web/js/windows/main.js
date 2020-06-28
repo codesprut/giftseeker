@@ -66,10 +66,13 @@ $(() => {
   const servicesSwitcher = document.querySelector(".services_switcher");
   const servicesIcons = document.querySelector(".services-icons");
 
-  userAgentArea.placeholder = config.defaultUseragent;
+  userAgentArea.placeholder = config.defaultStorageData.user_agent;
   userAgentArea.value = Browser.webContents.session.getUserAgent();
   userAgentArea.onchange = () =>
-    settings.set("user_agent", userAgentArea.value);
+    settings.set(
+      "user_agent",
+      userAgentArea.value || userAgentArea.placeholder
+    );
 
   if (settings.get("wide_services_switcher"))
     servicesSwitcher.classList.add("wide");
