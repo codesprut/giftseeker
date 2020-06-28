@@ -7,6 +7,7 @@
   "homepage": "https://giftseeker.ru/",
   "main": "src/electron/app.js",
   "scripts": {
+    "test": "jest",
     "start": "electron .",
     "build-win": "electron-builder --x64 --ia32",
     "build-nix": "electron-builder -l --x64 --ia32"
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "electron": "9.0.0",
+    "jest": "26.1.0",
     "electron-builder": "22.7.0",
     "prettier": "1.19.1"
   },
