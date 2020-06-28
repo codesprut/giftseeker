@@ -1,5 +1,5 @@
 import Logger from "./logger.js";
-import UserPanel from "./userPanel.js";
+import UserPanel from "./user-panel.js";
 import Setting from "./setting.js";
 
 export default class ServicePanel {

@@ -1,8 +1,6 @@
 const { remote } = require("electron");
 const { language } = remote.getGlobal("sharedData");
 
-import browser from "../browser.js";
-
 export default class UserPanel {
   constructor(websiteUrl, value) {
     this.value = value;

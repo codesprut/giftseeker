@@ -1,7 +1,7 @@
 const { remote } = require("electron");
 const { services, settings, language } = remote.getGlobal("sharedData");
-import ServiceIcon from "./controls/serviceIcon.js";
-import ServicePanel from "./controls/servicePanel.js";
+import ServiceIcon from "./controls/service-icon.js";
+import ServicePanel from "./controls/service-panel.js";
 import browser from "./browser.js";
 import time from "./utlis/time.js";
 
