@@ -144,17 +144,17 @@ module.exports = class Seeker {
 
   runWorker() {
     setInterval(async () => {
-      this.serviceActions(this.totalTicks);
+      this.serviceActions(this.totalTicks, this.isStarted());
       this.totalTicks = this.totalTicks < 32760 ? this.totalTicks + 1 : 0;
       this.events.emit("tick", this.totalTicks);
     }, 1000);
   }
 
-  async serviceActions(currentTick) {
+  async serviceActions(currentTick, serviceStarted) {
     if (currentTick % this.updateUserInterval === 0)
       await this.updateUserInfo();
 
-    if (this.isStarted()) {
+    if (serviceStarted) {
       if (currentTick % this.workerInterval() === 0) {
         const authState = await this.authCheck();
 
