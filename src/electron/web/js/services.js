@@ -75,7 +75,8 @@ for (const service of services) {
       const authState = await service.start();
 
       if (authState === 0) {
-        serviceButton.innerText = language.get('service.btn_awaiting');
+        serviceButton.classList.add("disabled");
+        serviceButton.innerText = language.get("service.btn_awaiting");
         const cookies = await browser.runForAuth(
           service.websiteUrl,
           service.authPageUrl,

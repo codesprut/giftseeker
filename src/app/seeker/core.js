@@ -103,9 +103,11 @@ module.exports = class Seeker {
       case 1:
         this.setStateStarted();
         break;
-      case authState === 0 && autostart:
-        this.setState(states.ERROR);
-        this.log(language.get("service.cant_start"), true);
+      case 0:
+        if (autostart) {
+          this.setState(states.ERROR);
+          this.log(language.get("service.cant_start"), true);
+        } else this.setState(states.PAUSED);
         break;
       case -1:
         this.setState(states.ERROR);
