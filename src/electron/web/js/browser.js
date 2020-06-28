@@ -30,7 +30,7 @@ const runForAuth = async (websiteUrl, authPageUrl, authContent) => {
 
       resolve(
         Browser.webContents.session.cookies
-          .get({ domain: websiteUrl.split("/")[2] })
+          .get({ domain: websiteUrl.split("/")[2].replace("www.", "") })
           .then(cookies =>
             cookies.map(cookie => cookie.name + "=" + cookie.value).join("; ")
           )
