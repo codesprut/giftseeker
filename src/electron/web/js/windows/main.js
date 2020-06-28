@@ -6,7 +6,6 @@ const tippy = require("tippy.js").default;
 const { remote, ipcRenderer } = require("electron");
 const accountData = remote.getGlobal("user");
 const {
-  Request,
   language,
   settings,
   config,

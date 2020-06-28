@@ -1,32 +1,28 @@
 const { websiteUrl } = require("../electron/config");
 const storage = require("electron-json-storage");
-const request = require("./request-promise");
+const axios = require("axios");
 const settings = require("./settings");
 const fs = require("fs");
 
 let languages = {};
 
 const downloadTranslation = async name => {
-  await request({ uri: `${websiteUrl}trans/${name}` }).then(
-    translationStrings => {
-      fs.writeFile(
-        storage.getDataPath() + "/" + name,
-        translationStrings,
-        err => {}
-      );
-    }
-  );
+  return axios.get(`${websiteUrl}trans/${name}`).then(res => {
+    fs.writeFile(
+      storage.getDataPath() + "/" + name,
+      JSON.stringify(res.data),
+      err => {}
+    );
+  });
 };
 
 const updateTranslations = async () => {
-  const { response } = await request({
-    uri: `${websiteUrl}api/langs_new`,
-    json: true
-  });
+  const translations = await axios
+    .get(`${websiteUrl}api/langs_new`)
+    .then(res => JSON.parse(res.data.response).langs)
+    .catch(() => false);
 
-  if (!response || response.length === 0) return;
-
-  const translations = JSON.parse(response).langs;
+  if (!translations) return;
 
   for (const translation of translations) {
     const { name, size } = translation;

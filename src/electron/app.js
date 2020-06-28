@@ -11,7 +11,6 @@ const {
 } = require("electron");
 const { autoUpdater } = require("electron-updater");
 const autoLaunch = require("auto-launch");
-const request = require("../app/request-promise");
 
 const ENV = require("./environment");
 const config = require("./config");
@@ -242,8 +241,7 @@ app.on("ready", async () => {
     Browser: browserWindow,
     authWindow,
     mainWindow,
-    services,
-    Request: request
+    services
   };
 
   startApp();
