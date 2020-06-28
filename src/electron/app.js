@@ -17,7 +17,6 @@ const config = require("./config");
 const settings = require("../app/settings");
 
 const language = require("../app/language");
-const services = require("../app/seeker/bundle");
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -62,6 +61,7 @@ app.on("window-all-closed", () => {
 
 app.on("ready", async () => {
   await settings.init();
+  const services = require("../app/seeker/bundle");
   const programSession = require("../app/session");
 
   settings.on("change", "start_with_os", startWithOs => {
