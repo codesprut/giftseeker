@@ -177,8 +177,8 @@ class SteamGifts extends Seeker {
       )
         continue;
 
-      const entry = await this.enterGiveaway(giveaway, xsrfToken);
       await this.sleep(this.entryInterval());
+      const entry = await this.enterGiveaway(giveaway, xsrfToken);
 
       if (entry.success) {
         this.setValue(entry.points);
