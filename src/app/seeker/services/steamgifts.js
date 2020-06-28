@@ -3,7 +3,7 @@ const query = require("querystring");
 const language = require("../../language");
 const { parse } = require("node-html-parser");
 
-class Steamgifts extends Seeker {
+class SteamGifts extends Seeker {
   constructor() {
     super({
       websiteUrl: "https://www.steamgifts.com",
@@ -267,4 +267,4 @@ class Steamgifts extends Seeker {
   }
 }
 
-module.exports = new Steamgifts();
+module.exports = new SteamGifts();
