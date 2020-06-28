@@ -1,4 +1,5 @@
 const Seeker = require("../core");
+const query = require("querystring");
 const language = require("../../language");
 const { parse } = require("node-html-parser");
 
@@ -176,8 +177,21 @@ class Steamgifts extends Seeker {
       )
         continue;
 
-      await this.enterGiveaway(giveaway, xsrfToken);
+      const entry = await this.enterGiveaway(giveaway, xsrfToken);
       await this.sleep(this.entryInterval());
+
+      if (entry.success) {
+        this.setValue(entry.points);
+        this.log({
+          text: `${language.get("service.entered_in")} #link#. ${this.translate(
+            "cost"
+          )} ${giveaway.cost} ${this.translate("chance")} ${
+            giveaway.winChance
+          }%`,
+          anchor: giveaway.name,
+          url: `${this.websiteUrl}${giveaway.url}`
+        });
+      }
     }
   }
 
@@ -231,13 +245,25 @@ class Steamgifts extends Seeker {
   }
 
   async enterGiveaway(giveaway, xsrfToken) {
-    this.log({
-      text: `${language.get("service.entered_in")} #link#. ${this.translate(
-        "cost"
-      )} ${giveaway.cost} ${this.translate("chance")} ${giveaway.winChance}%`,
-      anchor: giveaway.name,
-      url: `${this.websiteUrl}${giveaway.url}`
-    });
+    return this.http({
+      url: `${this.websiteUrl}/ajax.php`,
+      responseType: "json",
+      method: "post",
+      data: query.stringify({
+        xsrf_token: xsrfToken,
+        do: "entry_insert",
+        code: giveaway.code
+      }),
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        Referer: `${this.websiteUrl}${giveaway.url}`
+      }
+    })
+      .then(res => ({
+        success: res.data.type === "success",
+        points: res.data.points
+      }))
+      .catch(() => ({ success: false }));
   }
 }
 
