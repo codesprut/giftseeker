@@ -67,6 +67,7 @@ module.exports = class Seeker {
       responseType: "text",
       withCredentials: true,
       headers: {
+        Referer: this.websiteUrl,
         "User-Agent": settings.get("user_agent"),
         Cookie: this.getConfig("cookie")
       }
