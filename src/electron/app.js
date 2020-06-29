@@ -183,10 +183,6 @@ app.on("ready", async () => {
     settings.set("window_height", newHeight);
   });
 
-  authWindow.on("show", () => {
-    authWindow.webContents.executeJavaScript("onShow()");
-  });
-
   authWindow.on("close", () => {
     authWindow.removeAllListeners("close");
     mainWindow.close();

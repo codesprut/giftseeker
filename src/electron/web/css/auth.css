@@ -118,7 +118,7 @@ body {
   color: gray;
   font-size: 16px;
 }
-#choice-lang .no-available-langs {
+#choice-lang .no-translations-available {
   display: none;
 }
 #choice-lang .label {

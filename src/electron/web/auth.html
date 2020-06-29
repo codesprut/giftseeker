@@ -19,9 +19,9 @@
       </div>
       <div class="window-buttons">
         <span
-          onclick="$('#choice-lang').addClass('visible')"
+          onclick="document.querySelector('#choice-lang').classList.add('visible')"
           class="language fa fa-globe"
-          data-tippy-translate="auth.lng_choice_title"
+          data-lang-title="auth.lng_choice_title"
         ></span>
         <span onclick="window.close()" class="closer fa fa-times"></span>
       </div>
@@ -43,8 +43,8 @@
       ></button>
     </div>
     <div id="choice-lang" class="no-selectable">
-      <div data-lang="auth.no_avail_trans" class="no-available-langs"></div>
-      <div data-lang="auth.choose_lang" class="label"></div>
+      <div data-lang="auth.no_avail_trans" class="no-translations-available"></div>
+      <div data-lang="auth.choose_lang" class="choose-lang-label label"></div>
       <div class="input-wrap select">
         <select class="setter" id="lang"> </select>
       </div>
@@ -52,9 +52,9 @@
         id="languages_button"
         class="seeker-button"
         data-lang="auth.go_back"
-        onclick="$('#choice-lang').removeClass('visible')"
+        onclick="document.querySelector('#choice-lang').classList.remove('visible')"
       ></button>
     </div>
-    <script src="js/windows/auth.js"></script>
+    <script type="module" src="js/windows/auth.js"></script>
   </body>
 </html>

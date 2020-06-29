@@ -1,122 +1,100 @@
-"use strict";
-window.$ = window.jQuery = require("jquery");
 const { remote, ipcRenderer } = require("electron");
+const axios = require("axios").default;
 
 const {
   language,
   config,
   mainWindow,
-  Browser,
   ipcMain,
   currentBuild
 } = remote.getGlobal("sharedData");
 
-const status = $(".status-text");
-const buttons = $("#auth_button");
+import browser from "../browser.js";
 
-function onShow() {
-  reloadLangStrings();
-  buttons.removeClass("disabled");
-}
+const statusLabel = document.querySelector(".status-text");
+const authButton = document.querySelector("#auth_button");
+const languageSelect = document.querySelector("select#lang");
 
-$(function() {
-  ipcMain.on("change-lang", function() {
-    reloadLangStrings();
-  });
-  ipcMain.on("window-shown", function() {
-    buttons.removeClass("disabled");
-  });
-
-  const languageSelect = $("select#lang");
-  const languagesList = language.listAvailable();
-
-  // Наполняем языковой селект, либо удаляем его
-  if (language.count() <= 1) {
-    languageSelect.remove();
-    $(".no-available-langs")
-      .css("display", "block")
-      .next()
-      .css("display", "none");
-  } else {
-    for (const lang of languagesList) {
-      const option = $(document.createElement("option"))
-        .attr("id", lang.culture)
-        .val(lang.culture)
-        .text("[" + lang.culture + "] " + lang.name);
-
-      if (language.current() === lang.culture) option.prop("selected", true);
-
-      languageSelect.append(option);
-    }
-
-    languageSelect.change(function() {
-      ipcRenderer.send("change-lang", $(this).val());
-    });
-  }
-
-  $("#auth_button").click(function(e) {
-    e.preventDefault();
-
-    Browser.loadURL(`${config.websiteUrl}logIn`);
-    Browser.show();
-    Browser.setTitle("GS Browser - " + language.get("auth.browser_loading"));
-
-    Browser.webContents.on("did-finish-load", () => {
-      if (Browser.getURL() === config.websiteUrl) {
-        Browser.webContents
-          .executeJavaScript('document.querySelector("body").innerHTML')
-          .then(body => {
-            if (body.indexOf("/account") >= 0) {
-              Browser.webContents.removeAllListeners("did-finish-load");
-              Browser.close();
-              checkAuth();
-            }
-          });
-      }
-    });
-  });
-
-  checkAuth();
+ipcMain.on("change-lang", () => reloadLangStrings());
+ipcMain.on("window-shown", function() {
+  authButton.classList.remove("disabled");
 });
 
-function checkAuth() {
-  buttons.addClass("disabled");
-  status.text(language.get("auth.check"));
+if (language.count() > 1) {
+  for (const lang of language.listAvailable()) {
+    const option = document.createElement("option");
+    option.setAttribute("id", lang.culture);
+    option.value = lang.culture;
+    option.innerText = `[${lang.culture}] ${lang.name}`;
 
-  $.ajax({
-    url: `${config.websiteUrl}api/userData`,
-    data: { ver: currentBuild },
-    dataType: "json",
-    success: function(data) {
-      if (!data.response) {
-        status.text(language.get("auth.ses_not_found"));
-        buttons.removeClass("disabled");
+    if (language.current() === lang.culture) option.selected = true;
+
+    languageSelect.appendChild(option);
+  }
+
+  languageSelect.onclick = () => {
+    ipcRenderer.send("change-lang", languageSelect.value);
+  };
+} else {
+  languageSelect.remove();
+  document.querySelector(".no-translations-available").style.display = "block";
+  document.querySelector(".choose-lang-label").style.display = "none";
+}
+
+authButton.onclick = async () => {
+  authButton.classList.add("disabled");
+
+  await browser.runForAuth(
+    config.websiteUrl,
+    `${config.websiteUrl}logIn`,
+    "/account"
+  );
+
+  attemptAuthorize();
+};
+
+const wrapTranslation = key =>
+  `<span data-lang="${key}">${language.get(key)}</span>`;
+
+const loadProgram = () => mainWindow.loadFile("./src/electron/web/main.html");
+
+const attemptAuthorize = () => {
+  authButton.classList.add("disabled");
+  statusLabel.innerHTML = wrapTranslation("auth.check");
+  axios
+    .get(`${config.websiteUrl}api/userData`, {
+      data: `ver=${currentBuild}`
+    })
+    .then(({ data }) => {
+      if (data.response) {
+        ipcRenderer.send("save-user", data.response);
+        statusLabel.innerHTML =
+          wrapTranslation("auth.session") + data.response.username;
+        loadProgram();
         return;
       }
+      statusLabel.innerHTML = wrapTranslation("auth.ses_not_found");
+    })
+    .catch(() => {
+      statusLabel.innerHTML = wrapTranslation("auth.connection_error");
+    })
+    .finally(() => {
+      authButton.classList.remove("disabled");
+    });
+};
 
-      ipcRenderer.send("save-user", data.response);
+const reloadLangStrings = () => {
+  document
+    .querySelectorAll("[data-lang]")
+    .forEach(el => (el.innerHTML = language.get(el.dataset.lang)));
+  document
+    .querySelectorAll("[data-lang-title]")
+    .forEach(el =>
+      el.setAttribute("title", language.get(el.dataset.langTitle))
+    );
+};
 
-      status.text(language.get("auth.session") + data.response.username);
-
-      loadProgram();
-    },
-    error: () => {
-      status.text(language.get("auth.connection_error"));
-      buttons.removeClass("disabled");
-    }
-  });
-}
-
-function loadProgram() {
-  mainWindow.loadFile("./src/electron/web/main.html");
-}
-
-function reloadLangStrings() {
-  $("[data-lang]").each(function() {
-    $(this).html(language.get($(this).attr("data-lang")));
-  });
-
-  $("[data-lang-title]").each(function() {
-    $(this).attr("title", language.get($(this).attr("data-lang-title")));
-  });
-}
+(async () => {
+  reloadLangStrings();
+  attemptAuthorize();
+})();
