@@ -146,11 +146,22 @@ module.exports = class Seeker {
   }
 
   runWorker() {
-    setInterval(async () => {
+    if (this.workerIntervalId) return;
+
+    this.workerIntervalId = setInterval(async () => {
       this.serviceActions(this.totalTicks, this.isStarted());
       this.totalTicks = this.totalTicks < 32760 ? this.totalTicks + 1 : 0;
       this.events.emit("tick", this.totalTicks);
     }, 1000);
+  }
+
+  stopWorker() {
+    clearInterval(this.workerIntervalId);
+    this.workerIntervalId = null;
+  }
+
+  clearEvents() {
+    this.events.removeAllListeners();
   }
 
   async serviceActions(currentTick, serviceStarted) {

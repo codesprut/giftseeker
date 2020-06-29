@@ -103,3 +103,10 @@ for (const service of services) {
 
 services[0].icon.setActive();
 services[0].panel.setActive();
+
+window.addEventListener("beforeunload", () => {
+  services.forEach(service => {
+    service.stopWorker();
+    service.clearEvents();
+  });
+});
