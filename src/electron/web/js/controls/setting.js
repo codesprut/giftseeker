@@ -93,17 +93,13 @@ export default class Setting {
     let iterations = 0;
 
     const timeoutFunction = callback => {
-      if (!pressed) {
-        clearTimeout(pressTimeout);
-        iterations = 0;
-        return;
-      }
+      if (!pressed) return;
 
       iterations = iterations > 50 ? 50 : iterations + 1;
       callback();
       pressTimeout = setTimeout(() => {
         timeoutFunction(callback);
-      }, 200 / (iterations / 2));
+      }, 500 / iterations);
     };
 
     this.buttonInc.onmousedown = () => {
@@ -115,7 +111,9 @@ export default class Setting {
       pressTimeout = timeoutFunction(() => this.decrementValue(params, step));
     };
 
-    this.buttonInc.onmouseup = this.buttonDec.onmouseup = this.buttonInc.onmouseleave = this.buttonDec.onmouseleave = ev => {
+    this.buttonInc.onmouseup = this.buttonDec.onmouseup = this.buttonInc.onmouseleave = this.buttonDec.onmouseleave = () => {
+      clearTimeout(pressTimeout);
+      iterations = 0;
       pressed = false;
     };
   }
