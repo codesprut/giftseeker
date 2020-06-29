@@ -197,7 +197,11 @@ a:hover {
   border-right: none;
 }
 
-#head .user-bar > div.btn:not(.no-active):hover {
+#head .user-bar > div.btn.disabled {
+  pointer-events: none;
+}
+
+#head .user-bar > div.btn:not(.no-active):not(.disabled):hover {
   border-color: rgba(255, 255, 255, 0.4);
   color: #fff;
   cursor: pointer;
