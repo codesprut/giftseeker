@@ -53,7 +53,7 @@ class OpiumPulses extends Seeker {
       if (!this.isStarted()) break;
 
       await this.sleep(this.entryInterval());
-      const entered = await this.enterGiveaway(giveaway.code);
+      const entered = await this.enterGiveaway(giveaway);
 
       if (entered) {
         this.log({
@@ -78,6 +78,7 @@ class OpiumPulses extends Seeker {
   }
 
   parseGiveaway(htmlNode) {
+    const entered = !!htmlNode.querySelector(".entered");
     const url = htmlNode
       .querySelector(".giveaways-page-item-img-btn-more")
       .getAttribute("href");
@@ -87,6 +88,13 @@ class OpiumPulses extends Seeker {
         .structuredText.replace(/[^0-9]/g, "")
     );
 
+    const checkUser = entered
+      ? false
+      : htmlNode
+          .querySelector(".giveaways-page-item-img-btn-enter")
+          .getAttribute("onClick")
+          .replace(/[^0-9]/g, "");
+
     return {
       name: htmlNode.querySelector(".giveaways-page-item-footer-name")
         .structuredText,
@@ -94,13 +102,15 @@ class OpiumPulses extends Seeker {
       cost,
       free: cost === 0,
       code: url.split("/")[2],
-      entered: !!htmlNode.querySelector(".entered")
+      entered,
+      checkUser
     };
   }
 
-  async enterGiveaway(giveawayCode) {
+  async enterGiveaway(giveaway) {
+    this.modifyCookie([["checkUser", giveaway.checkUser]]);
     return this.http
-      .get(`${this.websiteUrl}/giveaways/enter/${giveawayCode}`)
+      .get(`${this.websiteUrl}/giveaways/enter/${giveaway.code}`)
       .then(({ data }) => data.indexOf("entered this") >= 0)
       .catch(() => false);
   }
