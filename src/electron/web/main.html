@@ -15,10 +15,10 @@
       <div id="head_decor"></div>
       <div class="logo"></div>
       <ul class="menu">
-        <li class="active" data-id="services">
+        <li class="active" data-menu-id="services">
           <span data-lang="ui.menu.services"> </span>
         </li>
-        <li data-id="settings">
+        <li data-menu-id="settings">
           <span data-lang="ui.menu.settings"> </span>
         </li>
       </ul>
@@ -45,7 +45,7 @@
       </div>
     </div>
     <div id="content">
-      <div class="content-item active" data-id="services">
+      <div class="content-item active" data-menu-id="services">
         <div class="services_switcher">
           <div class="services-icons"></div>
           <div class="expander">
@@ -57,7 +57,7 @@
         </div>
         <div class="services-panels"></div>
       </div>
-      <div class="content-item" data-id="settings">
+      <div class="content-item" data-menu-id="settings">
         <div class="left-side">
           <label for="useragent">UserAgent</label>
           <textarea id="useragent"></textarea>
@@ -104,7 +104,7 @@
         </div>
       </div>
     </div>
-    <script src="js/windows/main.js"></script>
+    <script type="module" src="js/windows/main.js"></script>
     <script type="module" src="js/services.js"></script>
     <script type="module">
       import browser from "./js/browser.js";

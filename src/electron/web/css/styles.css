@@ -271,35 +271,35 @@ a:hover {
   display: flex;
 }
 
-.content-item[data-id="settings"] .left-side,
-.content-item[data-id="settings"] .right-side {
+.content-item[data-menu-id="settings"] .left-side,
+.content-item[data-menu-id="settings"] .right-side {
   position: relative;
   padding: 10px;
 }
 
-.content-item[data-id="settings"] .left-side {
+.content-item[data-menu-id="settings"] .left-side {
   width: 100%;
 }
-.content-item[data-id="settings"] .info-links {
+.content-item[data-menu-id="settings"] .info-links {
   position: absolute;
   left: 10px;
   bottom: 10px;
   line-height: 16px;
 }
-.content-item[data-id="settings"] .right-side {
+.content-item[data-menu-id="settings"] .right-side {
   height: 100%;
   width: 250px;
   flex-shrink: 0;
   background: rgba(0, 0, 0, 0.2);
   border-left: 1px solid #28313e;
 }
-.content-item[data-id="settings"] .right-side .setter#lang {
+.content-item[data-menu-id="settings"] .right-side .setter#lang {
   width: 100%;
   cursor: pointer;
   margin-bottom: 5px;
   height: 24px;
 }
-.content-item[data-id="settings"] .right-side .build {
+.content-item[data-menu-id="settings"] .right-side .build {
   width: 100%;
   position: absolute;
   bottom: 10px;

@@ -1,12 +1,9 @@
-"use strict";
-
-window.$ = window.jQuery = require("jquery");
 const tippy = require("tippy.js").default;
+const axios = require("axios").default;
 
 const { remote, ipcRenderer } = require("electron");
 const accountData = remote.getGlobal("user");
 const {
-  language,
   settings,
   config,
   Browser,
@@ -17,44 +14,167 @@ const {
   currentBuild
 } = remote.getGlobal("sharedData");
 
-const updateIcon = $("div.update-available");
-let intervalTicks = 0,
-  updateAvail = false;
+import language from "../language.js";
 
-$(() => {
+const updateIcon = document.querySelector("div.update-available");
+const logoutButton = document.querySelector(".logout-button");
+
+let intervalTicks = 0;
+let updateAvailable = false;
+
+const intervalActions = async () => {
+  if (intervalTicks % 300 === 0 && !isPortable && !updateAvailable)
+    autoUpdater.checkForUpdatesAndNotify();
+
+  if (intervalTicks !== 0 && intervalTicks % 300 === 0) {
+    axios
+      .get(`${config.websiteUrl}api/userData?ver=${currentBuild}`)
+      .then(({ data }) => {
+        if (data.response) renderUser(data.response);
+        else switchToAuthWindow();
+      });
+  }
+
+  intervalTicks++;
+};
+
+const reloadLangStrings = () => {
+  document
+    .querySelectorAll("[data-lang]")
+    .forEach(el => (el.innerHTML = language.get(el.dataset.lang)));
+  document
+    .querySelectorAll("[data-lang-title]")
+    .forEach(el =>
+      el.setAttribute("title", language.get(el.dataset.langTitle))
+    );
+  document.querySelectorAll("[data-tippy-translate]").forEach(el => {
+    const languageKey = el.dataset.tippyTranslate;
+    const translation = language.get(languageKey);
+
+    if (!el._tippy) {
+      el.dataset.tippyContent = translation;
+      tippy(el, {
+        placement: "bottom-end",
+        arrow: true
+      });
+      return;
+    }
+
+    el._tippy.setContent(translation);
+  });
+};
+
+const settingsSection = () => {
+  document.querySelector(".build .version").innerText = currentBuild;
+
+  const languageSelect = document.querySelector("select#lang");
+
+  if (language.count() > 1) {
+    for (const lang of language.listAvailable()) {
+      const option = document.createElement("option");
+      option.setAttribute("id", lang.culture);
+      option.value = lang.culture;
+      option.innerText = `[${lang.culture}] ${lang.name}`;
+
+      if (language.current() === lang.culture) option.selected = true;
+
+      languageSelect.append(option);
+    }
+  } else languageSelect.remove();
+
+  const infoLinks = document.querySelector(".content-item .info-links");
+
+  const websiteLink = document.createElement("button");
+  websiteLink.classList.add("open-website");
+  websiteLink.dataset.link = config.websiteUrl;
+  websiteLink.innerText = "GiftSeeker.RU";
+
+  const steamLink = document.createElement("button");
+  steamLink.classList.add("open-website");
+  steamLink.dataset.link = "https://steamcommunity.com/groups/GiftSeeker";
+  steamLink.dataset.lang = "settings.steam_group";
+  steamLink.style.marginLeft = "7px";
+
+  const donationLink = document.createElement("button");
+  donationLink.classList.add("open-website");
+  donationLink.dataset.link = `${config.websiteUrl}donation`;
+  donationLink.dataset.lang = "settings.donation";
+  donationLink.style.marginLeft = "7px";
+
+  infoLinks.appendChild(websiteLink);
+  infoLinks.appendChild(steamLink);
+  infoLinks.appendChild(donationLink);
+};
+
+const renderUser = accountData => {
+  document.querySelector(
+    "#head .user-bar .avatar"
+  ).style.backgroundImage = `url("${accountData.avatar}")`;
+  document.querySelector("#head .user-bar .username").innerText =
+    accountData.username;
+};
+
+const switchToAuthWindow = () => {
+  mainWindow.hide();
+  mainWindow.loadURL(__dirname + "/blank.html");
+
+  ipcRenderer.send("save-user", null);
+  authWindow.show();
+};
+
+window.minimizeWindow = () => {
+  remote.BrowserWindow.getFocusedWindow().hide();
+};
+
+window.closeWindow = () => {
+  if (settings.get("minimize_on_close")) {
+    minimizeWindow();
+    return;
+  }
+
+  window.close();
+};
+
+(() => {
   autoUpdater.on("update-available", () => {
-    updateAvail = true;
-    updateIcon.addClass("progress");
+    updateAvailable = true;
+    updateIcon.classList.add("progress");
   });
 
   autoUpdater.on("download-progress", (progress, speed, percent) => {
-    updateIcon.attr(
+    updateIcon.setAttribute(
       "title",
-      language.get("ui.upd_progress") + " - " + percent + "%"
+      `${language.get("ui.upd_progress")} - ${percent}%`
     );
   });
 
   autoUpdater.on("update-downloaded", () => {
-    updateIcon
-      .addClass("downloaded")
-      .attr("title", language.get("ui.upd_downloaded"));
+    updateIcon.classList.add("downloaded");
+    updateIcon.setAttribute("title", language.get("ui.upd_downloaded"));
   });
 
-  // Основной воркер главного окна
-  setInterval(intervalSchedules, 1000);
+  setInterval(intervalActions, 1000);
 
-  // UI LOAD
+  renderUser(accountData);
   settingsSection();
   reloadLangStrings();
 
-  const setters = $("[data-id=settings] .setter").each(function() {
-    let item = $(this);
-
-    switch (item.attr("type")) {
+  document.querySelectorAll("[data-id=settings] .setter").forEach(control => {
+    switch (control.getAttribute("type")) {
       case "checkbox":
-        item.prop("checked", settings.get(item.attr("id")));
+        control.checked = settings.get(control.getAttribute("id"));
         break;
     }
+
+    control.onchange = () => {
+      if (control.getAttribute("id") === "lang") {
+        ipcRenderer.send("change-lang", control.value);
+        return;
+      }
+
+      if (control.getAttribute("type") === "checkbox")
+        settings.set(control.getAttribute("id"), control.checked);
+    };
   });
 
   authWindow.hide();
@@ -117,166 +237,28 @@ $(() => {
   if (settings.get("start_minimized")) mainWindow.hide();
   else mainWindow.focus();
 
-  // Переключение основных пунктов меню
-  $(".menu li span").click(function() {
-    let parent = $(this).parent();
-    $(".menu li, .content-item").removeClass("active");
+  document.querySelectorAll(".menu li").forEach(menuItem => {
+    menuItem.onclick = () => {
+      document
+        .querySelectorAll(".menu li, .content-item")
+        .forEach(node => node.classList.remove("active"));
 
-    parent
-      .add('.content-item[data-id="' + parent.attr("data-id") + '"]')
-      .addClass("active");
+      document
+        .querySelectorAll(`[data-menu-id=${menuItem.dataset.menuId}]`)
+        .forEach(node => node.classList.add("active"));
+    };
   });
 
-  $(".logout-button").click(function() {
-    let clicked = $(this).addClass("disabled");
-
-    $.ajax({
-      method: "get",
-      url: `${config.websiteUrl}logout`,
-      success: function() {
-        mainWindow.hide();
-        mainWindow.loadURL(__dirname + "/blank.html");
-
-        ipcRenderer.send("save-user", null);
-        authWindow.show();
-      },
-      error: function() {
-        clicked.removeClass("disabled");
-        alert("something went wrong...");
-      }
-    });
-  });
-
-  // Изменение настроек
-  setters.change(function() {
-    const changed = $(this);
-    let value = changed.val();
-
-    if (changed.attr("type") === "checkbox") {
-      value = changed.prop("checked");
-    }
-
-    if (changed.attr("id") === "lang") {
-      ipcRenderer.send("change-lang", value);
-      return;
-    }
-
-    settings.set(changed.attr("id"), value);
-  });
+  logoutButton.onclick = () => {
+    logoutButton.classList.add("disabled");
+    axios
+      .get(`${config.websiteUrl}logout`)
+      .then(switchToAuthWindow)
+      .catch(() => alert("something went wrong..."))
+      .finally(() => logoutButton.classList.remove("disabled"));
+  };
 
   ipcRenderer.on("change-lang", function() {
     reloadLangStrings();
   });
-});
-
-function intervalSchedules() {
-  if (intervalTicks % 300 === 0 && !isPortable && !updateAvail)
-    autoUpdater.checkForUpdatesAndNotify();
-
-  // user info update
-  if (intervalTicks !== 0 && intervalTicks % 300 === 0) {
-    $.ajax({
-      url: `${config.websiteUrl}api/userData`,
-      data: { ver: currentBuild },
-      dataType: "json",
-      success: data => {
-        if (data.response) renderUser(data.response);
-      }
-    });
-  }
-
-  intervalTicks++;
-}
-
-function reloadLangStrings() {
-  $("[data-lang]").each(function() {
-    $(this).html(language.get($(this).attr("data-lang")));
-  });
-
-  $("[data-lang-title]").each(function() {
-    $(this).attr("title", language.get($(this).attr("data-lang-title")));
-  });
-
-  $("[data-tippy-translate]").each((i, element) => {
-    const languageKey = element.dataset.tippyTranslate;
-    const translation = language.get(languageKey);
-
-    if (!element._tippy) {
-      element.dataset.tippyContent = translation;
-      tippy(element, {
-        placement: "bottom-end",
-        arrow: true
-      });
-      return;
-    }
-
-    element._tippy.setContent(translation);
-  });
-}
-
-function settingsSection() {
-  renderUser(accountData);
-
-  $(".build .version").text(currentBuild);
-
-  const languageSwitch = $("select#lang");
-  const languagesList = language.listAvailable();
-
-  // fill language select
-  if (language.count() <= 1) languageSwitch.remove();
-  else {
-    for (const lang of languagesList) {
-      const option = $(document.createElement("option"))
-        .attr("id", lang.culture)
-        .val(lang.culture)
-        .text("[" + lang.culture + "] " + lang.name);
-
-      if (language.current() === lang.culture) option.prop("selected", true);
-
-      languageSwitch.append(option);
-    }
-  }
-
-  // settings bottom links
-  const infoLinks = $(".content-item .info-links");
-
-  $(document.createElement("button"))
-    .addClass("open-website")
-    .text("GiftSeeker.RU")
-    .attr("data-link", config.websiteUrl)
-    .appendTo(infoLinks);
-
-  $(document.createElement("button"))
-    .addClass("open-website")
-    .attr("data-lang", "settings.steam_group")
-    .css("margin-left", "7px")
-    .attr("data-link", "https://steamcommunity.com/groups/GiftSeeker")
-    .appendTo(infoLinks);
-
-  $(document.createElement("button"))
-    .addClass("open-website")
-    .attr("data-lang", "settings.donation")
-    .css("margin-left", "7px")
-    .attr("data-link", `${config.websiteUrl}donation`)
-    .appendTo(infoLinks);
-}
-
-function renderUser(accountData) {
-  $("#head .user-bar .avatar").css({
-    "background-image": 'url("' + accountData.avatar + '")'
-  });
-  $("#head .user-bar .username").html(accountData.username);
-}
-
-const minimizeWindow = () => {
-  remote.BrowserWindow.getFocusedWindow().hide();
-};
-
-const closeWindow = () => {
-  if (settings.get("minimize_on_close")) {
-    minimizeWindow();
-    return;
-  }
-
-  window.close();
-};
+})();
