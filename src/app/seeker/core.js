@@ -68,7 +68,7 @@ module.exports = class Seeker {
       headers: {
         Referer: this.websiteUrl,
         "User-Agent": settings.get("user_agent"),
-        Cookie: this.getConfig("cookie")
+        Cookie: this.getConfig("cookie", "")
       }
     });
 
@@ -117,8 +117,9 @@ module.exports = class Seeker {
   modifyCookie(cookieArray) {
     let needUpdate = false;
     const currentCookies = new Map(
-      this.getConfig("cookie")
+      this.getConfig("cookie", "")
         .split(";")
+        .filter(row => row.length)
         .map(row => row.trim().split("="))
     );
     cookieArray.forEach(cookie => {
