@@ -1,5 +1,4 @@
 const Seeker = require("../core");
-const query = require("querystring");
 const language = require("../../language");
 const { parse } = require("node-html-parser");
 const clearHtmlTags = require("../../utils/clear-html-tags");
