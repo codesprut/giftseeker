@@ -177,7 +177,6 @@ class SteamGifts extends Seeker {
       )
         continue;
 
-      await this.sleep(this.entryInterval());
       const entry = await this.enterGiveaway(giveaway, xsrfToken);
 
       if (entry.success) {
@@ -192,6 +191,7 @@ class SteamGifts extends Seeker {
           url: `${this.websiteUrl}${giveaway.url}`
         });
       }
+      await this.entryInterval();
     }
   }
 

@@ -75,7 +75,6 @@ class IndieGala extends Seeker {
     for (const giveaway of giveaways) {
       if (!this.isStarted()) return;
 
-      await this.sleep(this.entryInterval());
       const entry = await this.enterGiveaway(giveaway.id);
 
       if (entry.status === "ok") {
@@ -86,6 +85,7 @@ class IndieGala extends Seeker {
         });
         this.setValue(entry.silver_tot);
       }
+      await this.entryInterval();
     }
   }
 

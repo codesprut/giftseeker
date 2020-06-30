@@ -63,15 +63,16 @@ class Follx extends Seeker {
     for (const giveaway of giveaways) {
       if (!this.isStarted()) break;
 
-      await this.sleep(this.entryInterval());
       const entered = await this.enterGiveaway(giveaway, csrfToken);
 
-      if (entered)
+      if (entered) {
         this.log({
           text: `${language.get("service.entered_in")} #link#`,
           anchor: giveaway.name,
           url: giveaway.url
         });
+      }
+      await this.entryInterval();
     }
   }
 

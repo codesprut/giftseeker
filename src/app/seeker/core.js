@@ -123,7 +123,6 @@ module.exports = class Seeker {
     );
     cookieArray.forEach(cookie => {
       const [name, newValue] = cookie;
-      
       if (currentCookies.get(name) !== newValue) {
         needUpdate = true;
         currentCookies.set(name, newValue);
@@ -259,7 +258,8 @@ module.exports = class Seeker {
     const max =
       this.getConfig("interval_to", this.settings.interval_to.default) + 1;
 
-    return (Math.floor(Math.random() * (max - min)) + min) * 1000;
+    const intervalMs = (Math.floor(Math.random() * (max - min)) + min) * 1000;
+    return new Promise(resolve => setTimeout(resolve, intervalMs));
   }
 
   workerInterval() {
@@ -305,10 +305,6 @@ module.exports = class Seeker {
 
   log(text, type) {
     this.events.emit("log", { text, type });
-  }
-
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   async seekService() {}

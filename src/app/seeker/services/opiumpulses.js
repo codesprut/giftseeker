@@ -52,7 +52,6 @@ class OpiumPulses extends Seeker {
     for (const giveaway of giveaways) {
       if (!this.isStarted()) break;
 
-      await this.sleep(this.entryInterval());
       const entered = await this.enterGiveaway(giveaway);
 
       if (entered) {
@@ -62,6 +61,7 @@ class OpiumPulses extends Seeker {
           url: this.websiteUrl + giveaway.url
         });
       }
+      await this.entryInterval();
     }
   }
 
