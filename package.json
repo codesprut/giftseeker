@@ -51,7 +51,6 @@
     "node-html-parser": "1.2.19",
     "electron-json-storage": "4.1.8",
     "electron-updater": "4.2.0",
-    "jquery": "3.5.0",
     "tippy.js": "5.2.0"
   }
 }
