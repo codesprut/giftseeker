@@ -65,7 +65,7 @@ class IndieGala extends Seeker {
     const giveaways = document
       .querySelectorAll(".items-list-item")
       .map(this.parseGiveaway)
-      .filter(ga => ga.requiredLevel <= userLevel && !ga.entered)
+      .filter(ga => ga.requiredLevel <= userLevel && !ga.entered && ga.single)
       .reduce((distinct, current) => {
         if (distinct.filter(it => it.id === current.id).length === 0)
           distinct.push(current);
