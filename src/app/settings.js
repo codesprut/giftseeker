@@ -8,6 +8,12 @@ let settings = {};
 
 let saveToStorageTimeout = null;
 
+/**
+ * Get stored settings
+ * @param key
+ * @param defaultValue
+ * @returns {boolean|*}
+ */
 const get = (key, defaultValue) => {
   if (settings[key] !== undefined) return settings[key];
 
@@ -16,6 +22,11 @@ const get = (key, defaultValue) => {
   return false;
 };
 
+/**
+ * Set setting and store to db
+ * @param key
+ * @param newValue
+ */
 const set = (key, newValue) => {
   const oldValue = get(key);
 

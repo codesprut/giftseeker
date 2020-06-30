@@ -102,11 +102,19 @@ const change = setLang => {
   settings.set("language", setLang);
 };
 
+/**
+ *
+ * @returns {string} current translation
+ */
 const current = () => {
   return settings.get("language");
 };
 
-const count = () => {
+/**
+ * Program translation quantity
+ * @returns {number}
+ */
+const quantity = () => {
   return Object.keys(languages).length;
 };
 
@@ -121,7 +129,7 @@ const listAvailable = () => {
 };
 
 module.exports = {
-  count,
+  quantity,
   current,
   change,
   init,

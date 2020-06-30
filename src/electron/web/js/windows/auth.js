@@ -20,7 +20,7 @@ ipcMain.on("window-shown", function() {
   authButton.classList.remove("disabled");
 });
 
-if (language.count() > 1) {
+if (language.quantity() > 1) {
   for (const lang of language.listAvailable()) {
     const option = document.createElement("option");
     option.setAttribute("id", lang.culture);

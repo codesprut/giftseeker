@@ -69,7 +69,7 @@ const settingsSection = () => {
 
   const languageSelect = document.querySelector("select#lang");
 
-  if (language.count() > 1) {
+  if (language.quantity() > 1) {
     for (const lang of language.listAvailable()) {
       const option = document.createElement("option");
       option.setAttribute("id", lang.culture);
