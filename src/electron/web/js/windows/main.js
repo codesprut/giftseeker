@@ -159,7 +159,7 @@ window.closeWindow = () => {
   settingsSection();
   reloadLangStrings();
 
-  document.querySelectorAll("[data-id=settings] .setter").forEach(control => {
+  document.querySelectorAll("[data-menu-id=settings] .setter").forEach(control => {
     switch (control.getAttribute("type")) {
       case "checkbox":
         control.checked = settings.get(control.getAttribute("id"));
