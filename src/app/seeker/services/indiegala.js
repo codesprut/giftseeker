@@ -57,7 +57,7 @@ class IndieGala extends Seeker {
 
   async enterOnPage(page, userLevel) {
     const document = await this.http
-      .get(`${this.websiteUrl}/giveaways/ajax/${page}/price/asc/level/all`, {
+      .get(`${this.websiteUrl}/giveaways/ajax/${page}/expiry/asc/level/all`, {
         transformResponse: this.clearResponse
       })
       .then(res => parse(res.data.html));
