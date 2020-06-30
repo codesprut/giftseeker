@@ -14,4 +14,3 @@ module.exports = (html, tags = []) => {
 
   return result;
 };
-1;
