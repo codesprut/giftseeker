@@ -5,7 +5,6 @@ const events = require("events");
 const axios = require("axios");
 
 module.exports = class Seeker {
-  totalTicks = 0;
   currentValue = 0;
   updateUserInterval = 300;
 
@@ -147,6 +146,7 @@ module.exports = class Seeker {
 
   runWorker() {
     if (this.workerIntervalId) return;
+    this.totalTicks = 0;
 
     this.workerIntervalId = setInterval(async () => {
       this.serviceActions(this.totalTicks, this.isStarted());
