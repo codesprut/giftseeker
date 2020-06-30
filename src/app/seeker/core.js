@@ -72,6 +72,13 @@ module.exports = class Seeker {
       }
     });
 
+    this.http.interceptors.response.use(response => {
+      if (response.headers["set-cookie"])
+        this.modifyCookie(response.headers["set-cookie"]);
+
+      return response;
+    });
+
     settings.on("change", "user_agent", userAgent => {
       this.http.defaults.headers["User-Agent"] = userAgent;
     });
@@ -86,6 +93,37 @@ module.exports = class Seeker {
       .get(this.websiteUrl)
       .then(res => (res.data.indexOf(this.authContent) >= 0 ? 1 : 0))
       .catch(err => (err.status === 200 ? 0 : -1));
+  }
+
+  modifyCookie(newCookies) {
+    let needUpdate = false;
+    const currentCookies = new Map(
+      this.getConfig("cookie")
+        .split(";")
+        .map(row => row.trim().split("="))
+    );
+
+    newCookies
+      .map(row => {
+        const [[name, value], ...params] = row
+          .split(";")
+          .map(param => param.trim().split("="));
+
+        return new Map([["name", name], ["value", value], ...params]);
+      })
+      .filter(cookie => this.websiteUrl.indexOf(cookie.get("domain")) >= 0)
+      .forEach(cookie => {
+        const name = cookie.get("name");
+        const newValue = cookie.get("value");
+
+        if (currentCookies.get(name) !== newValue) {
+          needUpdate = true;
+          currentCookies.set(name, newValue);
+        }
+      });
+
+    if (needUpdate)
+      this.setCookie([...currentCookies].map(it => it.join("=")).join("; "));
   }
 
   setCookie(cookie) {
