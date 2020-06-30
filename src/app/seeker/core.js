@@ -73,8 +73,17 @@ module.exports = class Seeker {
     });
 
     this.http.interceptors.response.use(response => {
-      if (response.headers["set-cookie"])
-        this.modifyCookie(response.headers["set-cookie"]);
+      const host = response.request.socket.servername;
+      if (
+        this.websiteUrl.indexOf(host) >= 0 &&
+        response.headers["set-cookie"]
+      ) {
+        const cookieArray = this.parseSetCookieHeader(
+          response.headers["set-cookie"]
+        );
+
+        this.modifyCookie(cookieArray);
+      }
 
       return response;
     });
@@ -95,32 +104,31 @@ module.exports = class Seeker {
       .catch(err => (err.status === 200 ? 0 : -1));
   }
 
-  modifyCookie(newCookies) {
+  parseSetCookieHeader(header) {
+    return header.map(row => {
+      const [[name, value]] = row
+        .split(";")
+        .map(param => param.trim().split("="));
+
+      return [name, value];
+    });
+  }
+
+  modifyCookie(cookieArray) {
     let needUpdate = false;
     const currentCookies = new Map(
       this.getConfig("cookie")
         .split(";")
         .map(row => row.trim().split("="))
     );
-
-    newCookies
-      .map(row => {
-        const [[name, value], ...params] = row
-          .split(";")
-          .map(param => param.trim().split("="));
-
-        return new Map([["name", name], ["value", value], ...params]);
-      })
-      .filter(cookie => this.websiteUrl.indexOf(cookie.get("domain")) >= 0)
-      .forEach(cookie => {
-        const name = cookie.get("name");
-        const newValue = cookie.get("value");
-
-        if (currentCookies.get(name) !== newValue) {
-          needUpdate = true;
-          currentCookies.set(name, newValue);
-        }
-      });
+    cookieArray.forEach(cookie => {
+      const [name, newValue] = cookie;
+      
+      if (currentCookies.get(name) !== newValue) {
+        needUpdate = true;
+        currentCookies.set(name, newValue);
+      }
+    });
 
     if (needUpdate)
       this.setCookie([...currentCookies].map(it => it.join("=")).join("; "));
