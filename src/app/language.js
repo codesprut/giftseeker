@@ -78,6 +78,11 @@ const init = async () => {
   }
 };
 
+/**
+ *
+ * @param key of translation string
+ * @returns {string}
+ */
 const get = key => {
   let response = languages;
   const keysTree = `${current()}.${key}`.split(".");

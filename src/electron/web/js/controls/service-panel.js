@@ -1,6 +1,7 @@
 import Logger from "./logger.js";
 import UserPanel from "./user-panel.js";
 import Setting from "./setting.js";
+import language from "../language.js";
 
 export default class ServicePanel {
   constructor(service) {
@@ -92,6 +93,7 @@ export default class ServicePanel {
 
     menuItem.dataset.id = pageCode;
     menuItem.dataset.lang = `service.${pageCode}`;
+    menuItem.innerText = language.get(`service.${pageCode}`);
 
     menuItem.onclick = () => {
       if (this.menuItemCallback) this.menuItemCallback(pageCode);

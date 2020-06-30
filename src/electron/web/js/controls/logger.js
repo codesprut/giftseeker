@@ -1,7 +1,5 @@
-const { remote } = require("electron");
-const { language } = remote.getGlobal("sharedData");
-
 import time from "../utlis/time.js";
+import language from "../language.js";
 
 export default class Logger {
   constructor() {
@@ -9,6 +7,7 @@ export default class Logger {
 
     this.clearButton = document.createElement("span");
     this.clearButton.classList.add("clear-log");
+    this.clearButton.innerText = language.get("service.clear_log");
     this.clearButton.dataset.lang = "service.clear_log";
     this.clearButton.onclick = () => this.clear();
   }

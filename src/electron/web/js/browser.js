@@ -1,5 +1,7 @@
 const { remote, shell } = require("electron");
-const { Browser, settings, language } = remote.getGlobal("sharedData");
+const { Browser, settings } = remote.getGlobal("sharedData");
+
+import language from "./language.js";
 
 const openUrl = (url, useProgramBrowser) => {
   if (settings.get("use_system_browser") && !useProgramBrowser)

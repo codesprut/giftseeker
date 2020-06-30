@@ -1,5 +1,4 @@
-const { remote } = require("electron");
-const { language } = remote.getGlobal("sharedData");
+import language from "../language.js";
 
 export default class Setting {
   constructor(name, params, get, set) {
