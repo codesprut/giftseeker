@@ -62,7 +62,7 @@ app.on("window-all-closed", () => {
 app.on("ready", async () => {
   await settings.init();
   const services = require("../app/seeker/bundle");
-  const programSession = require("../app/session");
+  const programSession = require("./session");
 
   settings.on("change", "start_with_os", startWithOs => {
     autoStartControl(startWithOs);
