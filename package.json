@@ -14,7 +14,9 @@
     "test": "jest",
     "start": "electron .",
     "build-win": "electron-builder --x64 --ia32",
-    "build-nix": "electron-builder -l --x64 --ia32"
+    "build-nix": "electron-builder -l --x64 --ia32",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "build": {
     "appId": "com.giftseeker.app",
