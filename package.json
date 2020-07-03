@@ -20,7 +20,8 @@
     "appId": "com.giftseeker.app",
     "files": [
       "src",
-      "node_modules"
+      "node_modules",
+      "LICENSE"
     ],
     "productName": "GiftSeeker",
     "artifactName": "${productName}Setup.${ext}",
