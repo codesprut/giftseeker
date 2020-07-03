@@ -20,6 +20,8 @@ const language = require("../app/language");
 
 const gotTheLock = app.requestSingleInstanceLock();
 
+const currentBuild = app.getVersion();
+
 let appLoaded = false;
 
 let authWindow = null;
@@ -214,7 +216,7 @@ app.on("ready", async () => {
     { role: "quit" }
   ]);
 
-  tray.setToolTip(`${config.appName} ${ENV.currentBuild}`);
+  tray.setToolTip(`${config.appName} ${currentBuild}`);
   tray.setContextMenu(trayMenu);
   tray.on("click", () => {
     if (user === null)
@@ -226,7 +228,7 @@ app.on("ready", async () => {
   global.sharedData = {
     isPortable: ENV.isPortable,
     autoUpdater,
-    currentBuild: ENV.currentBuild,
+    currentBuild,
     devMode: ENV.devMode,
     shell,
     TrayIcon: tray,
