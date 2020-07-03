@@ -6,6 +6,10 @@
   "description": "Automatically join giveaways",
   "homepage": "https://giftseeker.ru/",
   "main": "src/electron/app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CodeSprut/GiftSeeker.git"
+  },
   "scripts": {
     "test": "jest",
     "start": "electron .",
