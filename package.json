@@ -3,7 +3,7 @@
   "version": "2.0.3",
   "author": "CodeSprut",
   "license": "ISC",
-  "description": "Steam raffles autojoiner",
+  "description": "Automatically join giveaways",
   "homepage": "https://giftseeker.ru/",
   "main": "src/electron/app.js",
   "scripts": {
@@ -20,7 +20,7 @@
     ],
     "productName": "GiftSeeker",
     "artifactName": "${productName}Setup.${ext}",
-    "copyright": "Copyright © 2019 ${author}",
+    "copyright": "Copyright © 2020 ${author}",
     "linux": {
       "icon": "./src/resources/images/icon.ico"
     },
