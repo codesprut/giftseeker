@@ -2,7 +2,7 @@
   "name": "giftseeker",
   "version": "2.0.3",
   "author": "CodeSprut",
-  "license": "ISC",
+  "license": "MIT",
   "description": "Automatically join giveaways",
   "homepage": "https://giftseeker.ru/",
   "main": "src/electron/app.js",
