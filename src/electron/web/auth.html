@@ -21,7 +21,7 @@
         <span
           onclick="document.querySelector('#choice-lang').classList.add('visible')"
           class="language fa fa-globe"
-          data-lang-title="auth.lng_choice_title"
+          data-tippy-translate="auth.lng_choice_title"
         ></span>
         <span onclick="window.close()" class="closer fa fa-times"></span>
       </div>
@@ -43,7 +43,10 @@
       ></button>
     </div>
     <div id="choice-lang" class="no-selectable">
-      <div data-lang="auth.no_avail_trans" class="no-translations-available"></div>
+      <div
+        data-lang="auth.no_avail_trans"
+        class="no-translations-available"
+      ></div>
       <div data-lang="auth.choose_lang" class="choose-lang-label label"></div>
       <div class="input-wrap select">
         <select class="setter" id="lang"> </select>

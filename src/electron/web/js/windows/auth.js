@@ -1,15 +1,12 @@
 const { remote, ipcRenderer } = require("electron");
 const axios = require("axios").default;
 
-const {
-  language,
-  config,
-  mainWindow,
-  ipcMain,
-  currentBuild
-} = remote.getGlobal("sharedData");
+const { config, mainWindow, ipcMain, currentBuild } = remote.getGlobal(
+  "sharedData"
+);
 
 import browser from "../browser.js";
+import language from "../language.js";
 
 const statusLabel = document.querySelector(".status-text");
 const authButton = document.querySelector("#auth_button");
@@ -85,13 +82,8 @@ const attemptAuthorize = () => {
 
 const reloadLangStrings = () => {
   document
-    .querySelectorAll("[data-lang]")
-    .forEach(el => (el.innerHTML = language.get(el.dataset.lang)));
-  document
-    .querySelectorAll("[data-lang-title]")
-    .forEach(el =>
-      el.setAttribute("title", language.get(el.dataset.langTitle))
-    );
+    .querySelectorAll("[data-lang],[data-lang-title],[data-tippy-translate]")
+    .forEach(language.updateNode);
 };
 
 (async () => {

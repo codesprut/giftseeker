@@ -1,4 +1,3 @@
-const tippy = require("tippy.js").default;
 const axios = require("axios").default;
 
 const { remote, ipcRenderer } = require("electron");
@@ -40,28 +39,8 @@ const intervalActions = async () => {
 
 const reloadLangStrings = () => {
   document
-    .querySelectorAll("[data-lang]")
-    .forEach(el => (el.innerHTML = language.get(el.dataset.lang)));
-  document
-    .querySelectorAll("[data-lang-title]")
-    .forEach(el =>
-      el.setAttribute("title", language.get(el.dataset.langTitle))
-    );
-  document.querySelectorAll("[data-tippy-translate]").forEach(el => {
-    const languageKey = el.dataset.tippyTranslate;
-    const translation = language.get(languageKey);
-
-    if (!el._tippy) {
-      el.dataset.tippyContent = translation;
-      tippy(el, {
-        placement: "bottom-end",
-        arrow: true
-      });
-      return;
-    }
-
-    el._tippy.setContent(translation);
-  });
+    .querySelectorAll("[data-lang],[data-lang-title],[data-tippy-translate]")
+    .forEach(language.updateNode);
 };
 
 const settingsSection = () => {
@@ -159,23 +138,25 @@ window.closeWindow = () => {
   settingsSection();
   reloadLangStrings();
 
-  document.querySelectorAll("[data-menu-id=settings] .setter").forEach(control => {
-    switch (control.getAttribute("type")) {
-      case "checkbox":
-        control.checked = settings.get(control.getAttribute("id"));
-        break;
-    }
-
-    control.onchange = () => {
-      if (control.getAttribute("id") === "lang") {
-        ipcRenderer.send("change-lang", control.value);
-        return;
+  document
+    .querySelectorAll("[data-menu-id=settings] .setter")
+    .forEach(control => {
+      switch (control.getAttribute("type")) {
+        case "checkbox":
+          control.checked = settings.get(control.getAttribute("id"));
+          break;
       }
 
-      if (control.getAttribute("type") === "checkbox")
-        settings.set(control.getAttribute("id"), control.checked);
-    };
-  });
+      control.onchange = () => {
+        if (control.getAttribute("id") === "lang") {
+          ipcRenderer.send("change-lang", control.value);
+          return;
+        }
+
+        if (control.getAttribute("type") === "checkbox")
+          settings.set(control.getAttribute("id"), control.checked);
+      };
+    });
 
   authWindow.hide();
   mainWindow.show();
@@ -258,7 +239,5 @@ window.closeWindow = () => {
       .finally(() => logoutButton.classList.remove("disabled"));
   };
 
-  ipcRenderer.on("change-lang", function() {
-    reloadLangStrings();
-  });
+  ipcRenderer.on("change-lang", () => reloadLangStrings());
 })();
