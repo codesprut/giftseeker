@@ -34,7 +34,6 @@ export default class Setting {
     this.control.classList.add("checkbox");
 
     const wrap = document.createElement("label");
-    wrap.dataset.tippyContent = language.get(`${params.trans}_title`);
     wrap.dataset.tippyTranslate = `${params.trans}_title`;
 
     const checkBox = document.createElement("input");
@@ -43,11 +42,14 @@ export default class Setting {
     checkBox.onchange = () => this.saveValue(checkBox.checked);
 
     const label = document.createElement("span");
+    label.classList.add("label");
     label.dataset.lang = params.trans;
-    label.innerText = language.get(params.trans);
 
     wrap.appendChild(checkBox);
     wrap.appendChild(label);
+
+    language.updateNode(wrap);
+    language.updateNode(label);
 
     this.control.appendChild(wrap);
   }
@@ -74,15 +76,15 @@ export default class Setting {
 
     const label = document.createElement("div");
     label.classList.add("label");
-    label.dataset.tippyContent = language.get(`${params.trans}_title`);
     label.dataset.tippyTranslate = `${params.trans}_title`;
     label.dataset.lang = params.trans;
-    label.innerText = language.get(params.trans);
 
     this.control.appendChild(this.buttonDec);
     this.control.appendChild(this.valueLabel);
     this.control.appendChild(this.buttonInc);
     this.control.appendChild(label);
+
+    language.updateNode(label);
 
     if (params.default === this.max) this.buttonInc.classList.add("disabled");
     if (params.default === this.min) this.buttonDec.classList.add("disabled");

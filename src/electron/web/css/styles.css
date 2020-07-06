@@ -537,6 +537,7 @@ textarea#useragent {
   position: relative;
 }
 .service-settings .input-wrap .label {
+  display: inline-block;
   padding: 0 5px;
   font-size: 12px;
   color: #9ec5ea;
@@ -575,12 +576,6 @@ textarea#useragent {
 .service-settings .input-wrap.number .button.disabled {
   cursor: default;
   color: grey;
-}
-
-.service-settings .input-wrap .label {
-  padding: 0 5px;
-  font-size: 12px;
-  color: #9ec5ea;
 }
 
 .service-settings .input-wrap.checkbox {
