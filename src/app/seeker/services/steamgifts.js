@@ -42,15 +42,21 @@ class SteamGifts extends Seeker {
     };
     this.settings.min_cost = {
       type: "number",
+      range: true,
+      rangeType: "min",
+      rangePart: "max_cost",
       trans: this.translationKey("min_cost"),
       min: 0,
-      max: this.getConfig("max_cost", 0),
+      max: 300,
       default: this.getConfig("min_cost", 0)
     };
     this.settings.max_cost = {
       type: "number",
+      range: true,
+      rangeType: "max",
+      rangePart: "min_cost",
       trans: this.translationKey("max_cost"),
-      min: this.getConfig("min_cost", 0),
+      min: 0,
       max: 300,
       default: this.getConfig("max_cost", 0)
     };
