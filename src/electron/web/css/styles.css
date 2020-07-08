@@ -536,20 +536,21 @@ textarea#useragent {
   display: inline-block;
   position: relative;
 }
-.service-settings .input-wrap .label {
-  display: inline-block;
-  padding: 0 5px;
-  font-size: 12px;
-  color: #9ec5ea;
-  cursor: help;
-}
 .service-settings .input-wrap.number {
   text-align: center;
   width: 20%;
   margin-bottom: 10px;
   vertical-align: top;
 }
-
+.service-settings .input-wrap.checkbox .label {
+  display: inline-block;
+}
+.service-settings .input-wrap .label {
+  padding: 0 5px;
+  font-size: 12px;
+  color: #9ec5ea;
+  cursor: help;
+}
 .service-settings .input-wrap.number .value-label,
 .service-settings .input-wrap.number .button {
   display: inline-block;
