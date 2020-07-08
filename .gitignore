@@ -1,7 +1,2 @@
-/.idea/
 /dist/
 /node_modules/
-*.symlink
-*.txt
-*.rar
-npm
