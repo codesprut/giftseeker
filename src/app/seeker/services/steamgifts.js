@@ -128,60 +128,16 @@ class SteamGifts extends Seeker {
       .filter(node => node.getAttribute("name") === "xsrf_token")[0]
       .getAttribute("value");
 
-    const pinnedCodes = document
-      .querySelectorAll(
-        ".pinned-giveaways__outer-wrap .giveaway__row-outer-wrap"
-      )
-      .map(htmlNode => this.parseGiveaway(htmlNode).code);
-
-    const giveaways = document
-      .querySelectorAll(".giveaway__row-outer-wrap")
-      .map(htmlNode => this.parseGiveaway(htmlNode))
-      .map(giveaway => ({
-        ...giveaway,
-        pinned: pinnedCodes.includes(giveaway.code)
-      }));
+    const giveaways = this.extractGiveaways(document);
 
     if (this.getConfig("sort_by_chance", false))
       giveaways.sort((a, b) => b.winChance - a.winChance);
 
     const wishlistPage = pageUrl.indexOf("wishlist") > 0;
-    const ignoreSomeSetting = wishlistPage && this.getConfig("ignore_on_wish");
-
-    const minChance = this.getConfig("min_chance", 0);
-    const minTimeLeft = this.getConfig("ending", 0) * 60;
-    const minLevel = this.getConfig("min_level", 0);
-    const minCost = this.getConfig("min_cost", 0);
-    const maxCost = this.getConfig("max_cost", 0);
-    const pointsReserve = this.getConfig("points_reserve", 0);
 
     for (const giveaway of giveaways) {
       if (!this.isStarted()) return;
-      if (
-        (minChance > 0 && minChance < giveaway.winChance) ||
-        (minTimeLeft > 0 && minTimeLeft < giveaway.timeLeft) ||
-        giveaway.entered ||
-        !giveaway.levelPass ||
-        this.currentValue < giveaway.cost ||
-        (wishlistPage && giveaway.pinned)
-      )
-        continue;
-
-      if (
-        !ignoreSomeSetting &&
-        ((minCost !== 0 && giveaway.cost < minCost) ||
-          (maxCost !== 0 && giveaway.cost > maxCost) ||
-          (minLevel !== 0 && giveaway.level > minLevel))
-      )
-        continue;
-
-      const reserveExceeded = this.currentValue - giveaway.cost < pointsReserve;
-
-      if (
-        reserveExceeded &&
-        (!wishlistPage || !this.getConfig("reserve_on_wish"))
-      )
-        continue;
+      if (!this.canEnterGiveaway(giveaway, wishlistPage)) continue;
 
       const entry = await this.enterGiveaway(giveaway, xsrfToken);
 
@@ -199,6 +155,59 @@ class SteamGifts extends Seeker {
       }
       await this.entryInterval();
     }
+  }
+
+  canEnterGiveaway(giveaway, wishlistPage) {
+    const minChance = this.getConfig("min_chance", 0);
+    const minTimeLeft = this.getConfig("ending", 0) * 60;
+    const minLevel = this.getConfig("min_level", 0);
+    const minCost = this.getConfig("min_cost", 0);
+    const maxCost = this.getConfig("max_cost", 0);
+    const pointsReserve = this.getConfig("points_reserve", 0);
+    const reserveExceeded = this.currentValue - giveaway.cost < pointsReserve;
+    const ignoreSomeSetting = wishlistPage && this.getConfig("ignore_on_wish");
+
+    if (
+      (minChance > 0 && minChance < giveaway.winChance) ||
+      (minTimeLeft > 0 && minTimeLeft < giveaway.timeLeft) ||
+      giveaway.entered ||
+      !giveaway.levelPass ||
+      this.currentValue < giveaway.cost ||
+      (wishlistPage && giveaway.pinned)
+    )
+      return false;
+
+    if (
+      !ignoreSomeSetting &&
+      ((minCost !== 0 && giveaway.cost < minCost) ||
+        (maxCost !== 0 && giveaway.cost > maxCost) ||
+        (minLevel !== 0 && giveaway.level > minLevel))
+    )
+      return false;
+
+    if (
+      reserveExceeded &&
+      (!wishlistPage || !this.getConfig("reserve_on_wish"))
+    )
+      return false;
+
+    return true;
+  }
+
+  extractGiveaways(document) {
+    const pinnedCodes = document
+      .querySelectorAll(
+        ".pinned-giveaways__outer-wrap .giveaway__row-outer-wrap"
+      )
+      .map(htmlNode => this.parseGiveaway(htmlNode).code);
+
+    return document
+      .querySelectorAll(".giveaway__row-outer-wrap")
+      .map(htmlNode => this.parseGiveaway(htmlNode))
+      .map(giveaway => ({
+        ...giveaway,
+        pinned: pinnedCodes.includes(giveaway.code)
+      }));
   }
 
   parseGiveaway(htmlNode) {
