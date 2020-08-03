@@ -20,7 +20,7 @@ module.exports = {
     maxHeight: 900
   },
   defaultStorageData: {
-    language: "ru_RU",
+    language: "en_US",
     user_agent: "Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/83.0.4103.88 Mobile/15E148 Safari/604.1"
   }
 };
