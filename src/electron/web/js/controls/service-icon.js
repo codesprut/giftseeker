@@ -8,6 +8,7 @@ export default class ServiceIcon {
     this.bg.style.backgroundImage = `url('images/services/${serviceName}.png')`;
 
     this.stateIcon = document.createElement("div");
+
     this.stateIcon.classList.add("service-state");
 
     this.nameLabel = document.createElement("span");

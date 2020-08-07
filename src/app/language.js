@@ -11,7 +11,7 @@ const downloadTranslation = async name => {
     fs.writeFile(
       storage.getDataPath() + "/" + name,
       JSON.stringify(res.data),
-      err => {}
+      err => {},
     );
   });
 };
@@ -134,5 +134,5 @@ module.exports = {
   change,
   init,
   get,
-  listAvailable
+  listAvailable,
 };

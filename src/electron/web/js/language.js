@@ -16,7 +16,7 @@ language.updateNode = node => {
       node.dataset.tippyContent = translation;
       tippy(node, {
         placement: "bottom-end",
-        arrow: true
+        arrow: true,
       });
       return;
     }

@@ -9,7 +9,7 @@ class SteamGifts extends Seeker {
       websiteUrl: "https://www.steamgifts.com",
       authPageUrl: "https://www.steamgifts.com/?login",
       winsPageUrl: "https://www.steamgifts.com/giveaways/won",
-      authContent: "Account"
+      authContent: "Account",
     });
 
     this.settings.points_reserve = {
@@ -17,28 +17,28 @@ class SteamGifts extends Seeker {
       trans: this.translationKey("points_reserve"),
       min: 0,
       max: 500,
-      default: this.getConfig("points_reserve", 0)
+      default: this.getConfig("points_reserve", 0),
     };
     this.settings.ending = {
       type: "number",
       trans: this.translationKey("ending"),
       min: 0,
       max: 500,
-      default: this.getConfig("ending", 0)
+      default: this.getConfig("ending", 0),
     };
     this.settings.min_chance = {
       type: "float_number",
       trans: this.translationKey("min_chance"),
       min: 0,
       max: 100,
-      default: this.getConfig("min_chance", 0)
+      default: this.getConfig("min_chance", 0),
     };
     this.settings.min_level = {
       type: "number",
       trans: this.translationKey("min_level"),
       min: 0,
       max: 10,
-      default: this.getConfig("min_level", 0)
+      default: this.getConfig("min_level", 0),
     };
     this.settings.min_cost = {
       type: "number",
@@ -48,7 +48,7 @@ class SteamGifts extends Seeker {
       trans: this.translationKey("min_cost"),
       min: 0,
       max: 300,
-      default: this.getConfig("min_cost", 0)
+      default: this.getConfig("min_cost", 0),
     };
     this.settings.max_cost = {
       type: "number",
@@ -58,28 +58,28 @@ class SteamGifts extends Seeker {
       trans: this.translationKey("max_cost"),
       min: 0,
       max: 300,
-      default: this.getConfig("max_cost", 0)
+      default: this.getConfig("max_cost", 0),
     };
 
     this.settings.sort_by_chance = {
       type: "checkbox",
       trans: this.translationKey("sort_by_chance"),
-      default: this.getConfig("sort_by_chance", false)
+      default: this.getConfig("sort_by_chance", false),
     };
     this.settings.wishlist_only = {
       type: "checkbox",
       trans: this.translationKey("wishlist_only"),
-      default: this.getConfig("wishlist_only", false)
+      default: this.getConfig("wishlist_only", false),
     };
     this.settings.reserve_on_wish = {
       type: "checkbox",
       trans: this.translationKey("reserve_on_wish"),
-      default: this.getConfig("reserve_on_wish", false)
+      default: this.getConfig("reserve_on_wish", false),
     };
     this.settings.ignore_on_wish = {
       type: "checkbox",
       trans: this.translationKey("ignore_on_wish"),
-      default: this.getConfig("ignore_on_wish", false)
+      default: this.getConfig("ignore_on_wish", false),
     };
   }
 
@@ -97,14 +97,14 @@ class SteamGifts extends Seeker {
           username: document
             .querySelector(".form__input-small")
             .getAttribute("value"),
-          value: document.querySelector(".nav__points").structuredText
+          value: document.querySelector(".nav__points").structuredText,
         };
       });
   }
 
   async seekService() {
     await this.enterOnPage(
-      "https://www.steamgifts.com/giveaways/search?type=wishlist"
+      "https://www.steamgifts.com/giveaways/search?type=wishlist",
     );
 
     if (this.getConfig("wishlist_only")) return;
@@ -114,7 +114,7 @@ class SteamGifts extends Seeker {
 
     do {
       await this.enterOnPage(
-        `https://www.steamgifts.com/giveaways/search?page=${currentPage}`
+        `https://www.steamgifts.com/giveaways/search?page=${currentPage}`,
       );
       currentPage++;
     } while (currentPage <= processPages);
@@ -145,12 +145,12 @@ class SteamGifts extends Seeker {
         this.setValue(entry.points);
         this.log({
           text: `${language.get("service.entered_in")} #link#. ${this.translate(
-            "cost"
+            "cost",
           )} ${giveaway.cost} ${this.translate("chance")} ${
             giveaway.winChance
           }%`,
           anchor: giveaway.name,
-          url: `${this.websiteUrl}${giveaway.url}`
+          url: `${this.websiteUrl}${giveaway.url}`,
         });
       }
       await this.entryInterval();
@@ -197,7 +197,7 @@ class SteamGifts extends Seeker {
   extractGiveaways(document) {
     const pinnedCodes = document
       .querySelectorAll(
-        ".pinned-giveaways__outer-wrap .giveaway__row-outer-wrap"
+        ".pinned-giveaways__outer-wrap .giveaway__row-outer-wrap",
       )
       .map(htmlNode => this.parseGiveaway(htmlNode).code);
 
@@ -206,7 +206,7 @@ class SteamGifts extends Seeker {
       .map(htmlNode => this.parseGiveaway(htmlNode))
       .map(giveaway => ({
         ...giveaway,
-        pinned: pinnedCodes.includes(giveaway.code)
+        pinned: pinnedCodes.includes(giveaway.code),
       }));
   }
 
@@ -215,7 +215,7 @@ class SteamGifts extends Seeker {
     const infoNodes = htmlNode.querySelectorAll(".giveaway__heading__thin");
     const linkNode = htmlNode.querySelector("a.giveaway__heading__name");
     const levelNode = htmlNode.querySelector(
-      ".giveaway__column--contributor-level"
+      ".giveaway__column--contributor-level",
     );
 
     let copies = 1;
@@ -223,7 +223,7 @@ class SteamGifts extends Seeker {
     const entries = Number(
       htmlNode
         .querySelector(".giveaway__links span")
-        .structuredText.replace(/[^0-9]/g, "")
+        .structuredText.replace(/[^0-9]/g, ""),
     );
     const timeLeft =
       htmlNode
@@ -235,7 +235,7 @@ class SteamGifts extends Seeker {
     }
 
     const cost = Number(
-      infoNodes[infoNodes.length - 1].structuredText.replace(/[^0-9]/g, "")
+      infoNodes[infoNodes.length - 1].structuredText.replace(/[^0-9]/g, ""),
     );
 
     const chance = parseFloat(((copies / entries) * 100).toFixed(2));
@@ -250,12 +250,12 @@ class SteamGifts extends Seeker {
         ? Number(levelNode.structuredText.replace(/[^0-9]/g, ""))
         : 0,
       levelPass: !htmlNode.querySelector(
-        ".giveaway__column--contributor-level--negative"
+        ".giveaway__column--contributor-level--negative",
       ),
       name: linkNode.structuredText,
       code: url.split("/")[2],
       entered: !!htmlNode.querySelector(".giveaway__row-inner-wrap.is-faded"),
-      winChance: chance === Infinity ? 0 : chance
+      winChance: chance === Infinity ? 0 : chance,
     };
   }
 
@@ -267,16 +267,16 @@ class SteamGifts extends Seeker {
       data: query.stringify({
         xsrf_token: xsrfToken,
         do: "entry_insert",
-        code: giveaway.code
+        code: giveaway.code,
       }),
       headers: {
         "X-Requested-With": "XMLHttpRequest",
-        Referer: `${this.websiteUrl}${giveaway.url}`
-      }
+        Referer: `${this.websiteUrl}${giveaway.url}`,
+      },
     })
       .then(res => ({
         success: res.data.type === "success",
-        points: res.data.points
+        points: res.data.points,
       }))
       .catch(() => ({ success: false }));
   }

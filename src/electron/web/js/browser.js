@@ -34,9 +34,9 @@ const runForAuth = async (websiteUrl, authPageUrl, authContent) => {
         Browser.webContents.session.cookies
           .get({ domain: websiteUrl.split("/")[2].replace("www.", "") })
           .then(cookies =>
-            cookies.map(cookie => cookie.name + "=" + cookie.value).join("; ")
+            cookies.map(cookie => cookie.name + "=" + cookie.value).join("; "),
           )
-          .catch(() => "")
+          .catch(() => ""),
       );
     });
   });
@@ -44,5 +44,5 @@ const runForAuth = async (websiteUrl, authPageUrl, authContent) => {
 
 export default {
   openUrl,
-  runForAuth
+  runForAuth,
 };

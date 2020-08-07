@@ -14,9 +14,9 @@ const createGiveaway = (number, fields = {}) => {
       name: "test " + number,
       code: "test" + number,
       entered: false,
-      winChance: 100
+      winChance: 100,
     },
-    fields
+    fields,
   );
 };
 
@@ -25,15 +25,15 @@ const defaultValue = 300;
 const commonGiveaways = [
   createGiveaway(1),
   createGiveaway(2, { entered: true }),
-  createGiveaway(3, { levelPass: false })
+  createGiveaway(3, { levelPass: false }),
 ];
 
 describe("Entry logic", () => {
   const cases = [
     {
       toString: () => "Default settings",
-      expectTruthy: ["test1"]
-    }
+      expectTruthy: ["test1"],
+    },
   ];
   test.each(cases)("%s", async caseData => {
     settingsMock.setup(caseData.settings || {});
@@ -41,7 +41,7 @@ describe("Entry logic", () => {
       steamGifts.setValue(caseData.currentValue || defaultValue);
       const canEnter = steamGifts.canEnterGiveaway(
         giveaway,
-        caseData.wishlistPage || false
+        caseData.wishlistPage || false,
       );
       expect(canEnter).toEqual(caseData.expectTruthy.includes(giveaway.code));
     }

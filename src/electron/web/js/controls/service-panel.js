@@ -17,7 +17,7 @@ export default class ServicePanel {
       settingsPage,
       service.settings,
       service.getConfig,
-      service.setConfig
+      service.setConfig,
     );
 
     this.logger = new Logger();

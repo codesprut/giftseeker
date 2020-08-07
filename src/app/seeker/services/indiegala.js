@@ -98,7 +98,7 @@ class IndieGala extends Seeker {
       : Number(
           htmlNode
             .querySelector(".items-list-item-data-button a")
-            .getAttribute("data-price")
+            .getAttribute("data-price"),
         );
     const single = typeNode.structuredText.indexOf("single") === 0;
     const requiredLevel = (() => {

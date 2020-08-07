@@ -10,7 +10,7 @@ const {
   mainWindow,
   autoUpdater,
   isPortable,
-  currentBuild
+  currentBuild,
 } = remote.getGlobal("sharedData");
 
 import language from "../language.js";
@@ -87,7 +87,7 @@ const settingsSection = () => {
 
 const renderUser = accountData => {
   document.querySelector(
-    "#head .user-bar .avatar"
+    "#head .user-bar .avatar",
   ).style.backgroundImage = `url("${accountData.avatar}")`;
   document.querySelector("#head .user-bar .username").innerText =
     accountData.username;
@@ -123,7 +123,7 @@ window.closeWindow = () => {
   autoUpdater.on("download-progress", (progress, speed, percent) => {
     updateIcon.setAttribute(
       "title",
-      `${language.get("ui.upd_progress")} - ${percent}%`
+      `${language.get("ui.upd_progress")} - ${percent}%`,
     );
   });
 
@@ -172,14 +172,14 @@ window.closeWindow = () => {
   userAgentArea.onchange = () =>
     settings.set(
       "user_agent",
-      userAgentArea.value || userAgentArea.placeholder
+      userAgentArea.value || userAgentArea.placeholder,
     );
 
   if (settings.get("wide_services_switcher"))
     servicesSwitcher.classList.add("wide");
 
   document.querySelector(
-    ".services_switcher .expander .span-wrap"
+    ".services_switcher .expander .span-wrap",
   ).onclick = () => {
     servicesSwitcher.style.transition = "width 0.3s";
     servicesSwitcher.classList.toggle("wide");

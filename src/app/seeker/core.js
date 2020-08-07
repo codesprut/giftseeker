@@ -30,7 +30,7 @@ module.exports = class Seeker {
         trans: "service.timer",
         min: 5,
         max: 60,
-        default: this.getConfig("timer", 10)
+        default: this.getConfig("timer", 10),
       },
       interval_from: {
         type: "number",
@@ -40,7 +40,7 @@ module.exports = class Seeker {
         trans: "service.interval_from",
         min: 0,
         max: 60,
-        default: this.getConfig("interval_from", 3)
+        default: this.getConfig("interval_from", 3),
       },
       interval_to: {
         type: "number",
@@ -50,15 +50,15 @@ module.exports = class Seeker {
         trans: "service.interval_to",
         min: 3,
         max: 60,
-        default: this.getConfig("interval_to", 5)
+        default: this.getConfig("interval_to", 5),
       },
       pages: {
         type: "number",
         trans: "service.pages",
         min: 1,
         max: 10,
-        default: this.getConfig("pages", 1)
-      }
+        default: this.getConfig("pages", 1),
+      },
     };
 
     this.http = axios.create({
@@ -68,8 +68,8 @@ module.exports = class Seeker {
       headers: {
         Referer: this.websiteUrl,
         "User-Agent": settings.get("user_agent"),
-        Cookie: this.getConfig("cookie", "")
-      }
+        Cookie: this.getConfig("cookie", ""),
+      },
     });
 
     this.http.interceptors.response.use(response => {
@@ -79,7 +79,7 @@ module.exports = class Seeker {
         response.headers["set-cookie"]
       ) {
         const cookieArray = this.parseSetCookieHeader(
-          response.headers["set-cookie"]
+          response.headers["set-cookie"],
         );
 
         this.modifyCookie(cookieArray);
@@ -120,7 +120,7 @@ module.exports = class Seeker {
       this.getConfig("cookie", "")
         .split(";")
         .filter(row => row.length)
-        .map(row => row.trim().split("="))
+        .map(row => row.trim().split("=")),
     );
     cookieArray.forEach(cookie => {
       const [name, newValue] = cookie;
@@ -242,7 +242,7 @@ module.exports = class Seeker {
       const userInfo = await this.getUserInfo().catch(() => ({
         avatar: `${this.websiteUrl}/favicon.ico`,
         username: `${this.name} user`,
-        value: 0
+        value: 0,
       }));
 
       this.events.emit("userinfo.updated", userInfo);
@@ -254,7 +254,7 @@ module.exports = class Seeker {
   entryInterval() {
     const min = this.getConfig(
       "interval_from",
-      this.settings.interval_from.default
+      this.settings.interval_from.default,
     );
     const max =
       this.getConfig("interval_to", this.settings.interval_to.default) + 1;

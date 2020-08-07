@@ -9,7 +9,7 @@ class OpiumPulses extends Seeker {
       websiteUrl: "https://www.opiumpulses.com",
       authPageUrl: "https://www.opiumpulses.com/site/login",
       winsPageUrl: "https://www.opiumpulses.com/user/giveawaykeys",
-      authContent: "/site/logout"
+      authContent: "/site/logout",
     });
 
     delete this.settings.pages;
@@ -32,7 +32,7 @@ class OpiumPulses extends Seeker {
         value: document
           .querySelector(".points-items li a")
           .structuredText.replace("Points:", "")
-          .trim()
+          .trim(),
       };
     });
   }
@@ -46,7 +46,7 @@ class OpiumPulses extends Seeker {
         parse(data)
           .querySelectorAll(".giveaways-page-item")
           .map(this.parseGiveaway)
-          .filter(ga => !ga.entered && ga.cost === 0)
+          .filter(ga => !ga.entered && ga.cost === 0),
       );
 
     for (const giveaway of giveaways) {
@@ -58,7 +58,7 @@ class OpiumPulses extends Seeker {
         this.log({
           text: `${language.get("service.entered_in")} #link#`,
           anchor: giveaway.name,
-          url: this.websiteUrl + giveaway.url
+          url: this.websiteUrl + giveaway.url,
         });
       }
       await this.entryInterval();
@@ -72,8 +72,8 @@ class OpiumPulses extends Seeker {
         pageSize: 240,
         jointypes: "everyone",
         status: "active",
-        ajax: 1
-      }
+        ajax: 1,
+      },
     });
   }
 
@@ -85,7 +85,7 @@ class OpiumPulses extends Seeker {
     const cost = Number(
       htmlNode
         .querySelector(".giveaways-page-item-header-points")
-        .structuredText.replace(/[^0-9]/g, "")
+        .structuredText.replace(/[^0-9]/g, ""),
     );
 
     const checkUser = entered
@@ -103,7 +103,7 @@ class OpiumPulses extends Seeker {
       free: cost === 0,
       code: url.split("/")[2],
       entered,
-      checkUser
+      checkUser,
     };
   }
 

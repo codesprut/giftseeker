@@ -2,7 +2,7 @@ const { remote, ipcRenderer } = require("electron");
 const axios = require("axios").default;
 
 const { config, mainWindow, ipcMain, currentBuild } = remote.getGlobal(
-  "sharedData"
+  "sharedData",
 );
 
 import browser from "../browser.js";
@@ -44,7 +44,7 @@ authButton.onclick = async () => {
   await browser.runForAuth(
     config.websiteUrl,
     `${config.websiteUrl}logIn`,
-    "/account"
+    "/account",
   );
 
   attemptAuthorize();
@@ -60,7 +60,7 @@ const attemptAuthorize = () => {
   statusLabel.innerHTML = wrapTranslation("auth.check");
   axios
     .get(`${config.websiteUrl}api/userData`, {
-      data: `ver=${currentBuild}`
+      data: `ver=${currentBuild}`,
     })
     .then(({ data }) => {
       if (data.response) {

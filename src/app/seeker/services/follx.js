@@ -8,7 +8,7 @@ class Follx extends Seeker {
       websiteUrl: "https://follx.com",
       authPageUrl: "https://follx.com/logIn",
       winsPageUrl: "https://follx.com/giveaways/won",
-      authContent: "/account"
+      authContent: "/account",
     });
   }
 
@@ -22,7 +22,7 @@ class Follx extends Seeker {
           .toString()
           .match(/http.*jpg/)[0],
         username: document.querySelector(".username").structuredText,
-        value: document.querySelector(".energy span").structuredText
+        value: document.querySelector(".energy span").structuredText,
       };
     });
   }
@@ -40,7 +40,7 @@ class Follx extends Seeker {
   async enterOnPage(page) {
     const document = await this.http
       .get(`${this.websiteUrl}/giveaways`, {
-        page
+        page,
       })
       .then(response => parse(response.data));
 
@@ -56,7 +56,7 @@ class Follx extends Seeker {
         name: card.querySelector(".head_info").getAttribute("title"),
         have: !!card.querySelector("span.have"),
         entered: !!card.querySelector(".entered"),
-        entries: card.querySelector(".entries").structuredText
+        entries: card.querySelector(".entries").structuredText,
       }))
       .filter(ga => !ga.have && !ga.entered);
 
@@ -69,7 +69,7 @@ class Follx extends Seeker {
         this.log({
           text: `${language.get("service.entered_in")} #link#`,
           anchor: giveaway.name,
-          url: giveaway.url
+          url: giveaway.url,
         });
       }
       await this.entryInterval();
@@ -84,8 +84,8 @@ class Follx extends Seeker {
       responseType: "json",
       headers: {
         "X-Requested-With": "XMLHttpRequest",
-        "X-CSRF-TOKEN": csrfToken
-      }
+        "X-CSRF-TOKEN": csrfToken,
+      },
     })
       .then(res => res.data.entries > giveaway.entries)
       .catch(() => false);

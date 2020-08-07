@@ -9,5 +9,5 @@ module.exports = {
   execPath,
   devMode: process.argv[1] === ".",
   EOL: OS.EOL,
-  homedir: OS.homedir()
+  homedir: OS.homedir(),
 };

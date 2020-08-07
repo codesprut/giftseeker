@@ -23,7 +23,7 @@ export default class Logger {
     const logRow = document.createElement("div");
     logRow.classList.add(logType ? "warn" : "normal");
     logRow.innerHTML = `<span class="time">${time.format(
-      "hh:mm:ss"
+      "hh:mm:ss",
     )}</span>${logText}`;
     this.logField.appendChild(logRow);
 
@@ -35,7 +35,7 @@ export default class Logger {
 
     return log.text.replace(
       "#link#",
-      `<span class="open-website" data-link="${log.url}">${log.anchor}</span>`
+      `<span class="open-website" data-link="${log.url}">${log.anchor}</span>`,
     );
   }
 

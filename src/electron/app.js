@@ -7,7 +7,7 @@ const {
   Tray,
   BrowserWindow,
   ipcMain,
-  dialog
+  dialog,
 } = require("electron");
 const { autoUpdater } = require("electron-updater");
 const autoLaunch = require("auto-launch");
@@ -83,8 +83,8 @@ app.on("ready", async () => {
       session: programSession,
       enableRemoteModule: true,
       devTools: ENV.devMode,
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
   });
 
   authWindow.setMenu(null);
@@ -131,8 +131,8 @@ app.on("ready", async () => {
       devTools: ENV.devMode,
       nodeIntegration: true,
       backgroundThrottling: false,
-      webSecurity: false
-    }
+      webSecurity: false,
+    },
   });
 
   mainWindow.setMenu(null);
@@ -160,8 +160,8 @@ app.on("ready", async () => {
       nodeIntegration: false,
       devTools: false,
       webSecurity: false,
-      webviewTag: true
-    }
+      webviewTag: true,
+    },
   });
 
   browserWindow.loadFile("./src/electron/web/blank.html");
@@ -210,10 +210,10 @@ app.on("ready", async () => {
       click: () => {
         browserWindow.loadURL(config.websiteUrl);
         browserWindow.show();
-      }
+      },
     },
     { type: "separator" },
-    { role: "quit" }
+    { role: "quit" },
   ]);
 
   tray.setToolTip(`${config.appName} ${currentBuild}`);
@@ -239,7 +239,7 @@ app.on("ready", async () => {
     Browser: browserWindow,
     authWindow,
     mainWindow,
-    services
+    services,
   };
 
   startApp();
@@ -270,7 +270,7 @@ function startApp() {
           message:
             ex.message +
             ENV.EOL +
-            "Try restart the app or contact with developer"
+            "Try restart the app or contact with developer",
         })
         .finally(() => {
           app.quit();
