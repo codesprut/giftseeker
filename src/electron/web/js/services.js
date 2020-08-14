@@ -1,10 +1,10 @@
-const { remote } = require("electron");
-const { services, settings } = remote.getGlobal("sharedData");
 import ServiceIcon from "./controls/service-icon.js";
 import ServicePanel from "./controls/service-panel.js";
 import time from "./utlis/time.js";
 import browser from "./browser.js";
 import language from "./language.js";
+const { remote } = require("electron");
+const { services, settings } = remote.getGlobal("sharedData");
 
 const iconsWrap = document.querySelector(".services-icons");
 const panelsWrap = document.querySelector(".services-panels");
@@ -53,11 +53,11 @@ for (const service of services) {
   });
 
   service.on("userinfo.updated", userInfo =>
-    service.panel.userPanel.updateInfo(userInfo)
+    service.panel.userPanel.updateInfo(userInfo),
   );
 
   service.on("value.changed", newValue =>
-    service.panel.userPanel.setValue(newValue)
+    service.panel.userPanel.setValue(newValue),
   );
 
   service.on("tick", totalTicks => {
@@ -81,7 +81,7 @@ for (const service of services) {
         const cookies = await browser.runForAuth(
           service.websiteUrl,
           service.authPageUrl,
-          service.authContent
+          service.authContent,
         );
 
         service.setCookie(cookies);

@@ -7,7 +7,7 @@ jest.mock("electron", () => ({
 jest.mock("../../../../src/app/settings.js");
 const settings = require("../../../../src/app/settings");
 
-let currentSettings = {};
+const currentSettings = {};
 
 settings.set.mockImplementation((key, val) => (currentSettings[key] = val));
 

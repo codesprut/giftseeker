@@ -5,13 +5,13 @@ const events = require("events");
 const axios = require("axios");
 
 module.exports = class Seeker {
-  currentValue = 0;
-  updateUserInterval = 300;
-
-  reconnectTimeout = null;
-  state = states.PAUSED;
-
   constructor(params) {
+    this.currentValue = 0;
+    this.updateUserInterval = 300;
+
+    this.reconnectTimeout = null;
+    this.state = states.PAUSED;
+
     this.name = this.constructor.name;
 
     this.withValue = params.withValue || true;
@@ -136,7 +136,7 @@ module.exports = class Seeker {
 
   setCookie(cookie) {
     this.setConfig("cookie", cookie);
-    this.http.defaults.headers["Cookie"] = cookie;
+    this.http.defaults.headers.Cookie = cookie;
   }
 
   async start(autostart) {
@@ -278,11 +278,11 @@ module.exports = class Seeker {
     return this.state === states.STARTED;
   }
 
-  setValue(new_value) {
+  setValue(newValue) {
     if (!this.withValue) return;
 
-    this.events.emit("value.changed", new_value);
-    this.currentValue = parseInt(new_value);
+    this.events.emit("value.changed", newValue);
+    this.currentValue = parseInt(newValue);
   }
 
   getConfig(key, def) {

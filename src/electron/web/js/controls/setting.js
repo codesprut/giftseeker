@@ -90,7 +90,7 @@ export default class Setting {
     if (params.default === this.min) this.buttonDec.classList.add("disabled");
 
     let pressed = false;
-    let pressTimeout = undefined;
+    let pressTimeout;
     let iterations = 0;
 
     const timeoutFunction = callback => {

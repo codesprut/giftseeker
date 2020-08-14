@@ -11,7 +11,9 @@ const downloadTranslation = async name => {
     fs.writeFile(
       storage.getDataPath() + "/" + name,
       JSON.stringify(res.data),
-      err => {},
+      err => {
+        console.error("Translation download failed", err);
+      },
     );
   });
 };
@@ -34,7 +36,7 @@ const updateTranslations = async () => {
 
     await new Promise(resolve => {
       fs.stat(storage.getDataPath() + "/" + name, async (err, stats) => {
-        if (stats.size !== size) await downloadTranslation(name);
+        if (!err && stats.size !== size) await downloadTranslation(name);
 
         resolve();
       });
@@ -73,7 +75,7 @@ const init = async () => {
   let selectedLanguage = current();
 
   if (!languages[selectedLanguage]) {
-    selectedLanguage = Object.keys(loadedFiles.lang)[0];
+    selectedLanguage = Object.keys(languages)[0];
     settings.set("language", selectedLanguage);
   }
 };

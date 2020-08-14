@@ -10,7 +10,7 @@ class IndieGala extends Seeker {
       authPageUrl: "https://www.indiegala.com/login",
       winsPageUrl: "https://www.indiegala.com/profile",
       authContent: "My library",
-      requestTimeout: 15000
+      requestTimeout: 15000,
     });
   }
 
@@ -31,7 +31,7 @@ class IndieGala extends Seeker {
       return {
         avatar: document.querySelector("figure.avatar img").getAttribute("src"),
         username: document.querySelector(".username-text").structuredText,
-        value: document.querySelector("#galasilver-amount").structuredText
+        value: document.querySelector("#galasilver-amount").structuredText,
       };
     });
   }
@@ -49,7 +49,7 @@ class IndieGala extends Seeker {
 
   async getUserLevel() {
     return this.http(
-      `${this.websiteUrl}/library/giveaways/user-level-and-coins`
+      `${this.websiteUrl}/library/giveaways/user-level-and-coins`,
     )
       .then(res => Number(res.data.current_level))
       .catch(() => 0);
@@ -58,7 +58,7 @@ class IndieGala extends Seeker {
   async enterOnPage(page, userLevel) {
     const document = await this.http
       .get(`${this.websiteUrl}/giveaways/ajax/${page}/expiry/asc/level/all`, {
-        transformResponse: this.clearResponse
+        transformResponse: this.clearResponse,
       })
       .then(res => parse(res.data.html));
 
@@ -81,7 +81,7 @@ class IndieGala extends Seeker {
         this.log({
           text: `${language.get("service.entered_in")} #link#`,
           anchor: giveaway.name,
-          url: this.websiteUrl + giveaway.url
+          url: this.websiteUrl + giveaway.url,
         });
         this.setValue(entry.silver_tot);
       }
@@ -114,7 +114,7 @@ class IndieGala extends Seeker {
       entered,
       price,
       single,
-      requiredLevel
+      requiredLevel,
     };
   }
 
@@ -130,8 +130,8 @@ class IndieGala extends Seeker {
         referer: `${this.websiteUrl}/giveaways/`,
         "sec-fetch-site": "same-origin",
         "sec-fetch-mode": "cors",
-        "x-requested-with": "XMLHttpRequest"
-      }
+        "x-requested-with": "XMLHttpRequest",
+      },
     })
       .then(res => res.data)
       .catch(() => ({ status: "error" }));

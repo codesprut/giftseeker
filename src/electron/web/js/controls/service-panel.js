@@ -26,7 +26,7 @@ export default class ServicePanel {
     this.userPanel = new UserPanel(service.websiteUrl, {
       enabled: service.withValue,
       current: service.currentValue,
-      translationKey: service.translationKey("value_label")
+      translationKey: service.translationKey("value_label"),
     });
     this.userPanel.appendTo(this.panel);
   }
@@ -68,7 +68,7 @@ export default class ServicePanel {
         settingKey,
         settings[settingKey],
         getSetting,
-        setSetting
+        setSetting,
       );
     }
 
@@ -77,7 +77,7 @@ export default class ServicePanel {
       if (control.isRange) control.setRange(controls[control.rangePart]);
 
       control.appendTo(
-        control.type === "checkbox" ? checkboxesPanel : numbersPanel
+        control.type === "checkbox" ? checkboxesPanel : numbersPanel,
       );
     }
   }
@@ -102,7 +102,7 @@ export default class ServicePanel {
     pageItem.classList.add(
       `service-${pageCode}`,
       "in-service-panel",
-      "styled-scrollbar"
+      "styled-scrollbar",
     );
     pageItem.dataset.id = pageCode;
 
@@ -117,7 +117,7 @@ export default class ServicePanel {
     this.pages.push({
       pageCode,
       menuItem,
-      pageItem
+      pageItem,
     });
 
     return pageItem;

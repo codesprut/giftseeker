@@ -1,3 +1,6 @@
+import browser from "../browser.js";
+import language from "../language.js";
+
 const { remote, ipcRenderer } = require("electron");
 const axios = require("axios").default;
 
@@ -5,15 +8,12 @@ const { config, mainWindow, ipcMain, currentBuild } = remote.getGlobal(
   "sharedData",
 );
 
-import browser from "../browser.js";
-import language from "../language.js";
-
 const statusLabel = document.querySelector(".status-text");
 const authButton = document.querySelector("#auth_button");
 const languageSelect = document.querySelector("select#lang");
 
 ipcMain.on("change-lang", () => reloadLangStrings());
-ipcMain.on("window-shown", function() {
+ipcMain.on("window-shown", function () {
   authButton.classList.remove("disabled");
 });
 

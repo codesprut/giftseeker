@@ -46,7 +46,7 @@ const on = (eventName, key, callback) => {
 };
 
 const init = () => {
-  return new Promise(async resolve => {
+  return new Promise(resolve => {
     storage.setDataPath(storagePath);
 
     storage.get("configs", (error, data) => {
