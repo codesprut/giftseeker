@@ -1,8 +1,12 @@
 {
   "root": true,
-  "extends": ["standard"],
+  "extends": ["standard", "plugin:prettier/recommended"],
   "env": {
     "jest": true,
     "node": true
+  },
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": "error"
   }
 }
