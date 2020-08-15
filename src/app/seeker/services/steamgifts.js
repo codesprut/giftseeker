@@ -159,7 +159,7 @@ class SteamGifts extends Seeker {
   }
 
   canEnterGiveaway(giveaway, wishlistPage) {
-    const minChance = this.getConfig("min_chance", 0);
+    const minEntryChance = this.getConfig("min_chance", 0);
     const minTimeLeft = this.getConfig("ending", 0) * 60;
     const minEntryLevel = this.getConfig("min_level", 0);
     const minCost = this.getConfig("min_cost", 0);
@@ -169,8 +169,8 @@ class SteamGifts extends Seeker {
     const ignoreSomeSetting = wishlistPage && this.getConfig("ignore_on_wish");
 
     if (
-      (minChance > 0 && minChance < giveaway.winChance) ||
-      (minTimeLeft > 0 && minTimeLeft < giveaway.timeLeft) ||
+      (minEntryChance !== 0 && minEntryChance > giveaway.winChance) ||
+      (minTimeLeft !== 0 && minTimeLeft < giveaway.timeLeft) ||
       giveaway.entered ||
       !giveaway.levelPass ||
       this.currentValue < giveaway.cost ||
