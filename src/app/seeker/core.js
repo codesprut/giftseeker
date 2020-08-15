@@ -6,16 +6,16 @@ const axios = require("axios");
 const https = require("https");
 
 module.exports = class Seeker {
-  constructor(params) {
+  constructor({ withValue = true, ...params }) {
     this.currentValue = 0;
+    this.withValue = withValue;
+
     this.updateUserInterval = 300;
 
     this.reconnectTimeout = null;
     this.state = states.PAUSED;
 
     this.name = this.constructor.name;
-
-    this.withValue = params.withValue || true;
 
     this.domain = params.domain;
     this.websiteUrl = params.websiteUrl;
