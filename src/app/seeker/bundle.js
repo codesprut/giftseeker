@@ -3,4 +3,5 @@ module.exports = [
   require("./services/steamgifts"),
   require("./services/indiegala"),
   require("./services/opiumpulses"),
+  require("./services/astats"),
 ];
