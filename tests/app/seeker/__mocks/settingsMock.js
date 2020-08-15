@@ -7,7 +7,7 @@ jest.mock("electron", () => ({
 jest.mock("../../../../src/app/settings.js");
 const settings = require("../../../../src/app/settings");
 
-const currentSettings = {};
+let currentSettings = {};
 
 settings.set.mockImplementation((key, val) => (currentSettings[key] = val));
 
@@ -18,6 +18,6 @@ settings.get.mockImplementation((key, defaultValue) => {
   return false;
 });
 
-settings.setup = data => Object.assign(currentSettings, data);
+settings.setup = data => (currentSettings = data);
 
 module.exports = settings;
