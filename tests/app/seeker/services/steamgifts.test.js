@@ -66,3 +66,39 @@ describe("Entry logic", () => {
     }
   });
 });
+
+describe("Winning chance calculation", () => {
+  const cases = [
+    {
+      toString: () => "One copy and one entry",
+      copies: 1,
+      entries: 1,
+      expectChance: 50,
+    },
+    {
+      toString: () => "One copy without entries",
+      copies: 1,
+      entries: 0,
+      expectChance: 100,
+    },
+    {
+      toString: () => "Copies increase chance",
+      copies: 2,
+      entries: 1,
+      expectChance: 100,
+    },
+    {
+      toString: () => "Chance cannot be more than 100",
+      copies: 50,
+      entries: 0,
+      expectChance: 100,
+    },
+  ];
+  test.each(cases)("%s", async caseData => {
+    const calculatedChance = steamGifts.calculateWinChance(
+      caseData.copies,
+      caseData.entries,
+    );
+    expect(calculatedChance).toEqual(caseData.expectChance);
+  });
+});
