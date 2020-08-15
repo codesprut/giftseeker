@@ -76,6 +76,27 @@ describe("Entry logic", () => {
       ],
       expectTruthy: ["giveaway3", "giveaway4", "giveaway5"],
     },
+    {
+      toString: () => "Pass by ending time",
+      settings: {
+        steamgifts_ending: 2,
+      },
+      giveaways: [
+        createGiveaway(1, {
+          timeLeft: 50,
+        }),
+        createGiveaway(2, {
+          timeLeft: 120,
+        }),
+        createGiveaway(3, {
+          timeLeft: 121,
+        }),
+        createGiveaway(4, {
+          timeLeft: 180,
+        }),
+      ],
+      expectTruthy: ["giveaway1", "giveaway2"],
+    },
   ];
   test.each(cases)("%s", async caseData => {
     settingsMock.setup(caseData.settings || {});
