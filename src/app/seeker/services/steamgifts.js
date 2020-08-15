@@ -242,8 +242,6 @@ class SteamGifts extends Seeker {
       infoNodes[infoNodes.length - 1].structuredText.replace(/[^0-9]/g, ""),
     );
 
-    const chance = parseFloat(((copies / entries) * 100).toFixed(2));
-
     return {
       url,
       cost,
@@ -259,8 +257,15 @@ class SteamGifts extends Seeker {
       name: linkNode.structuredText,
       code: url.split("/")[2],
       entered: !!htmlNode.querySelector(".giveaway__row-inner-wrap.is-faded"),
-      winChance: chance === Infinity ? 0 : chance,
+      winChance: this.calculateWinChance(copies, entries),
     };
+  }
+
+  calculateWinChance(copies, entries) {
+    const entriesWillBe = entries + 1;
+    const winChance = Number(((copies / entriesWillBe) * 100).toFixed(1));
+
+    return winChance > 100 ? 100 : winChance;
   }
 
   async enterGiveaway(giveaway, xsrfToken) {
