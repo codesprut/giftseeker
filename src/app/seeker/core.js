@@ -3,6 +3,7 @@ const language = require("../language");
 const states = require("./states");
 const events = require("events");
 const axios = require("axios");
+const https = require("https");
 
 module.exports = class Seeker {
   constructor(params) {
@@ -70,6 +71,9 @@ module.exports = class Seeker {
         "User-Agent": settings.get("user_agent"),
         Cookie: this.getConfig("cookie", ""),
       },
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false,
+      }),
     });
 
     this.http.interceptors.response.use(response => {
