@@ -6,7 +6,7 @@ const createGiveaway = (number, fields = {}) => {
     {
       url: "http://sg.com",
       cost: 0,
-      copies: 1,
+      copies: 100,
       entries: 100,
       timeLeft: 300,
       levelRequired: 0,
@@ -51,6 +51,30 @@ describe("Entry logic", () => {
         steamgifts_min_level: 4,
       },
       expectTruthy: ["giveaway2", "giveaway3"],
+    },
+    {
+      toString: () => "Pass by winning chance",
+      settings: {
+        steamgifts_min_chance: 2.3,
+      },
+      giveaways: [
+        createGiveaway(1, {
+          winChance: 0,
+        }),
+        createGiveaway(2, {
+          winChance: 1.2,
+        }),
+        createGiveaway(3, {
+          winChance: 2.3,
+        }),
+        createGiveaway(4, {
+          winChance: 2.4,
+        }),
+        createGiveaway(5, {
+          winChance: 100,
+        }),
+      ],
+      expectTruthy: ["giveaway3", "giveaway4", "giveaway5"],
     },
   ];
   test.each(cases)("%s", async caseData => {
