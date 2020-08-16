@@ -55,7 +55,7 @@ class Astats extends Seeker {
 
   parseGiveaway(tableRowHtml) {
     const [, url, id, name] = tableRowHtml.match(
-      new RegExp(/<.{12}(\/astats\/G.*?([0-9]+))">(?:<f.*?>)?(.*?)</),
+      new RegExp(/<.{20}(G.*?(\d+))">(?:<f.*?>)?(.*?)</),
       "gs",
     );
 
