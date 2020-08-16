@@ -10,6 +10,7 @@ Program developed like a Node.js application. Electron used for UI only.
 - indiegala.com
 - follx.com
 - opiumpulses.com
+- astats.nl
 
 ## Setup
 
