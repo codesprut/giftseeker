@@ -34,9 +34,8 @@ class Astats extends Seeker {
 
     const giveaways = giveawaysTableHtml
       .match(new RegExp(/<tr>.*?\/tr>/, "gs"))
-      .map(tableRow => {
-        return {};
-      });
+      .map(this.parseGiveaway)
+      .filter(ga => !ga.ended);
 
     for (const giveaway of giveaways) {
       if (!this.isStarted()) break;
@@ -52,6 +51,22 @@ class Astats extends Seeker {
       }
       await this.entryInterval();
     }
+  }
+
+  parseGiveaway(tableRowHtml) {
+    const [, url, id, name] = tableRowHtml.match(
+      new RegExp(/<.{12}(\/astats\/G.*?([0-9]+))">(?:<f.*?>)?(.*?)</),
+      "gs",
+    );
+
+    const ended = tableRowHtml.indexOf("This giveaway has ended") >= 0;
+
+    return {
+      url,
+      id,
+      name,
+      ended,
+    };
   }
 
   async enterGiveaway(giveaway) {
