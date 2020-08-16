@@ -9,16 +9,18 @@ class Astats extends Seeker {
       authContent: "Log out",
       withValue: false,
     });
+
+    delete this.settings.pages;
   }
 
   async getUserInfo() {
-    return this.http.get(this.websiteUrl + "User_Info.php").then(response => ({
-      avatar: response.data.match(/"src="(.*?)"/)[1],
-      username: parseHtml(response.data).querySelector("h2").structuredText,
-    }));
+    return this.http
+      .get(this.websiteUrl + "User_Info.php")
+      .then(({ data }) => ({
+        avatar: data.match(/"src="(.*?)"/)[1],
+        username: parseHtml(data).querySelector("h2").structuredText,
+      }));
   }
-
-  async seekService() {}
 }
 
 module.exports = new Astats();
