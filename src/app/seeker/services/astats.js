@@ -1,4 +1,5 @@
 const Seeker = require("../core");
+const query = require("querystring");
 const language = require("../../language");
 const { parse: parseHtml } = require("node-html-parser");
 
@@ -46,7 +47,7 @@ class Astats extends Seeker {
         this.log({
           text: `${language.get("service.entered_in")} #link#`,
           anchor: giveaway.name,
-          url: giveaway.url,
+          url: this.websiteUrl + giveaway.url,
         });
       }
       await this.entryInterval();
@@ -70,6 +71,24 @@ class Astats extends Seeker {
   }
 
   async enterGiveaway(giveaway) {
+    const giveawayUrl = this.websiteUrl + giveaway.url;
+    const giveawayPageHtml = await this.http
+      .get(giveawayUrl)
+      .then(({ data }) => data);
+
+    if (giveawayPageHtml.indexOf("JoinGiveaway") >= 0) {
+      return this.http({
+        url: giveawayUrl,
+        data: query.stringify({
+          Comment: "",
+          JoinGiveaway: "Join",
+        }),
+        method: "post",
+      })
+        .then(({ data }) => data.indexOf("JoinGiveaway") < 0)
+        .catch(() => false);
+    }
+
     return false;
   }
 }
