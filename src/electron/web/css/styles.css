@@ -258,8 +258,6 @@ a:hover {
 
 #content {
   height: calc(100% - 80px);
-  border-bottom: 1px solid #28313e;
-  background: #111b29;
 }
 .content-item {
   position: relative;
@@ -323,7 +321,7 @@ textarea#useragent {
 }
 
 .services_switcher {
-  background-color: #030b15;
+  background-color: rgba(0, 0, 0, 0.2);
   width: 70px;
   height: 100%;
   position: relative;
@@ -337,7 +335,6 @@ textarea#useragent {
 }
 
 .services_switcher .expander {
-  background: #030b15;
   width: 100%;
   z-index: 5;
   position: absolute;
