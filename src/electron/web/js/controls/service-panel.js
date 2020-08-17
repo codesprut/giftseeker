@@ -1,5 +1,5 @@
 import Logger from "./logger.js";
-import UserPanel from "./user-panel.js";
+import ServiceControlPanel from "./service-control-panel.js";
 import Setting from "./setting.js";
 import language from "../language.js";
 
@@ -23,12 +23,12 @@ export default class ServicePanel {
     this.logger = new Logger();
     this.logger.appendTo(logsPage);
 
-    this.userPanel = new UserPanel(service.websiteUrl, {
+    this.controlPanel = new ServiceControlPanel(service.websiteUrl, {
       enabled: service.withValue,
       current: service.currentValue,
       translationKey: service.translationKey("value_label"),
     });
-    this.userPanel.appendTo(this.panel);
+    this.controlPanel.appendTo(this.panel);
   }
 
   setActive() {

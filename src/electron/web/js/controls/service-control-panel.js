@@ -1,10 +1,10 @@
 import language from "../language.js";
 
-export default class UserPanel {
+export default class ServiceControlPanel {
   constructor(websiteUrl, value) {
     this.value = value;
     this.panel = document.createElement("div");
-    this.panel.classList.add("service-user-panel");
+    this.panel.classList.add("service-control-panel");
 
     this.userInfo = document.createElement("div");
     this.userInfo.classList.add("user-info", "no-selectable");

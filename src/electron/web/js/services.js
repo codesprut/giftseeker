@@ -13,7 +13,7 @@ for (const service of services) {
   service.icon = new ServiceIcon(service.name, service.state);
   service.panel = new ServicePanel(service);
 
-  const serviceButton = service.panel.userPanel.mainButton;
+  const serviceButton = service.panel.controlPanel.mainButton;
 
   service.icon.appendTo(iconsWrap);
   service.panel.appendTo(panelsWrap);
@@ -53,11 +53,11 @@ for (const service of services) {
   });
 
   service.on("userinfo.updated", userInfo =>
-    service.panel.userPanel.updateInfo(userInfo),
+    service.panel.controlPanel.updateInfo(userInfo),
   );
 
   service.on("value.changed", newValue =>
-    service.panel.userPanel.setValue(newValue),
+    service.panel.controlPanel.setValue(newValue),
   );
 
   service.on("tick", totalTicks => {

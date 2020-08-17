@@ -609,25 +609,25 @@ textarea#useragent {
   pointer-events: none;
 }
 
-.service-user-panel {
+.service-control-panel {
   position: relative;
   padding: 7px 0;
   height: 52px;
   flex-shrink: 0;
 }
-.service-user-panel .seeker-button {
+.service-control-panel .seeker-button {
   position: absolute;
   right: 0;
   bottom: 10px;
 }
-.service-user-panel .user-info {
+.service-control-panel .user-info {
   display: none;
   line-height: 16px;
 }
-.service-user-panel .user-info.visible {
+.service-control-panel .user-info.visible {
   display: block;
 }
-.service-user-panel .user-info .avatar {
+.service-control-panel .user-info .avatar {
   width: 40px;
   height: 40px;
   background: center/contain transparent no-repeat;
@@ -635,7 +635,7 @@ textarea#useragent {
   float: left;
   margin-right: 10px;
 }
-.service-user-panel .user-info > span {
+.service-control-panel .user-info > span {
   display: block;
 }
 
@@ -651,7 +651,7 @@ button.open-website {
 button.open-website:hover {
   color: #9ec5ea;
 }
-.service-user-panel button.open-website {
+.service-control-panel button.open-website {
   position: absolute;
   right: 140px;
   bottom: 10px;
