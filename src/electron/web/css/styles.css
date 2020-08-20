@@ -613,6 +613,7 @@ textarea#useragent {
   height: 40px;
   line-height: 40px;
   background: rgba(0, 0, 0, 0.1);
+  display: flex;
 }
 .service-control-panel .seeker-button {
   vertical-align: middle;
@@ -625,6 +626,7 @@ textarea#useragent {
 }
 .service-control-panel .user-info.visible {
   display: inline-block;
+  flex-grow: 1;
 }
 .service-control-panel .user-info .avatar {
   width: 30px;
@@ -639,13 +641,20 @@ textarea#useragent {
   font-size: 14px;
   padding-left: 5px;
   vertical-align: middle;
+  max-width: 45%;
+  overflow: hidden;
+  height: 40px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.service-control-panel .user-info.visible + .service-control-panel-buttons {
+  flex-grow: 0;
 }
 
 .service-control-panel-buttons {
-  position: absolute;
-  right: 10px;
-  top: 0;
   height: 100%;
+  flex-grow: 1;
+  text-align: right;
 }
 
 .service-control-panel-buttons span.service-control-button {

@@ -18,7 +18,10 @@ export default class ServiceControlPanel {
     this.mainButton.classList.add("seeker-button", "start-button");
     this.mainButton.innerText = language.get("service.btn_start");
 
-    this.panel.appendChild(this.mainButton);
+    const buttonWrap = document.createElement("div");
+    buttonWrap.appendChild(this.mainButton);
+
+    this.panel.appendChild(buttonWrap);
 
     this.userInfo.appendChild(this.avatar);
     this.userInfo.appendChild(this.username);
