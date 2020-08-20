@@ -592,9 +592,10 @@ textarea#useragent {
   line-height: 26px;
   font-size: 14px;
   font-weight: bold;
-  background-color: #0e86ca;
-  border: 2px solid #10a1de;
+  background-color: #10a1de;
+  border: none;
   box-sizing: border-box;
+  border-radius: 2px;
 }
 .seeker-button:not(.disabled):hover {
   background-color: #03a9f7;
