@@ -7,14 +7,14 @@ const fs = require("fs");
 let languages = {};
 
 const downloadTranslation = async name => {
-  return axios.get(`${websiteUrl}trans/${name}`).then(res => {
-    fs.writeFile(
-      storage.getDataPath() + "/" + name,
-      JSON.stringify(res.data),
-      err => {
-        console.error("Translation download failed", err);
-      },
-    );
+  return axios.get(`${websiteUrl}trans/${name}`).then(({ data }) => {
+    return new Promise(resolve => {
+      fs.writeFile(
+        storage.getDataPath() + "/" + name,
+        JSON.stringify(data),
+        resolve,
+      );
+    });
   });
 };
 
@@ -27,7 +27,7 @@ const updateTranslations = async () => {
   if (!translations) return;
 
   for (const translation of translations) {
-    const { name, size } = translation;
+    const { name, cleanSize } = translation;
 
     if (!fs.existsSync(storage.getDataPath() + "/" + name)) {
       await downloadTranslation(name);
@@ -36,7 +36,7 @@ const updateTranslations = async () => {
 
     await new Promise(resolve => {
       fs.stat(storage.getDataPath() + "/" + name, async (err, stats) => {
-        if (!err && stats.size !== size) await downloadTranslation(name);
+        if (!err && stats.size !== cleanSize) await downloadTranslation(name);
 
         resolve();
       });
