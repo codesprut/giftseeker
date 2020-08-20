@@ -5,17 +5,17 @@ export default class Logger {
   constructor() {
     this.logField = document.createElement("div");
 
-    // this.clearButton = document.createElement("span");
-    // this.clearButton.classList.add("clear-log");
-    // this.clearButton.innerText = language.get("service.clear_log");
-    // this.clearButton.dataset.lang = "service.clear_log";
-    // this.clearButton.onclick = () => this.clear();
+    this.clearButton = document.createElement("span");
+    this.clearButton.classList.add("clear-log");
+    this.clearButton.innerText = language.get("service.clear_log");
+    this.clearButton.dataset.lang = "service.clear_log";
+    this.clearButton.onclick = () => this.clear();
   }
 
   appendTo(element) {
     this.parent = element;
     element.appendChild(this.logField);
-    // element.appendChild(this.clearButton);
+    element.appendChild(this.clearButton);
   }
 
   add(log, logType) {

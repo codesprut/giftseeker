@@ -489,6 +489,7 @@ textarea#useragent {
   display: none;
   height: 100%;
   padding: 10px 5px;
+  position: relative;
 }
 .in-service-panel.active {
   display: block;
@@ -518,7 +519,7 @@ textarea#useragent {
 }
 .service-logs .clear-log {
   position: absolute;
-  right: 18px;
+  right: 10px;
   top: 10px;
   font-size: 12px;
   color: #9ec5ea;
@@ -607,8 +608,10 @@ textarea#useragent {
 
 .service-control-panel {
   position: relative;
-  padding: 5px 10px;
+  padding: 0 10px;
   font-size: 0;
+  height: 40px;
+  line-height: 40px;
   background: rgba(0, 0, 0, 0.2);
 }
 .service-control-panel .seeker-button {
@@ -639,13 +642,10 @@ textarea#useragent {
 }
 
 .service-control-panel-buttons {
-  font-size: 20px;
   position: absolute;
-  right: 0;
+  right: 10px;
   top: 0;
   height: 100%;
-  padding-right: 10px;
-  line-height: 36px;
 }
 
 .service-control-panel-buttons span.service-control-button {
