@@ -195,6 +195,8 @@ module.exports = class Seeker {
   }
 
   runWorker() {
+    this.log(language.get("service.loaded"));
+
     if (this.workerIntervalId) return;
     this.totalTicks = 0;
 
