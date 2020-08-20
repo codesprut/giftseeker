@@ -518,8 +518,8 @@ textarea#useragent {
   -webkit-user-select: text;
 }
 .service-logs .clear-log {
-  position: absolute;
-  top: 5px;
+  position: fixed;
+  top: 123px;
   right: 10px;
   font-size: 12px;
   color: #9ec5ea;
