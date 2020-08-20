@@ -602,8 +602,7 @@ textarea#useragent {
 }
 .seeker-button.disabled {
   cursor: default;
-  color: lightgray;
-  opacity: 0.8;
+  opacity: 0.7;
   pointer-events: none;
 }
 
