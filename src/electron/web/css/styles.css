@@ -443,7 +443,6 @@ textarea#useragent {
 }
 
 .services-panels {
-  padding: 4px 15px 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -488,11 +487,8 @@ textarea#useragent {
 .in-service-panel {
   font-size: 14px;
   display: none;
-  background: rgba(80, 80, 80, 0.2);
   height: 100%;
-  padding: 5px;
-  border-radius: 2px;
-  border: 1px solid rgba(80, 80, 80, 0.5);
+  padding: 10px 5px;
 }
 .in-service-panel.active {
   display: block;
@@ -611,32 +607,63 @@ textarea#useragent {
 
 .service-control-panel {
   position: relative;
-  padding: 7px 0;
-  height: 52px;
-  flex-shrink: 0;
+  padding: 5px 10px;
+  font-size: 0;
+  background: rgba(0, 0, 0, 0.2);
 }
 .service-control-panel .seeker-button {
-  position: absolute;
-  right: 0;
-  bottom: 10px;
+  vertical-align: middle;
+  display: inline-block;
 }
 .service-control-panel .user-info {
   display: none;
-  line-height: 16px;
+  vertical-align: middle;
+  padding-left: 10px;
 }
 .service-control-panel .user-info.visible {
-  display: block;
+  display: inline-block;
 }
 .service-control-panel .user-info .avatar {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   background: center/contain transparent no-repeat;
   border-radius: 1px;
-  float: left;
-  margin-right: 10px;
+  display: inline-block;
+  vertical-align: middle;
 }
 .service-control-panel .user-info > span {
-  display: block;
+  display: inline-block;
+  font-size: 14px;
+  padding-left: 5px;
+  vertical-align: middle;
+}
+
+.service-control-panel-buttons {
+  font-size: 20px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  padding-right: 10px;
+  line-height: 36px;
+}
+
+.service-control-panel-buttons span.service-control-button {
+  font-size: 14px;
+  margin-left: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  width: 28px;
+  height: 28px;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 28px;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #808080;
+}
+.service-control-panel-buttons span.service-control-button:hover,
+.service-control-panel-buttons span.service-control-button.active {
+  color: #9ec5ea;
 }
 
 button.open-website {

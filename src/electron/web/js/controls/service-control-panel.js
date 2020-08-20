@@ -14,17 +14,16 @@ export default class ServiceControlPanel {
     this.username = document.createElement("span");
     this.username.classList.add("username");
 
-    this.websiteLink = document.createElement("button");
-    this.websiteLink.classList.add("open-website");
-    this.websiteLink.dataset.lang = "service.open_website";
-    this.websiteLink.dataset.link = websiteUrl;
-    this.websiteLink.innerText = language.get("service.open_website");
+    this.mainButton = document.createElement("button");
+    this.mainButton.classList.add("seeker-button", "start-button");
+    this.mainButton.innerText = language.get("service.btn_start");
+
+    this.panel.appendChild(this.mainButton);
 
     this.userInfo.appendChild(this.avatar);
     this.userInfo.appendChild(this.username);
 
     this.panel.appendChild(this.userInfo);
-    this.panel.appendChild(this.websiteLink);
 
     if (value.enabled) {
       const valueWrap = document.createElement("span");
@@ -40,11 +39,24 @@ export default class ServiceControlPanel {
       valueWrap.appendChild(this.valueLabel);
     }
 
-    this.mainButton = document.createElement("button");
-    this.mainButton.classList.add("seeker-button", "start-button");
-    this.mainButton.innerText = language.get("service.btn_start");
+    this.buttons = document.createElement("div");
+    this.buttons.classList.add("service-control-panel-buttons");
 
-    this.panel.appendChild(this.mainButton);
+    this.panel.appendChild(this.buttons);
+
+    const websiteLink = document.createElement("span");
+    websiteLink.classList.add("open-website", "fa", "fa-external-link-alt");
+    websiteLink.dataset.tippyTranslate = "service.open_website";
+    websiteLink.dataset.link = websiteUrl;
+
+    this.appendButton(websiteLink);
+  }
+
+  appendButton(button) {
+    button.classList.add("service-control-button");
+    language.updateNode(button);
+
+    this.buttons.appendChild(button);
   }
 
   updateInfo(data) {

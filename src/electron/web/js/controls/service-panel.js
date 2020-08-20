@@ -1,7 +1,6 @@
 import Logger from "./logger.js";
 import ServiceControlPanel from "./service-control-panel.js";
 import Setting from "./setting.js";
-import language from "../language.js";
 
 export default class ServicePanel {
   constructor(service) {
@@ -9,9 +8,17 @@ export default class ServicePanel {
     this.panel = document.createElement("div");
     this.panel.classList.add("service-panel");
     this.panel.setAttribute("id", service.name.toLowerCase());
+    this.logger = new Logger();
 
-    const logsPage = this.addPage("logs");
-    const settingsPage = this.addPage("settings");
+    this.controlPanel = new ServiceControlPanel(service.websiteUrl, {
+      enabled: service.withValue,
+      current: service.currentValue,
+      translationKey: service.translationKey("value_label"),
+    });
+    this.controlPanel.appendTo(this.panel);
+
+    const logsPage = this.addPage("logs", "bars");
+    const settingsPage = this.addPage("settings", "cog");
 
     this.renderSettings(
       settingsPage,
@@ -20,15 +27,7 @@ export default class ServicePanel {
       service.setConfig,
     );
 
-    this.logger = new Logger();
     this.logger.appendTo(logsPage);
-
-    this.controlPanel = new ServiceControlPanel(service.websiteUrl, {
-      enabled: service.withValue,
-      current: service.currentValue,
-      translationKey: service.translationKey("value_label"),
-    });
-    this.controlPanel.appendTo(this.panel);
   }
 
   setActive() {
@@ -82,18 +81,12 @@ export default class ServicePanel {
     }
   }
 
-  addPage(pageCode) {
-    if (!this.menuItems) {
-      this.menuItems = document.createElement("ul");
-      this.panel.appendChild(this.menuItems);
-    }
-
-    const menuItem = document.createElement("li");
+  addPage(pageCode, icon) {
+    const menuItem = document.createElement("span");
     const pageItem = document.createElement("div");
 
-    menuItem.dataset.id = pageCode;
-    menuItem.dataset.lang = `service.${pageCode}`;
-    menuItem.innerText = language.get(`service.${pageCode}`);
+    menuItem.classList.add("fa", `fa-${icon}`);
+    menuItem.dataset.tippyTranslate = `service.${pageCode}`;
 
     menuItem.onclick = () => {
       if (this.menuItemCallback) this.menuItemCallback(pageCode);
@@ -106,7 +99,7 @@ export default class ServicePanel {
     );
     pageItem.dataset.id = pageCode;
 
-    this.menuItems.appendChild(menuItem);
+    this.controlPanel.appendButton(menuItem);
     this.panel.appendChild(pageItem);
 
     if (this.pages.length === 0) {
