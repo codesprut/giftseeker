@@ -1,7 +1,11 @@
+import language from "../language.js";
+
 export default class ServiceIcon {
   constructor(serviceName, defaultState) {
     this.icon = document.createElement("div");
     this.icon.classList.add("service-icon");
+    this.icon.dataset.tippyTranslate = serviceName;
+    this.icon.dataset.tippyPlacement = "right";
 
     this.bg = document.createElement("div");
     this.bg.classList.add("bg");
@@ -20,6 +24,8 @@ export default class ServiceIcon {
     this.icon.appendChild(this.nameLabel);
 
     this.setState(defaultState);
+
+    language.updateNode(this.icon);
   }
 
   appendTo(element) {
