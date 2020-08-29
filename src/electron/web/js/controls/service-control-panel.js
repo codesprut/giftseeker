@@ -29,6 +29,10 @@ export default class ServiceControlPanel {
     this.panel.appendChild(this.userInfo);
 
     if (value.enabled) {
+      const delimeter = document.createElement("span");
+      delimeter.innerHTML = "&bull;";
+      this.userInfo.appendChild(delimeter);
+
       const valueWrap = document.createElement("span");
       valueWrap.classList.add("value");
       valueWrap.innerHTML = `<span data-lang="${
