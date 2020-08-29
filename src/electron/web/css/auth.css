@@ -51,6 +51,7 @@ body {
 }
 .window-buttons span.closer {
   float: right;
+  padding: 0;
 }
 
 .seeker-button {

@@ -231,10 +231,8 @@ a:hover {
   font-size: 0;
   z-index: 999;
   position: absolute;
-  top: 10px;
-  right: 10px;
-  height: 14px;
-  line-height: 14px;
+  top: 0;
+  right: 0;
   text-align: right;
   -webkit-app-region: no-drag;
 }
@@ -243,10 +241,11 @@ a:hover {
   font-size: 12px;
   display: inline-block;
   vertical-align: middle;
-  width: 14px;
-  height: inherit;
-  line-height: inherit;
-  margin-left: 6px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  padding-right: 10px;
+  text-align: right;
 }
 .window-buttons span:hover {
   color: #9ec5ea;
