@@ -57,7 +57,7 @@ module.exports = class Seeker {
         type: "number",
         trans: "service.pages",
         min: 1,
-        max: 10,
+        max: 99,
         default: this.getConfig("pages", 1),
       },
     };
