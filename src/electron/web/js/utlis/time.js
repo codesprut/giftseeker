@@ -28,7 +28,7 @@ class Time {
       .replace("hh", this.leadZero(hours))
       .replace("mm", this.leadZero(minutes))
       .replace("ss", this.leadZero(seconds))
-      .replace(/^00\D/g, "");
+      .replace(/^(00\D)+/g, "");
   }
 
   leadZero(number) {
