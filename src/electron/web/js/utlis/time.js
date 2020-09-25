@@ -21,7 +21,7 @@ class Time {
 
   elapsed(timestamp) {
     const hours = Math.floor(timestamp / 60 / 60);
-    const minutes = Math.floor((timestamp - hours * 60) / 60);
+    const minutes = Math.floor(timestamp / 60 - hours * 60);
     const seconds = timestamp % 60;
 
     return "hh:mm:ss"
