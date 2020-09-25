@@ -51,6 +51,7 @@
     }
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
     "electron": "^9.0.5",
     "electron-builder": "22.7.0",
     "eslint": "^7.6.0",
