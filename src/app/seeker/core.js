@@ -30,7 +30,7 @@ module.exports = class Seeker {
         type: "number",
         trans: "service.timer",
         min: 5,
-        max: 60,
+        max: 999,
         default: this.getConfig("timer", 10),
       },
       interval_from: {
