@@ -10,11 +10,11 @@ const {
   dialog,
 } = require("electron");
 const { autoUpdater } = require("electron-updater");
-const AutoLaunch = require("auto-launch");
 
 const ENV = require("../environment");
 const config = require("./config");
 const settings = require("../app/settings");
+const autoStart = require("./auto-start");
 
 const language = require("../app/language");
 
@@ -30,8 +30,6 @@ let browserWindow = null;
 let user = null;
 
 app.disableHardwareAcceleration();
-
-const autostart = new AutoLaunch({ name: config.appName });
 
 (() => {
   if (!isSecondAppInstance) return app.quit();
@@ -66,9 +64,7 @@ const autostart = new AutoLaunch({ name: config.appName });
     const services = require("../app/seeker/bundle");
     const programSession = require("./session");
 
-    settings.on("change", "start_with_os", startWithOs => {
-      setAutostart(startWithOs);
-    });
+    settings.on("change", "start_with_os", autoStart.set);
 
     authWindow = new BrowserWindow({
       width: 280,
@@ -258,14 +254,6 @@ const autostart = new AutoLaunch({ name: config.appName });
       });
   }
 })();
-
-const setAutostart = enabled => {
-  if (enabled && !ENV.devMode) {
-    return autostart.enable();
-  }
-
-  autostart.disable();
-};
 
 const createTrayIcon = () => {
   const tray = new Tray(nativeImage.createFromPath(config.appIcon));
