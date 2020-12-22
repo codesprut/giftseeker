@@ -13,17 +13,17 @@ module.exports = class Seeker {
     this.updateUserInterval = 300;
 
     this.reconnectTimeout = null;
-    this.state = states.PAUSED;
 
     this.name = this.constructor.name;
 
-    this.domain = params.domain;
     this.websiteUrl = params.websiteUrl;
     this.authPageUrl = params.authPageUrl;
     this.winsPageUrl = params.winsPageUrl;
     this.authContent = params.authContent;
 
     this.events = new events.EventEmitter();
+
+    this.setState(states.PAUSED);
 
     this.settings = {
       timer: {
