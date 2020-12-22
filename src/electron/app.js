@@ -76,6 +76,7 @@ app.disableHardwareAcceleration();
         session: programSession,
         enableRemoteModule: true,
         devTools: ENV.devMode,
+        contextIsolation: false,
         nodeIntegration: true,
       },
     });
@@ -120,6 +121,7 @@ app.disableHardwareAcceleration();
       frame: false,
       webPreferences: {
         session: programSession,
+        contextIsolation: false,
         enableRemoteModule: true,
         devTools: ENV.devMode,
         nodeIntegration: true,
@@ -151,6 +153,7 @@ app.disableHardwareAcceleration();
       webPreferences: {
         session: programSession,
         nodeIntegration: false,
+        contextIsolation: false,
         devTools: false,
         webSecurity: false,
         webviewTag: true,
