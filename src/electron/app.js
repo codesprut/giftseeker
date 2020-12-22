@@ -199,6 +199,8 @@ app.disableHardwareAcceleration();
       mainWindow = null;
     });
 
+    const trayIcon = createTrayIcon();
+
     // Variables shared with browser windows
     global.sharedData = {
       isPortable: ENV.isPortable,
@@ -206,6 +208,7 @@ app.disableHardwareAcceleration();
       currentBuild,
       devMode: ENV.devMode,
       shell,
+      trayIcon,
       ipcMain,
       language,
       config,
@@ -221,8 +224,6 @@ app.disableHardwareAcceleration();
 })();
 
 const startApp = () => {
-  createTrayIcon();
-
   language
     .init()
     .then(() => {
@@ -272,6 +273,8 @@ const createTrayIcon = () => {
 
     currentWindow.isVisible() ? currentWindow.hide() : currentWindow.show();
   });
+
+  return tray;
 };
 
 const activeWindow = () => {
