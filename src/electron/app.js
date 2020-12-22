@@ -22,8 +22,6 @@ const isSecondAppInstance = app.requestSingleInstanceLock();
 
 const currentBuild = app.getVersion();
 
-let appLoaded = false;
-
 let authWindow = null;
 let mainWindow = null;
 let browserWindow = null;
@@ -218,42 +216,38 @@ app.disableHardwareAcceleration();
 
     startApp();
   });
-
-  function startApp() {
-    if (appLoaded) return;
-
-    createTrayIcon();
-
-    language
-      .init()
-      .then(() => {
-        authWindow.loadFile("./src/electron/web/auth.html");
-
-        authWindow.on("ready-to-show", function () {
-          authWindow.show();
-
-          if (settings.get("start_minimized")) authWindow.hide();
-          else authWindow.focus();
-
-          appLoaded = true;
-        });
-      })
-      .catch(ex => {
-        dialog
-          .showMessageBox({
-            type: "error",
-            title: "Error loading translations",
-            message:
-              ex.message +
-              ENV.EOL +
-              "Try restart the app or contact with developer",
-          })
-          .finally(() => {
-            app.quit();
-          });
-      });
-  }
 })();
+
+const startApp = () => {
+  createTrayIcon();
+
+  language
+    .init()
+    .then(() => {
+      authWindow.loadFile("./src/electron/web/auth.html");
+
+      authWindow.on("ready-to-show", () => {
+        authWindow.show();
+
+        if (settings.get("start_minimized")) authWindow.hide();
+        else authWindow.focus();
+      });
+    })
+    .catch(ex => {
+      dialog
+        .showMessageBox({
+          type: "error",
+          title: "Error loading translations",
+          message:
+            ex.message +
+            ENV.EOL +
+            "Try restart the app or contact with developer",
+        })
+        .finally(() => {
+          app.quit();
+        });
+    });
+};
 
 const createTrayIcon = () => {
   const tray = new Tray(nativeImage.createFromPath(config.appIcon));
