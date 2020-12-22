@@ -1,4 +1,5 @@
 const ENV = require("./environment");
+const storage = require("electron-json-storage");
 
 const appName = "GiftSeeker";
 const installableStorage = ENV.homedir + "/" + appName;
@@ -6,10 +7,11 @@ const portableStorage = ENV.execPath + "data";
 
 const storagePath = ENV.isPortable ? portableStorage : installableStorage;
 
+storage.setDataPath(storagePath);
+
 module.exports = {
-  appName: appName,
+  appName,
   websiteUrl: "https://giftseeker.ru/",
-  storagePath: storagePath,
   appIcon: __dirname + "/../resources/images/icon.ico",
   window: {
     defaultWidth: 750,

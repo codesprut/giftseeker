@@ -1,4 +1,4 @@
-const { storagePath, defaultStorageData } = require("../electron/config");
+const { defaultStorageData } = require("../electron/config");
 const storage = require("electron-json-storage");
 const events = require("events");
 
@@ -47,8 +47,6 @@ const on = (eventName, key, callback) => {
 
 const init = () => {
   return new Promise(resolve => {
-    storage.setDataPath(storagePath);
-
     storage.get("configs", (error, data) => {
       if (error) resolve(error);
 
