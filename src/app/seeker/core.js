@@ -10,16 +10,13 @@ module.exports = class Seeker {
     this.currentValue = 0;
     this.withValue = withValue;
 
+    Object.assign(this, params);
+
     this.updateUserInterval = 300;
 
     this.reconnectTimeout = null;
 
     this.name = this.constructor.name;
-
-    this.websiteUrl = params.websiteUrl;
-    this.authPageUrl = params.authPageUrl;
-    this.winsPageUrl = params.winsPageUrl;
-    this.authContent = params.authContent;
 
     this.events = new events.EventEmitter();
 
@@ -103,7 +100,7 @@ module.exports = class Seeker {
 
   async authCheck() {
     return this.http
-      .get(this.websiteUrl)
+      .get(this.authCheckUrl ?? this.authPageUrl)
       .then(res => (res.data.indexOf(this.authContent) >= 0 ? 1 : 0))
       .catch(err => (err.status === 200 ? 0 : -1));
   }
