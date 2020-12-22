@@ -67,7 +67,7 @@ const autostart = new AutoLaunch({ name: config.appName });
     const programSession = require("./session");
 
     settings.on("change", "start_with_os", startWithOs => {
-      autoStartControl(startWithOs);
+      setAutostart(startWithOs);
     });
 
     authWindow = new BrowserWindow({
@@ -257,16 +257,15 @@ const autostart = new AutoLaunch({ name: config.appName });
           });
       });
   }
-
-  function autoStartControl(startWithOs) {
-    if (startWithOs === true && !ENV.devMode) {
-      autostart.enable().catch(() => {});
-      return;
-    }
-
-    autostart.disable().catch(() => {});
-  }
 })();
+
+const setAutostart = enabled => {
+  if (enabled && !ENV.devMode) {
+    return autostart.enable();
+  }
+
+  autostart.disable();
+};
 
 const createTrayIcon = () => {
   const tray = new Tray(nativeImage.createFromPath(config.appIcon));
