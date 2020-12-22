@@ -6,7 +6,7 @@ const states = require("../states");
 class OpiumPulses extends Seeker {
   constructor() {
     super({
-      websiteUrl: "https://www.opiumpulses.com",
+      websiteUrl: "https://www.opiumpulses.com/site/login",
       authPageUrl: "https://www.opiumpulses.com/site/login",
       winsPageUrl: "https://www.opiumpulses.com/user/giveawaykeys",
       authContent: "/site/logout",
