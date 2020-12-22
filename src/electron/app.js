@@ -203,27 +203,6 @@ const autostart = new AutoLaunch({ name: config.appName });
       mainWindow = null;
     });
 
-    const tray = new Tray(nativeImage.createFromPath(config.appIcon));
-    const trayMenu = Menu.buildFromTemplate([
-      {
-        label: "Open Website",
-        click: () => {
-          browserWindow.loadURL(config.websiteUrl);
-          browserWindow.show();
-        },
-      },
-      { type: "separator" },
-      { role: "quit" },
-    ]);
-
-    tray.setToolTip(`${config.appName} ${currentBuild}`);
-    tray.setContextMenu(trayMenu);
-    tray.on("click", () => {
-      if (user === null)
-        authWindow.isVisible() ? authWindow.hide() : authWindow.show();
-      else mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
-    });
-
     // Variables shared with browser windows
     global.sharedData = {
       isPortable: ENV.isPortable,
@@ -231,7 +210,6 @@ const autostart = new AutoLaunch({ name: config.appName });
       currentBuild,
       devMode: ENV.devMode,
       shell,
-      TrayIcon: tray,
       ipcMain,
       language,
       config,
@@ -247,6 +225,8 @@ const autostart = new AutoLaunch({ name: config.appName });
 
   function startApp() {
     if (appLoaded) return;
+
+    createTrayIcon();
 
     language
       .init()
@@ -287,3 +267,26 @@ const autostart = new AutoLaunch({ name: config.appName });
     autostart.disable().catch(() => {});
   }
 })();
+
+const createTrayIcon = () => {
+  const tray = new Tray(nativeImage.createFromPath(config.appIcon));
+  const trayMenu = Menu.buildFromTemplate([
+    {
+      label: "Open Website",
+      click: () => {
+        browserWindow.loadURL(config.websiteUrl);
+        browserWindow.show();
+      },
+    },
+    { type: "separator" },
+    { role: "quit" },
+  ]);
+
+  tray.setToolTip(`${config.appName} ${currentBuild}`);
+  tray.setContextMenu(trayMenu);
+  tray.on("click", () => {
+    if (user === null)
+      authWindow.isVisible() ? authWindow.hide() : authWindow.show();
+    else mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+  });
+};
