@@ -12,7 +12,7 @@ const {
 const { autoUpdater } = require("electron-updater");
 const autoLaunch = require("auto-launch");
 
-const ENV = require("./environment");
+const ENV = require("../environment");
 const config = require("./config");
 const settings = require("../app/settings");
 

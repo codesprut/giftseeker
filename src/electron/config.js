@@ -1,4 +1,4 @@
-const ENV = require("./environment");
+const ENV = require("../environment");
 const storage = require("electron-json-storage");
 
 const appName = "GiftSeeker";
@@ -12,7 +12,7 @@ storage.setDataPath(storagePath);
 module.exports = {
   appName,
   websiteUrl: "https://giftseeker.ru/",
-  appIcon: __dirname + "/../resources/images/icon.ico",
+  appIcon: ENV.appRoot + "/resources/images/icon.ico",
   window: {
     defaultWidth: 750,
     minWidth: 650,
