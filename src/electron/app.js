@@ -25,7 +25,7 @@ const currentBuild = app.getVersion();
 let authWindow = null;
 let mainWindow = null;
 let browserWindow = null;
-let user = null;
+let authorizedUser = null;
 
 app.disableHardwareAcceleration();
 
@@ -33,22 +33,21 @@ app.disableHardwareAcceleration();
   if (!isSecondAppInstance) return app.quit();
 
   app.on("second-instance", () => {
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore();
+    const windowToFocus = activeWindow();
 
-      if (!mainWindow.isVisible()) mainWindow.show();
+    if (windowToFocus.isMinimized()) windowToFocus.restore();
+    if (!windowToFocus.isVisible()) windowToFocus.show();
 
-      mainWindow.focus();
-    }
+    windowToFocus.focus();
   });
 
-  ipcMain.on("save-user", function (event, data) {
-    user = data;
+  ipcMain.on("save-user", (event, data) => {
+    authorizedUser = data;
     global.user = data;
   });
 
   // TODO: language event emitter
-  ipcMain.on("change-lang", function (event, data) {
+  ipcMain.on("change-lang", (event, data) => {
     language.change(data);
     event.sender.send("change-lang", data);
   });
@@ -266,8 +265,12 @@ const createTrayIcon = () => {
   tray.setToolTip(`${config.appName} ${currentBuild}`);
   tray.setContextMenu(trayMenu);
   tray.on("click", () => {
-    if (user === null)
-      authWindow.isVisible() ? authWindow.hide() : authWindow.show();
-    else mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+    const currentWindow = activeWindow();
+
+    currentWindow.isVisible() ? currentWindow.hide() : currentWindow.show();
   });
+};
+
+const activeWindow = () => {
+  return authorizedUser === null ? authWindow : mainWindow;
 };
