@@ -100,7 +100,7 @@ module.exports = class Seeker {
 
   async authCheck() {
     return this.http
-      .get(this.authCheckUrl ?? this.authPageUrl)
+      .get(this.authCheckUrl ?? this.websiteUrl)
       .then(res => (res.data.indexOf(this.authContent) >= 0 ? 1 : 0))
       .catch(err => (err.status === 200 ? 0 : -1));
   }
