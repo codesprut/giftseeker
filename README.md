@@ -18,7 +18,7 @@ If you are an end user, you can download and install application directly from o
 
 ## Quick start
 
-Make sure you have [Node.js](https://nodejs.org/) installed, then type the following commands.
+Make sure you have [Node.js](https://nodejs.org/) **>= 14.15.3** installed, then type the following commands.
 
 ```
 git clone https://github.com/CodeSprut/GiftSeeker.git
