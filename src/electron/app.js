@@ -5,7 +5,6 @@ const {
   shell,
   Menu,
   Tray,
-  BrowserWindow,
   ipcMain,
   dialog,
 } = require("electron");
@@ -17,14 +16,12 @@ const settings = require("../app/settings");
 const autoStart = require("./auto-start");
 
 const language = require("../app/language");
+const windows = require("./windows");
 
 const isSecondAppInstance = app.requestSingleInstanceLock();
 
 const currentBuild = app.getVersion();
 
-let authWindow = null;
-let mainWindow = null;
-let browserWindow = null;
 let authorizedUser = null;
 
 app.disableHardwareAcceleration();
@@ -33,12 +30,12 @@ app.disableHardwareAcceleration();
   if (!isSecondAppInstance) return app.quit();
 
   app.on("second-instance", () => {
-    const windowToFocus = activeWindow();
+    const activeWindow = windows.active();
 
-    if (windowToFocus.isMinimized()) windowToFocus.restore();
-    if (!windowToFocus.isVisible()) windowToFocus.show();
+    if (activeWindow.isMinimized()) activeWindow.restore();
+    if (!activeWindow.isVisible()) activeWindow.show();
 
-    windowToFocus.focus();
+    activeWindow.focus();
   });
 
   ipcMain.on("save-user", (event, data) => {
@@ -46,7 +43,6 @@ app.disableHardwareAcceleration();
     global.user = data;
   });
 
-  // TODO: language event emitter
   ipcMain.on("change-lang", (event, data) => {
     language.change(data);
     event.sender.send("change-lang", data);
@@ -59,145 +55,10 @@ app.disableHardwareAcceleration();
   app.on("ready", async () => {
     await settings.init();
     const services = require("../app/seeker/bundle");
-    const programSession = require("./session");
 
     settings.on("change", "start_with_os", autoStart.set);
 
-    authWindow = new BrowserWindow({
-      width: 280,
-      height: 340,
-      title: config.appName,
-      icon: config.appIcon,
-      show: false,
-      center: true,
-      resizable: false,
-      frame: false,
-      webPreferences: {
-        session: programSession,
-        enableRemoteModule: true,
-        devTools: ENV.devMode,
-        contextIsolation: false,
-        nodeIntegration: true,
-      },
-    });
-
-    authWindow.setMenu(null);
-
-    const { minWidth, maxWidth, minHeight, maxHeight } = config.window;
-
-    const windowWidth = (() => {
-      const defaultWidth = config.window.defaultWidth;
-      const width = settings.get("window_width", defaultWidth);
-
-      if (width < minWidth || width > maxWidth) return defaultWidth;
-
-      return width;
-    })();
-
-    const windowHeight = (() => {
-      const defaultHeight = config.window.defaultHeight;
-      const height = settings.get("window_height", defaultHeight);
-
-      if (height < minHeight || height > maxHeight) return defaultHeight;
-
-      return height;
-    })();
-
-    mainWindow = new BrowserWindow({
-      width: windowWidth,
-      height: windowHeight,
-      minWidth: minWidth,
-      maxWidth: maxWidth,
-      minHeight: minHeight,
-      maxHeight: maxHeight,
-      backgroundColor: "#111b29",
-      title: config.appName,
-      icon: config.appIcon,
-      show: false,
-      center: true,
-      resizable: true,
-      fullscreenable: false,
-      maximizable: false,
-      frame: false,
-      webPreferences: {
-        session: programSession,
-        contextIsolation: false,
-        enableRemoteModule: true,
-        devTools: ENV.devMode,
-        nodeIntegration: true,
-        backgroundThrottling: false,
-        webSecurity: false,
-      },
-    });
-
-    mainWindow.setMenu(null);
-
-    if (ENV.devMode) {
-      // authWindow.webContents.openDevTools({ mode: "detach" });
-      mainWindow.webContents.openDevTools({ mode: "detach" });
-    }
-
-    // ### Browser for websites
-
-    browserWindow = new BrowserWindow({
-      parent: mainWindow,
-      icon: config.appIcon,
-      title: "GS Browser",
-      width: 1024,
-      height: 700,
-      minWidth: 600,
-      minHeight: 500,
-      modal: true,
-      show: false,
-      center: true,
-      webPreferences: {
-        session: programSession,
-        nodeIntegration: false,
-        contextIsolation: false,
-        devTools: false,
-        webSecurity: false,
-        webviewTag: true,
-      },
-    });
-
-    browserWindow.loadFile("./src/electron/web/blank.html");
-
-    browserWindow.setMenu(null);
-
-    browserWindow.on("close", e => {
-      e.preventDefault();
-      browserWindow.loadFile("./src/electron/web/blank.html");
-      browserWindow.hide();
-
-      if (mainWindow.hidden) authWindow.focus();
-      else mainWindow.focus();
-    });
-
-    // ### end browser for websites
-    mainWindow.on("resize", () => {
-      const [newWidth, newHeight] = mainWindow.getContentSize();
-
-      settings.set("window_width", newWidth);
-      settings.set("window_height", newHeight);
-    });
-
-    authWindow.on("close", () => {
-      authWindow.removeAllListeners("close");
-      mainWindow.close();
-    });
-
-    mainWindow.on("close", () => {
-      mainWindow.removeAllListeners("close");
-      authWindow.close();
-    });
-
-    authWindow.on("closed", () => {
-      authWindow = null;
-    });
-
-    mainWindow.on("closed", () => {
-      mainWindow = null;
-    });
+    windows.init();
 
     const trayIcon = createTrayIcon();
 
@@ -213,9 +74,9 @@ app.disableHardwareAcceleration();
       language,
       config,
       settings,
-      Browser: browserWindow,
-      authWindow,
-      mainWindow,
+      Browser: windows.browser(),
+      authWindow: windows.auth(),
+      mainWindow: windows.main(),
       services,
     };
 
@@ -227,13 +88,13 @@ const startApp = () => {
   language
     .init()
     .then(() => {
-      authWindow.loadFile("./src/electron/web/auth.html");
+      windows.auth().loadFile("./src/electron/web/auth.html");
 
-      authWindow.on("ready-to-show", () => {
-        authWindow.show();
+      windows.auth().on("ready-to-show", () => {
+        windows.auth().show();
 
-        if (settings.get("start_minimized")) authWindow.hide();
-        else authWindow.focus();
+        if (settings.get("start_minimized")) windows.auth().hide();
+        else windows.auth().focus();
       });
     })
     .catch(ex => {
@@ -258,8 +119,8 @@ const createTrayIcon = () => {
     {
       label: "Open Website",
       click: () => {
-        browserWindow.loadURL(config.websiteUrl);
-        browserWindow.show();
+        windows.browser().loadURL(config.websiteUrl);
+        windows.browser().show();
       },
     },
     { type: "separator" },
@@ -278,5 +139,5 @@ const createTrayIcon = () => {
 };
 
 const activeWindow = () => {
-  return authorizedUser === null ? authWindow : mainWindow;
+  return authorizedUser === null ? windows.auth() : windows.main();
 };
