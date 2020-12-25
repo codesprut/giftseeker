@@ -58,7 +58,7 @@ app.disableHardwareAcceleration();
     settings.set("start_with_os", autoStart.isEnabled());
     settings.on("change", "start_with_os", autoStart.set);
 
-    const services = require("../app/seeker/bundle");
+    const services = require("../app/seeker/services");
 
     const {
       auth: authWindow,
