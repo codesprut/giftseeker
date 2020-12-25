@@ -30,7 +30,7 @@ app.disableHardwareAcceleration();
   if (!isSecondAppInstance) return app.quit();
 
   app.on("second-instance", () => {
-    const activeWindow = windows.active();
+    const activeWindow = windows.active(!!authorizedUser);
 
     if (activeWindow.isMinimized()) activeWindow.restore();
     if (!activeWindow.isVisible()) activeWindow.show();
@@ -58,9 +58,13 @@ app.disableHardwareAcceleration();
 
     settings.on("change", "start_with_os", autoStart.set);
 
-    windows.init();
+    const {
+      auth: authWindow,
+      main: mainWindow,
+      browser: browserWindow,
+    } = windows.init();
 
-    const trayIcon = createTrayIcon();
+    const trayIcon = createTrayIcon(browserWindow);
 
     // Variables shared with browser windows
     global.sharedData = {
@@ -74,27 +78,27 @@ app.disableHardwareAcceleration();
       language,
       config,
       settings,
-      Browser: windows.browser(),
-      authWindow: windows.auth(),
-      mainWindow: windows.main(),
+      Browser: browserWindow,
+      authWindow: authWindow,
+      mainWindow: mainWindow,
       services,
     };
 
-    startApp();
+    startApp(authWindow);
   });
 })();
 
-const startApp = () => {
+const startApp = authWindow => {
   language
     .init()
     .then(() => {
-      windows.auth().loadFile("./src/electron/web/auth.html");
+      authWindow.loadFile("./src/electron/web/auth.html");
 
-      windows.auth().on("ready-to-show", () => {
-        windows.auth().show();
+      authWindow.on("ready-to-show", () => {
+        authWindow.show();
 
-        if (settings.get("start_minimized")) windows.auth().hide();
-        else windows.auth().focus();
+        if (settings.get("start_minimized")) authWindow.hide();
+        else authWindow.focus();
       });
     })
     .catch(ex => {
@@ -113,31 +117,27 @@ const startApp = () => {
     });
 };
 
-const createTrayIcon = () => {
-  const tray = new Tray(nativeImage.createFromPath(config.appIcon));
+const createTrayIcon = browserWindow => {
+  const trayIcon = new Tray(nativeImage.createFromPath(config.appIcon));
   const trayMenu = Menu.buildFromTemplate([
     {
       label: "Open Website",
       click: () => {
-        windows.browser().loadURL(config.websiteUrl);
-        windows.browser().show();
+        browserWindow.loadURL(config.websiteUrl);
+        browserWindow.show();
       },
     },
     { type: "separator" },
     { role: "quit" },
   ]);
 
-  tray.setToolTip(`${config.appName} ${currentBuild}`);
-  tray.setContextMenu(trayMenu);
-  tray.on("click", () => {
-    const currentWindow = activeWindow();
+  trayIcon.setToolTip(`${config.appName} ${currentBuild}`);
+  trayIcon.setContextMenu(trayMenu);
+  trayIcon.on("click", () => {
+    const activeWindow = windows.active(!!authorizedUser);
 
-    currentWindow.isVisible() ? currentWindow.hide() : currentWindow.show();
+    activeWindow.isVisible() ? activeWindow.hide() : activeWindow.show();
   });
 
-  return tray;
-};
-
-const activeWindow = () => {
-  return authorizedUser === null ? windows.auth() : windows.main();
+  return trayIcon;
 };

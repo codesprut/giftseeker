@@ -1,21 +1,19 @@
 const { BrowserWindow } = require("electron");
 const { create: createSession } = require("./session");
 const ENV = require("../environment");
-const config = require("./config");
+const { appName, appIcon, window: windowConfig } = require("./config");
 const settings = require("../app/settings");
 
-let authWindow = null;
-let mainWindow = null;
-let browserWindow = null;
+const windows = {};
 
 const init = () => {
   const session = createSession();
 
-  authWindow = new BrowserWindow({
+  const authWindow = new BrowserWindow({
     width: 280,
     height: 340,
-    title: config.appName,
-    icon: config.appIcon,
+    title: appName,
+    icon: appIcon,
     show: false,
     center: true,
     resizable: false,
@@ -31,10 +29,10 @@ const init = () => {
 
   authWindow.setMenu(null);
 
-  const { minWidth, maxWidth, minHeight, maxHeight } = config.window;
+  const { minWidth, maxWidth, minHeight, maxHeight } = windowConfig;
 
   const windowWidth = (() => {
-    const defaultWidth = config.window.defaultWidth;
+    const defaultWidth = windowConfig.defaultWidth;
     const width = settings.get("window_width", defaultWidth);
 
     if (width < minWidth || width > maxWidth) return defaultWidth;
@@ -43,7 +41,7 @@ const init = () => {
   })();
 
   const windowHeight = (() => {
-    const defaultHeight = config.window.defaultHeight;
+    const defaultHeight = windowConfig.defaultHeight;
     const height = settings.get("window_height", defaultHeight);
 
     if (height < minHeight || height > maxHeight) return defaultHeight;
@@ -51,7 +49,7 @@ const init = () => {
     return height;
   })();
 
-  mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width: windowWidth,
     height: windowHeight,
     minWidth: minWidth,
@@ -59,8 +57,8 @@ const init = () => {
     minHeight: minHeight,
     maxHeight: maxHeight,
     backgroundColor: "#111b29",
-    title: config.appName,
-    icon: config.appIcon,
+    title: appName,
+    icon: appIcon,
     show: false,
     center: true,
     resizable: true,
@@ -85,11 +83,9 @@ const init = () => {
     mainWindow.webContents.openDevTools({ mode: "detach" });
   }
 
-  // ### Browser for websites
-
-  browserWindow = new BrowserWindow({
+  const browserWindow = new BrowserWindow({
     parent: mainWindow,
-    icon: config.appIcon,
+    icon: appIcon,
     title: "GS Browser",
     width: 1024,
     height: 700,
@@ -139,23 +135,26 @@ const init = () => {
     authWindow.close();
   });
 
-  authWindow.on("closed", () => {
-    authWindow = null;
-  });
+  authWindow.on("closed", () => (windows.auth = null));
+  mainWindow.on("closed", () => (windows.main = null));
 
-  mainWindow.on("closed", () => {
-    mainWindow = null;
-  });
+  windows.auth = authWindow;
+  windows.main = mainWindow;
+  windows.browser = browserWindow;
+
+  return windows;
 };
 
-const active = () => {
-  return mainWindow;
+/**
+ * Returns an active window
+ * Active window depends of user auth state
+ * @param {boolean} userIsAuthorized
+ */
+const active = userIsAuthorized => {
+  return userIsAuthorized ? windows.main : windows.auth;
 };
 
 module.exports = {
   init,
   active,
-  auth: () => authWindow,
-  main: () => mainWindow,
-  browser: () => browserWindow,
 };
