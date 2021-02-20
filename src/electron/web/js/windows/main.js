@@ -1,6 +1,10 @@
+import language from "../language.js";
+
 const axios = require("axios").default;
+const path = require("path");
 
 const { remote, ipcRenderer } = require("electron");
+
 const accountData = remote.getGlobal("user");
 const {
   settings,
@@ -12,8 +16,6 @@ const {
   isPortable,
   currentBuild,
 } = remote.getGlobal("sharedData");
-
-import language from "../language.js";
 
 const updateIcon = document.querySelector("div.update-available");
 const logoutButton = document.querySelector(".logout-button");
@@ -95,7 +97,7 @@ const renderUser = accountData => {
 
 const switchToAuthWindow = () => {
   mainWindow.hide();
-  mainWindow.loadURL(__dirname + "/blank.html");
+  mainWindow.loadURL(path.resolve(__dirname, "/blank.html"));
 
   ipcRenderer.send("save-user", null);
   authWindow.show();
@@ -107,7 +109,7 @@ window.minimizeWindow = () => {
 
 window.closeWindow = () => {
   if (settings.get("minimize_on_close")) {
-    minimizeWindow();
+    window.minimizeWindow();
     return;
   }
 
@@ -167,7 +169,7 @@ window.closeWindow = () => {
   const servicesSwitcher = document.querySelector(".services_switcher");
   const servicesIcons = document.querySelector(".services-icons");
 
-  userAgentArea.placeholder = config.defaultStorageData.user_agent;
+  userAgentArea.placeholder = config.storage.defaultData.user_agent;
   userAgentArea.value = Browser.webContents.session.getUserAgent();
   userAgentArea.onchange = () =>
     settings.set(

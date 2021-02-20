@@ -29,33 +29,35 @@ const init = () => {
 
   authWindow.setMenu(null);
 
-  const { minWidth, maxWidth, minHeight, maxHeight } = windowConfig;
+  const { width, height } = windowConfig;
 
   const windowWidth = (() => {
-    const defaultWidth = windowConfig.defaultWidth;
-    const width = settings.get("window_width", defaultWidth);
+    const currentWidth = settings.get("window_width", width.default);
 
-    if (width < minWidth || width > maxWidth) return defaultWidth;
+    if (currentWidth < width.min || currentWidth > width.max) {
+      return width.default;
+    }
 
-    return width;
+    return currentWidth;
   })();
 
   const windowHeight = (() => {
-    const defaultHeight = windowConfig.defaultHeight;
-    const height = settings.get("window_height", defaultHeight);
+    const currentHeight = settings.get("window_height", height.default);
 
-    if (height < minHeight || height > maxHeight) return defaultHeight;
+    if (currentHeight < height.min || currentHeight > height.max) {
+      return height.default;
+    }
 
-    return height;
+    return currentHeight;
   })();
 
   const mainWindow = new BrowserWindow({
     width: windowWidth,
     height: windowHeight,
-    minWidth: minWidth,
-    maxWidth: maxWidth,
-    minHeight: minHeight,
-    maxHeight: maxHeight,
+    minWidth: width.min,
+    maxWidth: width.max,
+    minHeight: height.min,
+    maxHeight: height.max,
     backgroundColor: "#111b29",
     title: appName,
     icon: appIcon,

@@ -1,29 +1,33 @@
 const ENV = require("../environment");
-const storage = require("electron-json-storage");
 
 const appName = "GiftSeeker";
 const installableStorage = ENV.homedir + "/" + appName;
 const portableStorage = ENV.execPath + "data";
 
-const storagePath = ENV.isPortable ? portableStorage : installableStorage;
-
-storage.setDataPath(storagePath);
+const storageDataPath = ENV.isPortable ? portableStorage : installableStorage;
 
 module.exports = {
   appName,
   websiteUrl: "https://giftseeker.ru/",
   appIcon: ENV.appRoot + "/resources/images/icon.ico",
   window: {
-    defaultWidth: 750,
-    minWidth: 650,
-    maxWidth: 1200,
-    defaultHeight: 500,
-    minHeight: 400,
-    maxHeight: 900,
+    width: {
+      default: 750,
+      min: 650,
+      max: 1200,
+    },
+    height: {
+      default: 500,
+      min: 400,
+      max: 900,
+    },
   },
-  defaultStorageData: {
-    language: "en_US",
-    user_agent:
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/83.0.4103.88 Mobile/15E148 Safari/604.1",
+  storage: {
+    dataPath: storageDataPath,
+    defaultData: {
+      language: "en_US",
+      user_agent:
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/83.0.4103.88 Mobile/15E148 Safari/604.1",
+    },
   },
 };

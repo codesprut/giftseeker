@@ -3,7 +3,8 @@
   "extends": ["standard", "plugin:prettier/recommended"],
   "env": {
     "jest": true,
-    "node": true
+    "node": true,
+    "browser": true
   },
   "plugins": ["prettier"],
   "rules": {

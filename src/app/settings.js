@@ -1,12 +1,13 @@
-const { defaultStorageData } = require("../electron/config");
+const { storage: storageConfig } = require("../electron/config");
 const storage = require("electron-json-storage");
 const events = require("events");
 
 const eventEmitter = new events.EventEmitter();
 
 let settings = {};
-
 let saveToStorageTimeout = null;
+
+storage.setDataPath(storageConfig.dataPath);
 
 /**
  * Get stored settings
@@ -50,8 +51,11 @@ const init = () => {
     storage.get("configs", (error, data) => {
       if (error) resolve(error);
 
-      for (const configKey in defaultStorageData)
-        if (!data[configKey]) data[configKey] = defaultStorageData[configKey];
+      for (const configKey in storageConfig.defaultData) {
+        if (!data[configKey]) {
+          data[configKey] = storageConfig.defaultData[configKey];
+        }
+      }
 
       settings = data;
       set("inits", get("inits", 0) + 1);
