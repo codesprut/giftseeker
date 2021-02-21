@@ -1,7 +1,8 @@
 {
   "root": true,
-  "extends": ["standard", "plugin:prettier/recommended"],
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
   "env": {
+    "es2017": true,
     "jest": true,
     "node": true,
     "browser": true
