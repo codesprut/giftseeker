@@ -13,45 +13,14 @@
   "scripts": {
     "test": "jest",
     "start": "electron .",
-    "build-win": "electron-builder --x64 --ia32",
-    "build-nix": "electron-builder -l --x64 --ia32",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
-  },
-  "build": {
-    "appId": "com.giftseeker.app",
-    "files": [
-      "src",
-      "node_modules",
-      "LICENSE"
-    ],
-    "productName": "GiftSeeker",
-    "artifactName": "${productName}Setup.${ext}",
-    "copyright": "Copyright © 2020 ${author}",
-    "linux": {
-      "icon": "./src/resources/images/icon.ico"
-    },
-    "win": {
-      "target": [
-        "nsis-web",
-        "portable"
-      ],
-      "icon": "./src/resources/images/icon.ico"
-    },
-    "portable": {
-      "artifactName": "${productName}.${ext}"
-    },
-    "nsisWeb": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
-    },
-    "publish": {
-      "provider": "generic",
-      "url": "https://giftseeker.ru/files"
-    }
+    "dist": "cross-env ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true node build.js",
+    "dist:win": "npm run dist -- WINDOWS",
+    "dist:mac": "npm run dist -- MAC",
+    "dist:linux": "npm run dist -- LINUX"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.10.4",
+    "cross-env": "^7.0.3",
     "electron": "^11.2.3",
     "electron-builder": "^22.9.1",
     "eslint": "^7.6.0",
