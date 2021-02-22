@@ -27,6 +27,7 @@ builder
       artifactName: "${productName}Setup.${ext}",
       copyright: "Copyright © 2016-2021 Alexander Pinashin",
       files: ["src", "node_modules", "LICENSE"],
+      icon: "./src/resources/images/icon.ico",
       win: {
         target: [
           {
