@@ -56,13 +56,9 @@ We use [electron-builder](https://github.com/electron-userland/electron-builder)
 Package in a distributable format (e.g. dmg, windows installer, deb package)
 
 ```
-npm run dist
-```
-
-Generates the package directory without really packaging it. This is useful for testing purposes
-
-```
-npm run pack
+npm run dist:mac
+npm run dist:win
+npm run dist:linux
 ```
 
 The build process compiles the content of the `src` and `node_modules` directories.
