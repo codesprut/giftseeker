@@ -1,12 +1,11 @@
 const Seeker = require("../core");
-// const query = require("querystring");
-// const language = require("../../language");
+const query = require("querystring");
 const { parse: parseHtml } = require("node-html-parser");
 
 class MagicDrop extends Seeker {
   constructor() {
     super({
-      websiteUrl: "https://magicdrop.top/case/free",
+      websiteUrl: "https://magicdrop.top/",
       authPageUrl: "https://magicdrop.top/login",
       authContent: "header_b_user_profile",
       withValue: false,
@@ -29,6 +28,20 @@ class MagicDrop extends Seeker {
         avatar,
         username,
       };
+    });
+  }
+
+  async seekService() {
+    return this.http({
+      url: this.websiteUrl + "/ajax.php?do=freecase_reg",
+      data: query.stringify({
+        caseName: "free",
+      }),
+      method: "post",
+    }).then(({ data }) => {
+      if (data.status === 1) {
+        this.log(this.translationKey("free_case_entered"));
+      }
     });
   }
 }
