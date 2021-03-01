@@ -1,5 +1,6 @@
 const Seeker = require("../core");
 const query = require("querystring");
+const language = require("../../language");
 const { parse: parseHtml } = require("node-html-parser");
 
 class MagicDrop extends Seeker {
@@ -40,7 +41,7 @@ class MagicDrop extends Seeker {
       method: "post",
     }).then(({ data }) => {
       if (data.status === 1) {
-        this.log(this.translationKey("free_case_entered"));
+        this.log(language.get(this.translationKey("free_case_entered")));
       }
     });
   }
