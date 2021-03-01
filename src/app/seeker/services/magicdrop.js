@@ -6,7 +6,7 @@ const { parse: parseHtml } = require("node-html-parser");
 class MagicDrop extends Seeker {
   constructor() {
     super({
-      websiteUrl: "https://magicdrop.top/",
+      websiteUrl: "https://magicdrop.top",
       authPageUrl: "https://magicdrop.top/login",
       authContent: "header_b_user_profile",
       withValue: false,
