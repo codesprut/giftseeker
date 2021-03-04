@@ -5,5 +5,4 @@ module.exports = [
   require("./opiumpulses"),
   require("./astats"),
   require("./magicdrop"),
-  require("./justcase"),
 ];
