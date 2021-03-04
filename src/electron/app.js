@@ -22,7 +22,9 @@ const isSecondAppInstance = app.requestSingleInstanceLock();
 
 const currentBuild = app.getVersion();
 
+let windowIsReady = false;
 let authorizedUser = null;
+let preventReadyWindowHiding = false;
 
 app.disableHardwareAcceleration();
 
@@ -97,10 +99,12 @@ const startApp = authWindow => {
       authWindow.loadFile("./src/electron/web/auth.html");
 
       authWindow.on("ready-to-show", () => {
+        windowIsReady = true;
         authWindow.show();
 
-        if (settings.get("start_minimized")) authWindow.hide();
-        else authWindow.focus();
+        if (settings.get("start_minimized") && !preventReadyWindowHiding) {
+          authWindow.hide();
+        } else authWindow.focus();
       });
     })
     .catch(ex => {
@@ -137,8 +141,11 @@ const createTrayIcon = browserWindow => {
   trayIcon.setContextMenu(trayMenu);
   trayIcon.on("click", () => {
     const activeWindow = windows.active(!!authorizedUser);
+    preventReadyWindowHiding = true;
 
-    activeWindow.isVisible() ? activeWindow.hide() : activeWindow.show();
+    if (windowIsReady) {
+      activeWindow.isVisible() ? activeWindow.hide() : activeWindow.show();
+    }
   });
 
   return trayIcon;

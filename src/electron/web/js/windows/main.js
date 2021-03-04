@@ -160,6 +160,8 @@ window.closeWindow = () => {
       };
     });
 
+  const preventWindowMinimize = authWindow.isVisible();
+
   authWindow.hide();
   mainWindow.show();
 
@@ -217,8 +219,9 @@ window.closeWindow = () => {
   servicesSwitcher.onmousewheel = ev =>
     servicesSwitcherScroll(ev.wheelDelta > 0 ? 20 : -20);
 
-  if (settings.get("start_minimized")) mainWindow.hide();
-  else mainWindow.focus();
+  if (settings.get("start_minimized") && !preventWindowMinimize) {
+    mainWindow.hide();
+  } else mainWindow.focus();
 
   document.querySelectorAll(".menu li").forEach(menuItem => {
     menuItem.onclick = () => {
