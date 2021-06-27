@@ -6,8 +6,8 @@ const { parse: parseHtml } = require("node-html-parser");
 class MagicDrop extends Seeker {
   constructor() {
     super({
-      websiteUrl: "https://magicdrop.top",
-      authPageUrl: "https://magicdrop.top/login",
+      websiteUrl: "https://magic-drop.top",
+      authPageUrl: "https://magic-drop.top/login",
       authContent: "header_b_user_profile",
       withValue: false,
     });
@@ -22,8 +22,9 @@ class MagicDrop extends Seeker {
       const avatar = document
         .querySelector(".header_b_user_profile_t_i img")
         .getAttribute("src");
-      const username = document.querySelector(".header_b_user_profile_t_n")
-        .structuredText;
+      const username = document.querySelector(
+        ".header_b_user_profile_t_n",
+      ).structuredText;
 
       return {
         avatar,
