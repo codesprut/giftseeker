@@ -19,7 +19,6 @@
     "dist:linux": "npm run dist -- LINUX"
   },
   "devDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.14.5",
     "cross-env": "^7.0.3",
     "electron": "^11.4.9",
     "electron-builder": "^22.11.7",
