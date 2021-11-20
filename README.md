@@ -11,8 +11,6 @@ Program developed like a Node.js application. Electron used for UI only.
 - follx.com
 - opiumpulses.com
 - astats.nl
-- magic-drop.top
-- ggplayers.com
 
 ## Setup
 
