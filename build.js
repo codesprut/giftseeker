@@ -8,7 +8,7 @@ function getCurrentPlatform() {
     case "darwin":
       return Platform.MAC;
     case "linux":
-      return Platform.linux;
+      return Platform.LINUX;
     default:
       console.error("Cannot resolve current platform!");
       return undefined;
