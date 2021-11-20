@@ -3,24 +3,31 @@ const storage = require("electron-json-storage");
 const axios = require("axios");
 const settings = require("./settings");
 const fs = require("fs");
+const https = require("https");
 
 let languages = {};
 
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false,
+});
+
 const downloadTranslation = async name => {
-  return axios.get(`${websiteUrl}trans/${name}`).then(({ data }) => {
-    return new Promise(resolve => {
-      fs.writeFile(
-        storage.getDataPath() + "/" + name,
-        JSON.stringify(data),
-        resolve,
-      );
+  return axios
+    .get(`${websiteUrl}trans/${name}`, { httpsAgent })
+    .then(({ data }) => {
+      return new Promise(resolve => {
+        fs.writeFile(
+          storage.getDataPath() + "/" + name,
+          JSON.stringify(data),
+          resolve,
+        );
+      });
     });
-  });
 };
 
 const updateTranslations = async () => {
   const translations = await axios
-    .get(`${websiteUrl}api/langs_new`)
+    .get(`${websiteUrl}api/langs_new`, { httpsAgent })
     .then(res => JSON.parse(res.data.response).langs)
     .catch(() => false);
 
