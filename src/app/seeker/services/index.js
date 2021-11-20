@@ -4,5 +4,4 @@ module.exports = [
   require("./indiegala"),
   require("./opiumpulses"),
   require("./astats"),
-  require("./ggplayers"),
 ];
