@@ -1,4 +1,4 @@
-const { websiteUrl } = require("../electron/config");
+const { websiteUrl } = require("./config");
 const storage = require("./json-storage");
 const axios = require("axios");
 const settings = require("./settings");

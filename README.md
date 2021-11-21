@@ -33,7 +33,7 @@ Now you have a running desktop application on your screen.
 
 The application located in the `src` directory which consist of three main folders.
 
-`app` - node.js files with main app features.
+`app` - node.js core with main app features.
 
 `electron` - serves as the app UI using the APIs provided by app modules.
 
