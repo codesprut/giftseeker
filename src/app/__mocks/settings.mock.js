@@ -1,5 +1,5 @@
-jest.mock("../../src/app/settings.js");
-const settings = require("../../src/app/settings");
+jest.mock("../settings.js");
+const settings = require("../settings");
 
 let currentSettings = {};
 
