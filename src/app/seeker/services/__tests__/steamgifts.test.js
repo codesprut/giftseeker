@@ -1,10 +1,10 @@
-const settingsMock = require("../__mocks/settingsMock");
-const steamGifts = require("../../../../src/app/seeker/services/steamgifts");
+const settingsMock = require("../../../../../tests/__mocks/settings.mock");
+const steamGifts = require("../steamgifts");
 
 const createGiveaway = (number, fields = {}) => {
   return Object.assign(
     {
-      url: "http://sg.com",
+      url: "https://sg.com",
       cost: 0,
       copies: 100,
       entries: 100,

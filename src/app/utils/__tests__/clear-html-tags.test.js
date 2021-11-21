@@ -1,4 +1,4 @@
-const clearHtmlTags = require("../../../src/app/utils/clear-html-tags");
+const clearHtmlTags = require("../clear-html-tags");
 
 const commonHtmlCode =
   "<html><script></script><hr><input/><span></span><s></s><span></span></html>";
@@ -42,8 +42,7 @@ const cases = [
   },
   {
     toString: () => "Tag with attributes removed",
-    html:
-      "<html><div></div><span id='to-be-removed' data-remove='true'></span></html>",
+    html: "<html><div></div><span id='to-be-removed' data-remove='true'></span></html>",
     clearTags: ["span"],
     expected: "<html><div></div></html>",
   },

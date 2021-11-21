@@ -1,4 +1,4 @@
-import time from "../../../src/electron/web/js/utlis/time";
+import time from "../time";
 
 describe("Elapsed method", () => {
   const cases = [
