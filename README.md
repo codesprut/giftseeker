@@ -44,7 +44,7 @@ The application located in the `src` directory which consist of three main folde
 Run all tests:
 
 ```
-npm test
+npm run test
 ```
 
 ## Build
