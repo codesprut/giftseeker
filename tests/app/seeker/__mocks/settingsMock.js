@@ -1,9 +1,3 @@
-jest.mock("electron", () => ({
-  get app() {
-    return {};
-  },
-}));
-
 jest.mock("../../../../src/app/settings.js");
 const settings = require("../../../../src/app/settings");
 
