@@ -27,6 +27,8 @@ const resolveFilePath = filename => {
  * @returns {Promise<boolean>}
  */
 const saveFile = (filename, data) => {
+  const dataToSave = isObject(data) ? sortObject(data) : data;
+
   return new Promise(resolve => {
     fs.mkdir(currentDataPath, { recursive: true }, error => {
       if (error) {
@@ -34,13 +36,35 @@ const saveFile = (filename, data) => {
         return;
       }
 
-      const jsonData = JSON.stringify(data, null, 2);
+      const jsonData = JSON.stringify(dataToSave, null, 2);
 
       fs.writeFile(resolveFilePath(filename), jsonData, "utf8", error => {
         resolve(!error);
       });
     });
   });
+};
+
+/**
+ * Detects var an object
+ * @param variable
+ * @returns {boolean}
+ */
+const isObject = variable => {
+  return (
+    typeof variable === "object" &&
+    !Array.isArray(variable) &&
+    variable !== null
+  );
+};
+
+const sortObject = object => {
+  return Object.keys(object)
+    .sort()
+    .reduce((result, key) => {
+      result[key] = object[key];
+      return result;
+    }, {});
 };
 
 const loadMany = filenames => {
