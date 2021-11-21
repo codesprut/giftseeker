@@ -1,5 +1,5 @@
 const { websiteUrl } = require("../electron/config");
-const storage = require("electron-json-storage");
+const storage = require("./json-storage");
 const axios = require("axios");
 const settings = require("./settings");
 const fs = require("fs");
@@ -52,24 +52,26 @@ const updateTranslations = async () => {
 };
 
 const loadTranslations = async () => {
-  const languagesList = [];
-  const storageFiles = fs.readdirSync(storage.getDataPath());
+  const translationsList = [];
+  const storageFiles = await storage.filesList();
 
   for (const filename of storageFiles) {
     if (filename.indexOf("lang.") >= 0) {
-      languagesList.push(filename.replace(".json", ""));
+      translationsList.push(filename.replace(".json", ""));
     }
   }
 
-  if (!languagesList.length)
+  if (!translationsList.length)
     throw new Error(`No translations found on storage`);
 
-  return await new Promise((resolve, reject) => {
-    storage.getMany(languagesList, (error, loadedFiles) => {
-      if (error) reject(new Error(`Can't load selected translation`));
-      resolve(loadedFiles.lang);
-    });
-  });
+  const loadedTranslations = await storage.loadMany(translationsList);
+
+  return Object.fromEntries(
+    loadedTranslations.map(translation => [
+      translation.lang.culture,
+      translation,
+    ]),
+  );
 };
 
 const init = async () => {

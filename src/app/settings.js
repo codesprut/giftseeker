@@ -1,8 +1,9 @@
 const { storage: storageConfig } = require("../electron/config");
-const storage = require("electron-json-storage");
 const events = require("events");
+const storage = require("./json-storage");
 
 const eventEmitter = new events.EventEmitter();
+const storageFilename = "settings";
 
 let settings = {};
 let saveToStorageTimeout = null;
@@ -13,7 +14,7 @@ storage.setDataPath(storageConfig.dataPath);
  * Get stored settings
  * @param key
  * @param defaultValue
- * @returns {boolean|*}
+ * @returns {any}
  */
 const get = (key, defaultValue) => {
   if (settings[key] !== undefined) return settings[key];
@@ -36,7 +37,7 @@ const set = (key, newValue) => {
   clearTimeout(saveToStorageTimeout);
 
   saveToStorageTimeout = setTimeout(() => {
-    storage.set("configs", settings);
+    storage.saveFile(storageFilename, settings);
   }, 500);
 
   if (oldValue !== newValue) eventEmitter.emit("change" + key, newValue);
@@ -46,22 +47,16 @@ const on = (eventName, key, callback) => {
   eventEmitter.on(eventName + key, callback);
 };
 
-const init = () => {
-  return new Promise(resolve => {
-    storage.get("configs", (error, data) => {
-      if (error) resolve(error);
+const init = async () => {
+  settings = await storage.loadFile(storageFilename).catch(() => ({}));
 
-      for (const configKey in storageConfig.defaultData) {
-        if (!data[configKey]) {
-          data[configKey] = storageConfig.defaultData[configKey];
-        }
-      }
+  for (const configKey in storageConfig.defaultData) {
+    if (!settings[configKey]) {
+      settings[configKey] = storageConfig.defaultData[configKey];
+    }
+  }
 
-      settings = data;
-      set("inits", get("inits", 0) + 1);
-      resolve(true);
-    });
-  });
+  set("inits", get("inits", 0) + 1);
 };
 
 module.exports = {
