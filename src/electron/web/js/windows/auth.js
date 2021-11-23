@@ -4,9 +4,8 @@ import language from "../language.js";
 const { remote, ipcRenderer } = require("electron");
 const axios = require("axios").default;
 
-const { config, mainWindow, ipcMain, currentBuild } = remote.getGlobal(
-  "sharedData",
-);
+const { config, mainWindow, ipcMain, currentBuild } =
+  remote.getGlobal("sharedData");
 
 const statusLabel = document.querySelector(".status-text");
 const authButton = document.querySelector("#auth_button");

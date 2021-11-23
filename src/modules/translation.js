@@ -1,33 +1,33 @@
-const { websiteUrl } = require("./config");
 const storage = require("./json-storage");
-const axios = require("axios");
 const settings = require("./settings");
-const fs = require("fs");
 const https = require("https");
+const axios = require("axios");
+const fs = require("fs");
 
-let languages = {};
+const settingsKey = "translation";
+const axiosConfig = {
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false,
+  }),
+};
 
-const httpsAgent = new https.Agent({
-  rejectUnauthorized: false,
-});
+let translations = {};
 
 const downloadTranslation = async name => {
-  return axios
-    .get(`${websiteUrl}trans/${name}`, { httpsAgent })
-    .then(({ data }) => {
-      return new Promise(resolve => {
-        fs.writeFile(
-          storage.getDataPath() + "/" + name,
-          JSON.stringify(data),
-          resolve,
-        );
-      });
+  return axios.get(`/trans/${name}`, axiosConfig).then(({ data }) => {
+    return new Promise(resolve => {
+      fs.writeFile(
+        storage.getDataPath() + "/" + name,
+        JSON.stringify(data),
+        resolve,
+      );
     });
+  });
 };
 
 const updateTranslations = async () => {
   const translations = await axios
-    .get(`${websiteUrl}api/langs_new`, { httpsAgent })
+    .get(`/api/langs_new`, axiosConfig)
     .then(res => JSON.parse(res.data.response).langs)
     .catch(() => false);
 
@@ -74,18 +74,20 @@ const loadTranslations = async () => {
   );
 };
 
-const init = async () => {
+const init = async downloadHost => {
   if (!fs.existsSync(storage.getDataPath()))
     throw new Error(`Could not find storage directory`);
 
-  await updateTranslations();
-  languages = await loadTranslations();
+  axiosConfig.baseUrl = downloadHost;
 
-  let selectedLanguage = current();
+  await updateTranslations(downloadHost);
+  translations = await loadTranslations();
 
-  if (!languages[selectedLanguage]) {
-    selectedLanguage = Object.keys(languages)[0];
-    settings.set("language", selectedLanguage);
+  let selectedTranslation = current();
+
+  if (!translations[selectedTranslation]) {
+    selectedTranslation = Object.keys(translations)[0];
+    settings.set(settingsKey, selectedTranslation);
   }
 };
 
@@ -95,7 +97,7 @@ const init = async () => {
  * @returns {string}
  */
 const get = key => {
-  let response = languages;
+  let response = translations;
   const keysTree = `${current()}.${key}`.split(".");
 
   for (const treeLevel of keysTree) {
@@ -107,10 +109,10 @@ const get = key => {
   return response;
 };
 
-const change = setLang => {
-  if (!languages[setLang]) return;
+const change = newTranslation => {
+  if (!translations[newTranslation]) return;
 
-  settings.set("language", setLang);
+  settings.set(settingsKey, newTranslation);
 };
 
 /**
@@ -118,7 +120,7 @@ const change = setLang => {
  * @returns {string} current translation
  */
 const current = () => {
-  return settings.get("language");
+  return settings.get(settingsKey);
 };
 
 /**
@@ -126,13 +128,13 @@ const current = () => {
  * @returns {number}
  */
 const quantity = () => {
-  return Object.keys(languages).length;
+  return Object.keys(translations).length;
 };
 
 const listAvailable = () => {
   const list = [];
-  for (const language of Object.keys(languages)) {
-    const { culture, name } = languages[language].lang;
+  for (const translation of Object.keys(translations)) {
+    const { culture, name } = translations[translation].lang;
     list.push({ culture, name });
   }
 

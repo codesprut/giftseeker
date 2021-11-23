@@ -1,5 +1,5 @@
 const { appRoot } = require("../environment");
-const coreConfig = require("../app/config");
+const coreConfig = require("../config");
 
 module.exports = {
   ...coreConfig,

@@ -2,7 +2,7 @@ const { BrowserWindow } = require("electron");
 const { create: createSession } = require("./session");
 const ENV = require("../environment");
 const { appName, appIcon, window: windowConfig } = require("./config");
-const settings = require("../app/settings");
+const settings = require("../modules/settings");
 
 const windows = {};
 

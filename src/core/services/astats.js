@@ -1,9 +1,9 @@
-const Seeker = require("../core");
+const BaseService = require("./base-service");
 const query = require("querystring");
-const language = require("../../language");
+const translation = require("../../modules/translation");
 const { parse: parseHtml } = require("node-html-parser");
 
-class Astats extends Seeker {
+class Astats extends BaseService {
   constructor() {
     super({
       websiteUrl: "https://astats.astats.nl/astats/",
@@ -45,7 +45,7 @@ class Astats extends Seeker {
 
       if (entered) {
         this.log({
-          text: `${language.get("service.entered_in")} #link#`,
+          text: `${translation.get("service.entered_in")} #link#`,
           anchor: giveaway.name,
           url: this.websiteUrl + giveaway.url,
         });

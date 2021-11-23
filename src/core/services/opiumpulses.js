@@ -1,9 +1,9 @@
-const Seeker = require("../core");
-const language = require("../../language");
+const BaseService = require("./base-service");
+const translation = require("../../modules/translation");
 const { parse } = require("node-html-parser");
-const states = require("../states");
+const states = require("../states.enum");
 
-class OpiumPulses extends Seeker {
+class OpiumPulses extends BaseService {
   constructor() {
     super({
       websiteUrl: "https://www.opiumpulses.com",
@@ -17,7 +17,7 @@ class OpiumPulses extends Seeker {
 
     this.events.on("state.changed", newState => {
       if (newState === states.STARTED)
-        this.log(language.get(this.translationKey("on_start_reminder")));
+        this.log(translation.get(this.translationKey("on_start_reminder")));
     });
   }
 
@@ -57,7 +57,7 @@ class OpiumPulses extends Seeker {
 
       if (entered) {
         this.log({
-          text: `${language.get("service.entered_in")} #link#`,
+          text: `${translation.get("service.entered_in")} #link#`,
           anchor: giveaway.name,
           url: this.websiteUrl + giveaway.url,
         });

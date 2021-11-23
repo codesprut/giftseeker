@@ -1,7 +1,7 @@
 const { session } = require("electron");
 
 const { appName } = require("./config");
-const settings = require("../app/settings");
+const settings = require("../modules/settings");
 
 const create = () => {
   const _session = session.fromPartition(`persist:${appName}`);

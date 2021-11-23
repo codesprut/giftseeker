@@ -1,9 +1,9 @@
-const Seeker = require("../core");
-const language = require("../../language");
+const BaseService = require("./base-service");
+const translation = require("../../modules/translation");
 const { parse } = require("node-html-parser");
-const clearHtmlTags = require("../../utils/clear-html-tags");
+const clearHtmlTags = require("../utils/clear-html-tags");
 
-class IndieGala extends Seeker {
+class IndieGala extends BaseService {
   constructor() {
     super({
       websiteUrl: "https://www.indiegala.com",
@@ -79,7 +79,7 @@ class IndieGala extends Seeker {
 
       if (entry.status === "ok") {
         this.log({
-          text: `${language.get("service.entered_in")} #link#`,
+          text: `${translation.get("service.entered_in")} #link#`,
           anchor: giveaway.name,
           url: this.websiteUrl + giveaway.url,
         });

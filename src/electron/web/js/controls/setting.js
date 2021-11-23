@@ -112,11 +112,15 @@ export default class Setting {
       pressTimeout = timeoutFunction(() => this.decrementValue(params, step));
     };
 
-    this.buttonInc.onmouseup = this.buttonDec.onmouseup = this.buttonInc.onmouseleave = this.buttonDec.onmouseleave = () => {
-      clearTimeout(pressTimeout);
-      iterations = 0;
-      pressed = false;
-    };
+    this.buttonInc.onmouseup =
+      this.buttonDec.onmouseup =
+      this.buttonInc.onmouseleave =
+      this.buttonDec.onmouseleave =
+        () => {
+          clearTimeout(pressTimeout);
+          iterations = 0;
+          pressed = false;
+        };
   }
 
   incrementValue(params, step) {

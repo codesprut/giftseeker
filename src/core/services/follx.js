@@ -1,8 +1,8 @@
-const Seeker = require("../core");
-const language = require("../../language");
+const BaseService = require("./base-service");
+const translation = require("../../modules/translation");
 const { parse } = require("node-html-parser");
 
-class Follx extends Seeker {
+class Follx extends BaseService {
   constructor() {
     super({
       websiteUrl: "https://follx.com",
@@ -67,7 +67,7 @@ class Follx extends Seeker {
 
       if (entered) {
         this.log({
-          text: `${language.get("service.entered_in")} #link#`,
+          text: `${translation.get("service.entered_in")} #link#`,
           anchor: giveaway.name,
           url: giveaway.url,
         });

@@ -10,13 +10,14 @@ const {
 } = require("electron");
 const { autoUpdater } = require("electron-updater");
 
-const ENV = require("../environment");
-const config = require("./config");
-const settings = require("../app/settings");
-const autoStart = require("./auto-start");
+const ENV = require("./environment");
+const config = require("./electron/config");
+const storage = require("./modules/json-storage");
+const settings = require("./modules/settings");
+const autoStart = require("./electron/auto-start");
 
-const language = require("../app/language");
-const windows = require("./windows");
+const translation = require("./modules/translation");
+const windows = require("./electron/windows");
 
 const isSecondAppInstance = app.requestSingleInstanceLock();
 
@@ -30,6 +31,8 @@ app.disableHardwareAcceleration();
 
 (() => {
   if (!isSecondAppInstance) return app.quit();
+
+  storage.setDataPath(config.storageDataPath);
 
   app.on("second-instance", () => {
     const activeWindow = windows.active(!!authorizedUser);
@@ -46,7 +49,7 @@ app.disableHardwareAcceleration();
   });
 
   ipcMain.on("change-lang", (event, data) => {
-    language.change(data);
+    translation.change(data);
     event.sender.send("change-lang", data);
   });
 
@@ -60,7 +63,7 @@ app.disableHardwareAcceleration();
     settings.set("start_with_os", autoStart.isEnabled());
     settings.on("change", "start_with_os", autoStart.set);
 
-    const services = require("../app/seeker/services");
+    const services = require("./core/services");
 
     const {
       auth: authWindow,
@@ -79,7 +82,7 @@ app.disableHardwareAcceleration();
       shell,
       trayIcon,
       ipcMain,
-      language,
+      language: translation,
       config,
       settings,
       Browser: browserWindow,
@@ -93,7 +96,7 @@ app.disableHardwareAcceleration();
 })();
 
 const startApp = authWindow => {
-  language
+  translation
     .init()
     .then(() => {
       authWindow.loadFile("./src/electron/web/auth.html");

@@ -171,7 +171,7 @@ window.closeWindow = () => {
   const servicesSwitcher = document.querySelector(".services_switcher");
   const servicesIcons = document.querySelector(".services-icons");
 
-  userAgentArea.placeholder = config.storage.defaultData.user_agent;
+  userAgentArea.placeholder = config.defaultSettings.user_agent;
   userAgentArea.value = Browser.webContents.session.getUserAgent();
   userAgentArea.onchange = () =>
     settings.set(
@@ -182,16 +182,15 @@ window.closeWindow = () => {
   if (settings.get("wide_services_switcher"))
     servicesSwitcher.classList.add("wide");
 
-  document.querySelector(
-    ".services_switcher .expander .span-wrap",
-  ).onclick = () => {
-    servicesSwitcher.style.transition = "width 0.3s";
-    servicesSwitcher.classList.toggle("wide");
+  document.querySelector(".services_switcher .expander .span-wrap").onclick =
+    () => {
+      servicesSwitcher.style.transition = "width 0.3s";
+      servicesSwitcher.classList.toggle("wide");
 
-    const wideSwitcher = servicesSwitcher.classList.contains("wide");
+      const wideSwitcher = servicesSwitcher.classList.contains("wide");
 
-    settings.set("wide_services_switcher", wideSwitcher);
-  };
+      settings.set("wide_services_switcher", wideSwitcher);
+    };
 
   const servicesSwitcherScroll = scrollStep => {
     let scrollTop = parseInt(servicesIcons.style.top || 0);

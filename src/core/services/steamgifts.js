@@ -1,9 +1,9 @@
-const Seeker = require("../core");
+const BaseService = require("./base-service");
 const query = require("querystring");
-const language = require("../../language");
+const translation = require("../../modules/translation");
 const { parse } = require("node-html-parser");
 
-class SteamGifts extends Seeker {
+class SteamGifts extends BaseService {
   constructor() {
     super({
       websiteUrl: "https://www.steamgifts.com",
@@ -145,11 +145,11 @@ class SteamGifts extends Seeker {
       if (entry.success) {
         this.setValue(entry.points);
         this.log({
-          text: `${language.get("service.entered_in")} #link#. ${this.translate(
-            "cost",
-          )} ${giveaway.cost} ${this.translate("chance")} ${
-            giveaway.winChance
-          }%`,
+          text: `${translation.get(
+            "service.entered_in",
+          )} #link#. ${this.translate("cost")} ${
+            giveaway.cost
+          } ${this.translate("chance")} ${giveaway.winChance}%`,
           anchor: giveaway.name,
           url: `${this.websiteUrl}${giveaway.url}`,
         });

@@ -1,14 +1,12 @@
-const { storage: storageConfig } = require("./config");
-const events = require("events");
 const storage = require("./json-storage");
+const events = require("events");
+const fs = require("fs");
 
 const eventEmitter = new events.EventEmitter();
 const storageFilename = "settings";
 
 let settings = {};
 let saveToStorageTimeout = null;
-
-storage.setDataPath(storageConfig.dataPath);
 
 /**
  * Get stored settings
@@ -47,12 +45,15 @@ const on = (eventName, key, callback) => {
   eventEmitter.on(eventName + key, callback);
 };
 
-const init = async () => {
+const init = async defaultSettings => {
+  if (!fs.existsSync(storage.getDataPath()))
+    throw new Error(`Could not find storage directory`);
+
   settings = await storage.loadFile(storageFilename).catch(() => ({}));
 
-  for (const configKey in storageConfig.defaultData) {
+  for (const configKey in defaultSettings) {
     if (!settings[configKey]) {
-      settings[configKey] = storageConfig.defaultData[configKey];
+      settings[configKey] = defaultSettings[configKey];
     }
   }
 

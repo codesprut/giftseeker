@@ -1,4 +1,4 @@
-const settingsMock = require("../../../__mocks__/settings.mock");
+const { settingsMock } = require("../../../modules/__mocks__");
 const steamGifts = require("../steamgifts");
 
 const createGiveaway = (number, fields = {}) => {

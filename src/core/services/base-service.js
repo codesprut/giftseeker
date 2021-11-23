@@ -1,11 +1,11 @@
-const settings = require("../settings");
-const language = require("../language");
-const states = require("./states");
+const settings = require("../../modules/settings");
+const translation = require("../../modules/translation");
+const states = require("../states.enum");
 const events = require("events");
 const axios = require("axios");
 const https = require("https");
 
-module.exports = class Seeker {
+module.exports = class BaseService {
   constructor({ withValue = true, ...params }) {
     this.currentValue = 0;
     this.withValue = withValue;
@@ -153,12 +153,12 @@ module.exports = class Seeker {
       case 0:
         if (autostart) {
           this.setState(states.ERROR);
-          this.log(language.get("service.cant_start"), true);
+          this.log(translation.get("service.cant_start"), true);
         } else this.setState(states.PAUSED);
         break;
       case -1:
         this.setState(states.ERROR);
-        this.log(language.get("service.connection_error"), true);
+        this.log(translation.get("service.connection_error"), true);
         if (autostart) this.runReconnectTimeout();
         break;
     }
@@ -172,13 +172,13 @@ module.exports = class Seeker {
 
     this.setState(state);
 
-    this.log(language.get("service.stopped"));
+    this.log(translation.get("service.stopped"));
 
     if (reconnect) this.runReconnectTimeout();
   }
 
   runReconnectTimeout() {
-    this.log(language.get("service.reconnect_in_5_min"));
+    this.log(translation.get("service.reconnect_in_5_min"));
     clearTimeout(this.reconnectTimeout);
     this.reconnectTimeout = setTimeout(() => {
       this.start(true);
@@ -188,11 +188,11 @@ module.exports = class Seeker {
   async setStateStarted() {
     this.totalTicks = 0;
     this.setState(states.STARTED);
-    this.log(language.get("service.started"));
+    this.log(translation.get("service.started"));
   }
 
   runWorker() {
-    this.log(language.get("service.loaded"));
+    this.log(translation.get("service.loaded"));
 
     if (this.workerIntervalId) return;
     this.totalTicks = 0;
@@ -226,11 +226,11 @@ module.exports = class Seeker {
             this.seekService();
             break;
           case 0:
-            this.log(language.get("service.session_expired"), true);
+            this.log(translation.get("service.session_expired"), true);
             this.stop(true);
             break;
           case -1:
-            this.log(language.get("service.connection_lost"), true);
+            this.log(translation.get("service.connection_lost"), true);
             this.stop(true, true);
             break;
         }
@@ -304,7 +304,7 @@ module.exports = class Seeker {
   }
 
   translate(key) {
-    return language.get(this.translationKey(key));
+    return translation.get(this.translationKey(key));
   }
 
   log(text, type) {

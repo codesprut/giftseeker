@@ -1,8 +1,7 @@
 const path = require("path");
-const os = require("os");
 const fs = require("fs");
 
-let currentDataPath = os.tmpdir();
+let currentDataPath = undefined;
 
 const setDataPath = directory => {
   if (!path.isAbsolute(directory)) {
