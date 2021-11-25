@@ -85,9 +85,9 @@ const init = async (settingsInstance, downloadHost) => {
   }
 
   settings = settingsInstance;
-  axiosConfig.baseUrl = downloadHost;
+  axiosConfig.baseURL = downloadHost;
 
-  await updateTranslations(downloadHost);
+  await updateTranslations();
   translations = await loadTranslations();
 
   let selectedTranslation = current();
