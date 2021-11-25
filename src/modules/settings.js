@@ -13,10 +13,12 @@ class Settings {
     this.saveToStorageTimeout = null;
   }
 
-  static async build(defaultSettings, storageFilename = "settings") {
+  static async build(defaultSettings, storagePrefix = "settings") {
     if (!fs.existsSync(storage.getDataPath())) {
       throw new Error(`Could not find storage directory`);
     }
+
+    const storageFilename = `${storagePrefix}.settings`;
 
     const storedSettings = await storage
       .loadFile(storageFilename)
