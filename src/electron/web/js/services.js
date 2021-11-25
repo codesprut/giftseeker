@@ -35,7 +35,7 @@ for (const service of services) {
     }
   });
 
-  service.on("log", ({ message, severity }) => {
+  service.on("log", (message, severity) => {
     service.panel.logger.add(message, severity);
   });
 

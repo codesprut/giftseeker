@@ -338,7 +338,7 @@ module.exports = class BaseService {
   }
 
   log(message, severity = logSeverity.INFO) {
-    this.events.emit("log", { message, severity });
+    this.events.emit("log", message, severity);
   }
 
   async seekService() {}
