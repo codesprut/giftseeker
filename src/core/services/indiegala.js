@@ -151,4 +151,4 @@ class IndieGala extends BaseService {
   }
 }
 
-module.exports = new IndieGala();
+module.exports = IndieGala;

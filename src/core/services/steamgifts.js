@@ -297,4 +297,4 @@ class SteamGifts extends BaseService {
   }
 }
 
-module.exports = new SteamGifts();
+module.exports = SteamGifts;

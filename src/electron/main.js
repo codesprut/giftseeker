@@ -16,6 +16,8 @@ const storage = require("../modules/json-storage");
 const settings = require("../modules/settings");
 const autoStart = require("./auto-start");
 
+const services = require("../core/services");
+
 const translation = require("../modules/translation");
 const windows = require("./windows");
 
@@ -71,8 +73,6 @@ app.disableHardwareAcceleration();
     settings.set("start_with_os", autoStart.isEnabled());
     settings.on("change", "start_with_os", autoStart.set);
 
-    const services = require("../core/services");
-
     const {
       auth: authWindow,
       main: mainWindow,
@@ -96,7 +96,7 @@ app.disableHardwareAcceleration();
       Browser: browserWindow,
       authWindow: authWindow,
       mainWindow: mainWindow,
-      services,
+      services: services.map(service => new service()),
     };
 
     startApp(authWindow);

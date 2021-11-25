@@ -120,4 +120,4 @@ class OpiumPulses extends BaseService {
   }
 }
 
-module.exports = new OpiumPulses();
+module.exports = OpiumPulses;

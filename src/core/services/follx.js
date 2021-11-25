@@ -94,4 +94,4 @@ class Follx extends BaseService {
   }
 }
 
-module.exports = new Follx();
+module.exports = Follx;

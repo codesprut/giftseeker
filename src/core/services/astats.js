@@ -95,4 +95,4 @@ class Astats extends BaseService {
   }
 }
 
-module.exports = new Astats();
+module.exports = Astats;
