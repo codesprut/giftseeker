@@ -24,15 +24,19 @@ let intervalTicks = 0;
 let updateAvailable = false;
 
 const intervalActions = async () => {
-  if (intervalTicks % 300 === 0 && !isPortable && !updateAvailable)
+  if (intervalTicks % 300 === 0 && !isPortable && !updateAvailable) {
     autoUpdater.checkForUpdatesAndNotify();
+  }
 
   if (intervalTicks !== 0 && intervalTicks % 300 === 0) {
     axios
       .get(`${config.websiteUrl}api/userData?ver=${currentBuild}`)
       .then(({ data }) => {
-        if (data.response) renderUser(data.response);
-        else switchToAuthWindow();
+        if (data.response) {
+          renderUser(data.response);
+        } else {
+          switchToAuthWindow();
+        }
       });
   }
 
@@ -57,11 +61,15 @@ const settingsSection = () => {
       option.value = lang.culture;
       option.innerText = `[${lang.culture}] ${lang.name}`;
 
-      if (language.current() === lang.culture) option.selected = true;
+      if (language.current() === lang.culture) {
+        option.selected = true;
+      }
 
       languageSelect.append(option);
     }
-  } else languageSelect.remove();
+  } else {
+    languageSelect.remove();
+  }
 
   const infoLinks = document.querySelector(".content-item .info-links");
 
@@ -155,8 +163,9 @@ window.closeWindow = () => {
           return;
         }
 
-        if (control.getAttribute("type") === "checkbox")
+        if (control.getAttribute("type") === "checkbox") {
           settings.set(control.getAttribute("id"), control.checked);
+        }
       };
     });
 
@@ -179,8 +188,9 @@ window.closeWindow = () => {
       userAgentArea.value || userAgentArea.placeholder,
     );
 
-  if (settings.get("wide_services_switcher"))
+  if (settings.get("wide_services_switcher")) {
     servicesSwitcher.classList.add("wide");
+  }
 
   document.querySelector(".services_switcher .expander .span-wrap").onclick =
     () => {
@@ -200,8 +210,12 @@ window.closeWindow = () => {
 
     scrollTop += scrollStep;
 
-    if (scrollTop < minScroll) scrollTop = minScroll;
-    if (scrollTop > 0) scrollTop = 0;
+    if (scrollTop < minScroll) {
+      scrollTop = minScroll;
+    }
+    if (scrollTop > 0) {
+      scrollTop = 0;
+    }
 
     servicesIcons.style.top = `${scrollTop}px`;
   };
@@ -210,7 +224,9 @@ window.closeWindow = () => {
     const newHeight = window.innerHeight;
     const difference = newHeight - windowHeight || 0;
 
-    if (difference > 0) servicesSwitcherScroll(difference);
+    if (difference > 0) {
+      servicesSwitcherScroll(difference);
+    }
 
     windowHeight = window.innerHeight;
   };
@@ -220,7 +236,9 @@ window.closeWindow = () => {
 
   if (settings.get("start_minimized") && !preventWindowMinimize) {
     mainWindow.hide();
-  } else mainWindow.focus();
+  } else {
+    mainWindow.focus();
+  }
 
   document.querySelectorAll(".menu li").forEach(menuItem => {
     menuItem.onclick = () => {

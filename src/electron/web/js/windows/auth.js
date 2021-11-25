@@ -23,7 +23,9 @@ if (language.quantity() > 1) {
     option.value = lang.culture;
     option.innerText = `[${lang.culture}] ${lang.name}`;
 
-    if (language.current() === lang.culture) option.selected = true;
+    if (language.current() === lang.culture) {
+      option.selected = true;
+    }
 
     languageSelect.appendChild(option);
   }

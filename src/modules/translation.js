@@ -31,7 +31,9 @@ const updateTranslations = async () => {
     .then(res => JSON.parse(res.data.response).langs)
     .catch(() => false);
 
-  if (!translations) return;
+  if (!translations) {
+    return;
+  }
 
   for (const translation of translations) {
     const { name, cleanSize } = translation;
@@ -43,7 +45,9 @@ const updateTranslations = async () => {
 
     await new Promise(resolve => {
       fs.stat(storage.getDataPath() + "/" + name, async (err, stats) => {
-        if (!err && stats.size !== cleanSize) await downloadTranslation(name);
+        if (!err && stats.size !== cleanSize) {
+          await downloadTranslation(name);
+        }
 
         resolve();
       });
@@ -61,8 +65,9 @@ const loadTranslations = async () => {
     }
   }
 
-  if (!translationsList.length)
+  if (!translationsList.length) {
     throw new Error(`No translations found on storage`);
+  }
 
   const loadedTranslations = await storage.loadMany(translationsList);
 
@@ -75,8 +80,9 @@ const loadTranslations = async () => {
 };
 
 const init = async downloadHost => {
-  if (!fs.existsSync(storage.getDataPath()))
+  if (!fs.existsSync(storage.getDataPath())) {
     throw new Error(`Could not find storage directory`);
+  }
 
   axiosConfig.baseUrl = downloadHost;
 
@@ -101,7 +107,9 @@ const get = key => {
   const keysTree = `${current()}.${key}`.split(".");
 
   for (const treeLevel of keysTree) {
-    if (response[treeLevel] === undefined) return key;
+    if (response[treeLevel] === undefined) {
+      return key;
+    }
 
     response = response[treeLevel];
   }
@@ -110,7 +118,9 @@ const get = key => {
 };
 
 const change = newTranslation => {
-  if (!translations[newTranslation]) return;
+  if (!translations[newTranslation]) {
+    return;
+  }
 
   settings.set(settingsKey, newTranslation);
 };

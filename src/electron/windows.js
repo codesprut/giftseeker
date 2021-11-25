@@ -115,8 +115,11 @@ const init = () => {
     browserWindow.loadFile("./src/electron/web/blank.html");
     browserWindow.hide();
 
-    if (mainWindow.hidden) authWindow.focus();
-    else mainWindow.focus();
+    if (mainWindow.hidden) {
+      authWindow.focus();
+    } else {
+      mainWindow.focus();
+    }
   });
 
   // ### end browser for websites

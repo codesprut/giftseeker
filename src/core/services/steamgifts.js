@@ -107,7 +107,9 @@ class SteamGifts extends BaseService {
       "https://www.steamgifts.com/giveaways/search?type=wishlist",
     );
 
-    if (this.getConfig("wishlist_only")) return;
+    if (this.getConfig("wishlist_only")) {
+      return;
+    }
 
     let currentPage = 1;
     const processPages = this.getConfig("pages", 1);
@@ -137,8 +139,12 @@ class SteamGifts extends BaseService {
     const wishlistPage = pageUrl.indexOf("wishlist") > 0;
 
     for (const giveaway of giveaways) {
-      if (!this.isStarted()) return;
-      if (!this.canEnterGiveaway(giveaway, wishlistPage)) continue;
+      if (!this.isStarted()) {
+        return;
+      }
+      if (!this.canEnterGiveaway(giveaway, wishlistPage)) {
+        continue;
+      }
 
       const entry = await this.enterGiveaway(giveaway, xsrfToken);
 

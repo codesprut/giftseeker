@@ -27,11 +27,15 @@ export default class Logger {
     )}</span>${logText}`;
     this.logField.appendChild(logRow);
 
-    if (this.parent) this.parent.scrollTop = this.parent.scrollHeight;
+    if (this.parent) {
+      this.parent.scrollTop = this.parent.scrollHeight;
+    }
   }
 
   parseLog(log) {
-    if (typeof log === "string") return log;
+    if (typeof log === "string") {
+      return log;
+    }
 
     return log.text.replace(
       "#link#",

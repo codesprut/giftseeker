@@ -30,15 +30,21 @@ let preventReadyWindowHiding = false;
 app.disableHardwareAcceleration();
 
 (() => {
-  if (!isSecondAppInstance) return app.quit();
+  if (!isSecondAppInstance) {
+    return app.quit();
+  }
 
   storage.setDataPath(config.storageDataPath);
 
   app.on("second-instance", () => {
     const activeWindow = windows.active(!!authorizedUser);
 
-    if (activeWindow.isMinimized()) activeWindow.restore();
-    if (!activeWindow.isVisible()) activeWindow.show();
+    if (activeWindow.isMinimized()) {
+      activeWindow.restore();
+    }
+    if (!activeWindow.isVisible()) {
+      activeWindow.show();
+    }
 
     activeWindow.focus();
   });
@@ -54,7 +60,9 @@ app.disableHardwareAcceleration();
   });
 
   app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") app.quit();
+    if (process.platform !== "darwin") {
+      app.quit();
+    }
   });
 
   app.on("ready", async () => {
@@ -107,7 +115,9 @@ const startApp = authWindow => {
 
         if (settings.get("start_minimized") && !preventReadyWindowHiding) {
           authWindow.hide();
-        } else authWindow.focus();
+        } else {
+          authWindow.focus();
+        }
       });
     })
     .catch(ex => {

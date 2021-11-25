@@ -76,7 +76,9 @@ export default class ServiceControlPanel {
   }
 
   setValue(newValue) {
-    if (newValue && this.value.enabled) this.valueLabel.innerText = newValue;
+    if (newValue && this.value.enabled) {
+      this.valueLabel.innerText = newValue;
+    }
   }
 
   appendTo(element) {

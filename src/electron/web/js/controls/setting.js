@@ -15,15 +15,20 @@ export default class Setting {
 
     this.getValue = value => get(this.name, value);
     this.saveValue = value => {
-      if (this.range) this.range.update(value);
+      if (this.range) {
+        this.range.update(value);
+      }
       set(this.name, value);
     };
 
     this.control = document.createElement("div");
     this.control.classList.add("input-wrap", "no-selectable");
 
-    if (params.type === "checkbox") this.createCheckbox(params);
-    else this.createNumber(params);
+    if (params.type === "checkbox") {
+      this.createCheckbox(params);
+    } else {
+      this.createNumber(params);
+    }
   }
 
   appendTo(element) {
@@ -57,8 +62,9 @@ export default class Setting {
   createNumber(params) {
     const step = params.type === "number" ? 1 : 0.1;
 
-    if (params.default < this.min || params.default > this.max)
+    if (params.default < this.min || params.default > this.max) {
       this.saveValue(params.default);
+    }
 
     this.control.classList.add("number");
 
@@ -86,15 +92,21 @@ export default class Setting {
 
     language.updateNode(label);
 
-    if (params.default === this.max) this.buttonInc.classList.add("disabled");
-    if (params.default === this.min) this.buttonDec.classList.add("disabled");
+    if (params.default === this.max) {
+      this.buttonInc.classList.add("disabled");
+    }
+    if (params.default === this.min) {
+      this.buttonDec.classList.add("disabled");
+    }
 
     let pressed = false;
     let pressTimeout;
     let iterations = 0;
 
     const timeoutFunction = callback => {
-      if (!pressed) return;
+      if (!pressed) {
+        return;
+      }
 
       iterations = iterations > 50 ? 50 : iterations + 1;
       callback();
@@ -130,9 +142,13 @@ export default class Setting {
       this.buttonDec.classList.remove("disabled");
     }
 
-    if (params.type === "float_number") value = parseFloat(value.toFixed(1));
+    if (params.type === "float_number") {
+      value = parseFloat(value.toFixed(1));
+    }
 
-    if (value === this.max) this.buttonInc.classList.add("disabled");
+    if (value === this.max) {
+      this.buttonInc.classList.add("disabled");
+    }
 
     this.valueLabel.innerText = value;
     this.saveValue(value);
@@ -145,9 +161,13 @@ export default class Setting {
       this.buttonInc.classList.remove("disabled");
     }
 
-    if (params.type === "float_number") value = parseFloat(value.toFixed(1));
+    if (params.type === "float_number") {
+      value = parseFloat(value.toFixed(1));
+    }
 
-    if (value === this.min) this.buttonDec.classList.add("disabled");
+    if (value === this.min) {
+      this.buttonDec.classList.add("disabled");
+    }
 
     this.valueLabel.innerText = value;
     this.saveValue(value);
@@ -167,7 +187,11 @@ export default class Setting {
     this.buttonDec.classList.remove("disabled");
     this.buttonInc.classList.remove("disabled");
 
-    if (this.getValue() === this.min) this.buttonDec.classList.add("disabled");
-    if (this.getValue() === this.max) this.buttonInc.classList.add("disabled");
+    if (this.getValue() === this.min) {
+      this.buttonDec.classList.add("disabled");
+    }
+    if (this.getValue() === this.max) {
+      this.buttonInc.classList.add("disabled");
+    }
   }
 }

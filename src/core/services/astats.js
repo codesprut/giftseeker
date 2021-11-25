@@ -39,7 +39,9 @@ class Astats extends BaseService {
       .filter(ga => !ga.ended);
 
     for (const giveaway of giveaways) {
-      if (!this.isStarted()) break;
+      if (!this.isStarted()) {
+        break;
+      }
 
       const entered = await this.enterGiveaway(giveaway);
 

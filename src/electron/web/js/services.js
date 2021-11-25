@@ -30,7 +30,9 @@ for (const service of services) {
   });
 
   service.panel.setMenuItemClickCallback(pageCode => {
-    for (const service of services) service.panel.selectPage(pageCode);
+    for (const service of services) {
+      service.panel.selectPage(pageCode);
+    }
   });
 
   service.on("log", ({ message, severity }) => {
@@ -66,15 +68,19 @@ for (const service of services) {
     const timeElapsed =
       service.workerInterval() - (totalTicks % service.workerInterval());
 
-    if (service.isStarted() && !serviceButton.classList.contains("hovered"))
+    if (service.isStarted() && !serviceButton.classList.contains("hovered")) {
       serviceButton.innerText = time.elapsed(timeElapsed);
+    }
   });
 
   serviceButton.onclick = async () => {
-    if (serviceButton.classList.contains("disabled")) return;
+    if (serviceButton.classList.contains("disabled")) {
+      return;
+    }
 
-    if (service.isStarted()) await service.stop();
-    else {
+    if (service.isStarted()) {
+      await service.stop();
+    } else {
       const authState = await service.start();
 
       if (authState === 0) {
@@ -94,13 +100,16 @@ for (const service of services) {
 
   serviceButton.onmouseenter = () => {
     serviceButton.classList.add("hovered");
-    if (service.isStarted())
+    if (service.isStarted()) {
       serviceButton.innerText = language.get("service.btn_stop");
+    }
   };
 
   serviceButton.onmouseleave = () => serviceButton.classList.remove("hovered");
 
-  if (settings.get("autostart")) service.start(true);
+  if (settings.get("autostart")) {
+    service.start(true);
+  }
   service.runWorker();
 }
 

@@ -16,8 +16,9 @@ class OpiumPulses extends BaseService {
     delete this.settings.pages;
 
     this.events.on("state.changed", newState => {
-      if (newState === runningState.STARTED)
+      if (newState === runningState.STARTED) {
         this.log(translation.get(this.translationKey("on_start_reminder")));
+      }
     });
   }
 
@@ -51,7 +52,9 @@ class OpiumPulses extends BaseService {
       );
 
     for (const giveaway of giveaways) {
-      if (!this.isStarted()) break;
+      if (!this.isStarted()) {
+        break;
+      }
 
       const entered = await this.enterGiveaway(giveaway);
 

@@ -19,7 +19,9 @@ class IndieGala extends BaseService {
       .get(this.websiteUrl)
       .then(res => (res.data.indexOf(this.authContent) >= 0 ? 1 : 0))
       .catch(err => {
-        if (err.code === "HPE_INVALID_HEADER_TOKEN") return 0;
+        if (err.code === "HPE_INVALID_HEADER_TOKEN") {
+          return 0;
+        }
         return err.status === 200 ? 0 : -1;
       });
   }
@@ -67,13 +69,16 @@ class IndieGala extends BaseService {
       .map(this.parseGiveaway)
       .filter(ga => ga.requiredLevel <= userLevel && !ga.entered && ga.single)
       .reduce((distinct, current) => {
-        if (distinct.filter(it => it.id === current.id).length === 0)
+        if (distinct.filter(it => it.id === current.id).length === 0) {
           distinct.push(current);
+        }
         return distinct;
       }, []);
 
     for (const giveaway of giveaways) {
-      if (!this.isStarted()) return;
+      if (!this.isStarted()) {
+        return;
+      }
 
       const entry = await this.enterGiveaway(giveaway.id);
 
@@ -103,7 +108,9 @@ class IndieGala extends BaseService {
     const single = typeNode.structuredText.indexOf("single") === 0;
     const requiredLevel = (() => {
       const levelSpan = typeNode.querySelector("span");
-      if (!levelSpan) return 0;
+      if (!levelSpan) {
+        return 0;
+      }
       return Number(levelSpan.structuredText.replace("Lev. ", ""));
     })();
 

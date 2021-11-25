@@ -73,7 +73,9 @@ export default class ServicePanel {
 
     for (const controlKey in controls) {
       const control = controls[controlKey];
-      if (control.isRange) control.setRange(controls[control.rangePart]);
+      if (control.isRange) {
+        control.setRange(controls[control.rangePart]);
+      }
 
       control.appendTo(
         control.type === "checkbox" ? checkboxesPanel : numbersPanel,
@@ -89,7 +91,9 @@ export default class ServicePanel {
     menuItem.dataset.tippyTranslate = `service.${pageCode}`;
 
     menuItem.onclick = () => {
-      if (this.menuItemCallback) this.menuItemCallback(pageCode);
+      if (this.menuItemCallback) {
+        this.menuItemCallback(pageCode);
+      }
     };
 
     pageItem.classList.add(

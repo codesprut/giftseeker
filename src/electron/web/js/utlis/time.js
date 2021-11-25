@@ -1,7 +1,8 @@
 class Time {
   format(format) {
-    if (typeof format !== "string")
+    if (typeof format !== "string") {
       throw new Error("'Format' variable should be a string");
+    }
 
     const date = this.getCurrentDate();
 

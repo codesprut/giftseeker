@@ -4,8 +4,9 @@ const { remote, shell } = require("electron");
 const { Browser, settings } = remote.getGlobal("sharedData");
 
 const openUrl = (url, useProgramBrowser) => {
-  if (settings.get("use_system_browser") && !useProgramBrowser)
+  if (settings.get("use_system_browser") && !useProgramBrowser) {
     return shell.openExternal(url);
+  }
 
   Browser.loadURL(url);
   Browser.setTitle("GS Browser - " + language.get("auth.browser_loading"));
@@ -19,7 +20,9 @@ const runForAuth = async (websiteUrl, authPageUrl, authContent) => {
       Browser.webContents
         .executeJavaScript('document.querySelector("body").innerHTML')
         .then(body => {
-          if (body.indexOf(authContent) >= 0) Browser.close();
+          if (body.indexOf(authContent) >= 0) {
+            Browser.close();
+          }
         });
     }
   });

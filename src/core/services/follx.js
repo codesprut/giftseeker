@@ -61,7 +61,9 @@ class Follx extends BaseService {
       .filter(ga => !ga.have && !ga.entered);
 
     for (const giveaway of giveaways) {
-      if (!this.isStarted()) break;
+      if (!this.isStarted()) {
+        break;
+      }
 
       const entered = await this.enterGiveaway(giveaway, csrfToken);
 

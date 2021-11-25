@@ -132,8 +132,9 @@ module.exports = class BaseService {
       }
     });
 
-    if (needUpdate)
+    if (needUpdate) {
       this.setCookie([...currentCookies].map(it => it.join("=")).join("; "));
+    }
   }
 
   setCookie(cookie) {
@@ -142,7 +143,9 @@ module.exports = class BaseService {
   }
 
   async start(autostart) {
-    if (this.isStarted()) return false;
+    if (this.isStarted()) {
+      return false;
+    }
 
     this.setState(runningState.PROCESS);
     const authState = await this.authCheck();
@@ -155,7 +158,9 @@ module.exports = class BaseService {
         if (autostart) {
           this.setState(runningState.ERROR);
           this.log(translation.get("service.cant_start"), logSeverity.ERROR);
-        } else this.setState(runningState.PAUSED);
+        } else {
+          this.setState(runningState.PAUSED);
+        }
         break;
       case -1:
         this.setState(runningState.ERROR);
@@ -163,7 +168,9 @@ module.exports = class BaseService {
           translation.get("service.connection_error"),
           logSeverity.ERROR,
         );
-        if (autostart) this.runReconnectTimeout();
+        if (autostart) {
+          this.runReconnectTimeout();
+        }
         break;
     }
 
@@ -172,13 +179,17 @@ module.exports = class BaseService {
 
   async stop(withError, reconnect) {
     const state = withError ? runningState.ERROR : runningState.PAUSED;
-    if (!this.isStarted()) return false;
+    if (!this.isStarted()) {
+      return false;
+    }
 
     this.setState(state);
 
     this.log(translation.get("service.stopped"));
 
-    if (reconnect) this.runReconnectTimeout();
+    if (reconnect) {
+      this.runReconnectTimeout();
+    }
   }
 
   runReconnectTimeout() {
@@ -198,7 +209,9 @@ module.exports = class BaseService {
   runWorker() {
     this.log(translation.get("service.loaded"));
 
-    if (this.workerIntervalId) return;
+    if (this.workerIntervalId) {
+      return;
+    }
     this.totalTicks = 0;
 
     this.workerIntervalId = setInterval(async () => {
@@ -218,8 +231,9 @@ module.exports = class BaseService {
   }
 
   async serviceActions(currentTick, serviceStarted) {
-    if (currentTick % this.updateUserInterval === 0)
+    if (currentTick % this.updateUserInterval === 0) {
       await this.updateUserInfo();
+    }
 
     if (serviceStarted) {
       if (currentTick % this.workerInterval() === 0) {
@@ -281,7 +295,9 @@ module.exports = class BaseService {
   }
 
   setState(state) {
-    if (this.state === state) return;
+    if (this.state === state) {
+      return;
+    }
 
     this.events.emit("state.changed", state);
     this.state = state;
@@ -292,15 +308,18 @@ module.exports = class BaseService {
   }
 
   setValue(newValue) {
-    if (!this.withValue) return;
+    if (!this.withValue) {
+      return;
+    }
 
     this.events.emit("value.changed", newValue);
     this.currentValue = parseInt(newValue);
   }
 
   getConfig(key, def) {
-    if (def === undefined && this.settings[key])
+    if (def === undefined && this.settings[key]) {
       def = this.settings[key].default;
+    }
 
     return settings.get(this.name.toLowerCase() + "_" + key, def);
   }

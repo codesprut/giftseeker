@@ -15,9 +15,13 @@ let saveToStorageTimeout = null;
  * @returns {any}
  */
 const get = (key, defaultValue) => {
-  if (settings[key] !== undefined) return settings[key];
+  if (settings[key] !== undefined) {
+    return settings[key];
+  }
 
-  if (defaultValue !== undefined) return defaultValue;
+  if (defaultValue !== undefined) {
+    return defaultValue;
+  }
 
   return false;
 };
@@ -38,7 +42,9 @@ const set = (key, newValue) => {
     storage.saveFile(storageFilename, settings);
   }, 500);
 
-  if (oldValue !== newValue) eventEmitter.emit("change" + key, newValue);
+  if (oldValue !== newValue) {
+    eventEmitter.emit("change" + key, newValue);
+  }
 };
 
 const on = (eventName, key, callback) => {
@@ -46,8 +52,9 @@ const on = (eventName, key, callback) => {
 };
 
 const init = async defaultSettings => {
-  if (!fs.existsSync(storage.getDataPath()))
+  if (!fs.existsSync(storage.getDataPath())) {
     throw new Error(`Could not find storage directory`);
+  }
 
   settings = await storage.loadFile(storageFilename).catch(() => ({}));
 
