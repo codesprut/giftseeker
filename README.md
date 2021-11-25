@@ -24,18 +24,22 @@ Make sure you have [Node.js](https://nodejs.org/) **>= 14.15.3** installed, then
 git clone https://github.com/CodeSprut/GiftSeeker.git
 cd GiftSeeker
 npm install
-npm start
+npm start:ui
 ```
 
 Now you have a running desktop application on your screen.
 
 ## Structure of the project
 
-The application located in the `src` directory which consist of three main folders.
+The application located in the `src` directory which consists of the following main folders:
 
-`app` - node.js core with main app features.
+`core` - node.js modules with main app features.
+
+`modules` - useful independent modules. For example, a storage module.
 
 `electron` - serves as the app UI using the APIs provided by app modules.
+
+`console` - cli program implementation.
 
 `resources` - contains common static files.
 
