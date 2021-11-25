@@ -9,6 +9,8 @@ const { services, settings } = remote.getGlobal("sharedData");
 const iconsWrap = document.querySelector(".services-icons");
 const panelsWrap = document.querySelector(".services-panels");
 
+const processState = "process";
+
 for (const service of services) {
   service.icon = new ServiceIcon(service.name, service.state);
   service.panel = new ServicePanel(service);
@@ -31,18 +33,18 @@ for (const service of services) {
     for (const service of services) service.panel.selectPage(pageCode);
   });
 
-  service.on("log", ({ text, type }) => {
-    service.panel.logger.add(text, type);
+  service.on("log", ({ message, severity }) => {
+    service.panel.logger.add(message, severity);
   });
 
-  service.on("state.changed", state => {
-    service.icon.setState(state);
+  service.on("state.changed", runningState => {
+    service.icon.setState(runningState);
 
     let buttonTranslation = `service.btn_${
       service.isStarted() ? "stop" : "start"
     }`;
 
-    if (state === "process") {
+    if (runningState === processState) {
       serviceButton.classList.add("disabled");
       buttonTranslation = `service.btn_checking`;
     } else {

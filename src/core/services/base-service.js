@@ -1,6 +1,7 @@
 const settings = require("../../modules/settings");
 const translation = require("../../modules/translation");
 const runningState = require("../running-state.enum");
+const logSeverity = require("../log-severity.enum");
 const events = require("events");
 const axios = require("axios");
 const https = require("https");
@@ -153,12 +154,15 @@ module.exports = class BaseService {
       case 0:
         if (autostart) {
           this.setState(runningState.ERROR);
-          this.log(translation.get("service.cant_start"), true);
+          this.log(translation.get("service.cant_start"), logSeverity.ERROR);
         } else this.setState(runningState.PAUSED);
         break;
       case -1:
         this.setState(runningState.ERROR);
-        this.log(translation.get("service.connection_error"), true);
+        this.log(
+          translation.get("service.connection_error"),
+          logSeverity.ERROR,
+        );
         if (autostart) this.runReconnectTimeout();
         break;
     }
@@ -226,11 +230,17 @@ module.exports = class BaseService {
             this.seekService();
             break;
           case 0:
-            this.log(translation.get("service.session_expired"), true);
+            this.log(
+              translation.get("service.session_expired"),
+              logSeverity.ERROR,
+            );
             this.stop(true);
             break;
           case -1:
-            this.log(translation.get("service.connection_lost"), true);
+            this.log(
+              translation.get("service.connection_lost"),
+              logSeverity.ERROR,
+            );
             this.stop(true, true);
             break;
         }
@@ -307,8 +317,8 @@ module.exports = class BaseService {
     return translation.get(this.translationKey(key));
   }
 
-  log(text, type) {
-    this.events.emit("log", { text, type });
+  log(message, severity = logSeverity.INFO) {
+    this.events.emit("log", { message, severity });
   }
 
   async seekService() {}

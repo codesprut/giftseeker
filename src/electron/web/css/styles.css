@@ -498,7 +498,7 @@ textarea#useragent {
   font-size: 13px;
   overflow-x: auto;
 }
-.service-logs .warn {
+.service-logs .error {
   color: lightcoral;
 }
 .service-logs span.time {

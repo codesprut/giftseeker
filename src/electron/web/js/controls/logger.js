@@ -18,10 +18,10 @@ export default class Logger {
     element.appendChild(this.clearButton);
   }
 
-  add(log, logType) {
-    const logText = this.parseLog(log);
+  add(message, severity) {
+    const logText = this.parseLog(message);
     const logRow = document.createElement("div");
-    logRow.classList.add(logType ? "warn" : "normal");
+    logRow.classList.add(severity);
     logRow.innerHTML = `<span class="time">${time.format(
       "hh:mm:ss",
     )}</span>${logText}`;
