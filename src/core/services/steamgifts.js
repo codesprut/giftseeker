@@ -4,8 +4,8 @@ const translation = require("../../modules/translation");
 const { parse } = require("node-html-parser");
 
 class SteamGifts extends BaseService {
-  constructor() {
-    super({
+  constructor(settingsStorage) {
+    super(settingsStorage, {
       websiteUrl: "https://www.steamgifts.com",
       authPageUrl: "https://www.steamgifts.com/?login",
       winsPageUrl: "https://www.steamgifts.com/giveaways/won",

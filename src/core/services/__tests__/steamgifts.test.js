@@ -1,5 +1,5 @@
-const { settingsMock } = require("../../../modules/__mocks__");
-const steamGifts = require("../steamgifts");
+const Settings = require("../../../modules/settings");
+const SteamGifts = require("../steamgifts");
 
 const createGiveaway = (number, fields = {}) => {
   return Object.assign(
@@ -21,6 +21,8 @@ const createGiveaway = (number, fields = {}) => {
 };
 
 const defaultValue = 300;
+const settings = new Settings({});
+const steamgifts = new SteamGifts(settings);
 
 const commonGiveaways = [
   createGiveaway(1),
@@ -99,11 +101,12 @@ describe("Entry logic", () => {
     },
   ];
   test.each(cases)("%s", async caseData => {
-    settingsMock.setup(caseData.settings || {});
+    settings.settings = caseData.settings || {};
+
     for (const giveaway of caseData.giveaways || commonGiveaways) {
       const truthyCodes = caseData.expectTruthy || [];
-      steamGifts.setValue(caseData.currentValue || defaultValue);
-      const canEnter = steamGifts.canEnterGiveaway(
+      steamgifts.setValue(caseData.currentValue || defaultValue);
+      const canEnter = steamgifts.canEnterGiveaway(
         giveaway,
         caseData.wishlistPage || false,
       );
@@ -140,7 +143,7 @@ describe("Winning chance calculation", () => {
     },
   ];
   test.each(cases)("%s", async caseData => {
-    const calculatedChance = steamGifts.calculateWinChance(
+    const calculatedChance = steamgifts.calculateWinChance(
       caseData.copies,
       caseData.entries,
     );

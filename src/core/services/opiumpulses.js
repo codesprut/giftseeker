@@ -4,8 +4,8 @@ const { parse } = require("node-html-parser");
 const runningState = require("../running-state.enum");
 
 class OpiumPulses extends BaseService {
-  constructor() {
-    super({
+  constructor(settingsStorage) {
+    super(settingsStorage, {
       websiteUrl: "https://www.opiumpulses.com",
       authPageUrl: "https://www.opiumpulses.com/site/login",
       winsPageUrl: "https://www.opiumpulses.com/user/giveawaykeys",

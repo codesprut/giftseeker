@@ -13,7 +13,7 @@ const { autoUpdater } = require("electron-updater");
 const ENV = require("../environment");
 const config = require("./config");
 const storage = require("../modules/json-storage");
-const settings = require("../modules/settings");
+const Settings = require("../modules/settings");
 const autoStart = require("./auto-start");
 
 const services = require("../core/services");
@@ -68,7 +68,7 @@ app.disableHardwareAcceleration();
   });
 
   app.on("ready", async () => {
-    await settings.init();
+    const settings = await Settings.build(config.defaultSettings, "settings");
 
     settings.set("start_with_os", autoStart.isEnabled());
     settings.on("change", "start_with_os", autoStart.set);
@@ -77,7 +77,7 @@ app.disableHardwareAcceleration();
       auth: authWindow,
       main: mainWindow,
       browser: browserWindow,
-    } = windows.init();
+    } = windows.init(settings);
 
     const trayIcon = createTrayIcon(browserWindow);
 
@@ -96,16 +96,16 @@ app.disableHardwareAcceleration();
       Browser: browserWindow,
       authWindow: authWindow,
       mainWindow: mainWindow,
-      services: services.map(service => new service()),
+      services: services.map(service => new service(settings)),
     };
 
-    startApp(authWindow);
+    startApp(authWindow, settings);
   });
 })();
 
-const startApp = authWindow => {
+const startApp = (authWindow, settings) => {
   translation
-    .init()
+    .init(settings, config.websiteUrl)
     .then(() => {
       authWindow.loadFile("./src/electron/web/auth.html");
 

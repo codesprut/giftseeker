@@ -1,4 +1,3 @@
-const settings = require("../../modules/settings");
 const translation = require("../../modules/translation");
 const runningState = require("../running-state.enum");
 const logSeverity = require("../log-severity.enum");
@@ -7,7 +6,9 @@ const axios = require("axios");
 const https = require("https");
 
 module.exports = class BaseService {
-  constructor({ withValue = true, ...params }) {
+  constructor(settingsStorage, { withValue = true, ...params }) {
+    this.settingsStorage = settingsStorage;
+
     this.currentValue = 0;
     this.withValue = withValue;
 
@@ -66,7 +67,7 @@ module.exports = class BaseService {
       withCredentials: true,
       headers: {
         Referer: this.websiteUrl,
-        "User-Agent": settings.get("user_agent"),
+        "User-Agent": this.settingsStorage.get("user_agent"),
         Cookie: this.getConfig("cookie", ""),
       },
       httpsAgent: new https.Agent({
@@ -90,7 +91,7 @@ module.exports = class BaseService {
       return response;
     });
 
-    settings.on("change", "user_agent", userAgent => {
+    this.settingsStorage.on("change", "user_agent", userAgent => {
       this.http.defaults.headers["User-Agent"] = userAgent;
     });
   }
@@ -321,11 +322,11 @@ module.exports = class BaseService {
       def = this.settings[key].default;
     }
 
-    return settings.get(this.name.toLowerCase() + "_" + key, def);
+    return this.settingsStorage.get(this.name.toLowerCase() + "_" + key, def);
   }
 
   setConfig(key, val) {
-    return settings.set(this.name.toLowerCase() + "_" + key, val);
+    return this.settingsStorage.set(this.name.toLowerCase() + "_" + key, val);
   }
 
   translationKey(subKey) {

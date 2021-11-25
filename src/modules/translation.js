@@ -1,5 +1,4 @@
 const storage = require("./json-storage");
-const settings = require("./settings");
 const https = require("https");
 const axios = require("axios");
 const fs = require("fs");
@@ -11,6 +10,7 @@ const axiosConfig = {
   }),
 };
 
+let settings;
 let translations = {};
 
 const downloadTranslation = async name => {
@@ -79,11 +79,12 @@ const loadTranslations = async () => {
   );
 };
 
-const init = async downloadHost => {
+const init = async (settingsInstance, downloadHost) => {
   if (!fs.existsSync(storage.getDataPath())) {
     throw new Error(`Could not find storage directory`);
   }
 
+  settings = settingsInstance;
   axiosConfig.baseUrl = downloadHost;
 
   await updateTranslations(downloadHost);

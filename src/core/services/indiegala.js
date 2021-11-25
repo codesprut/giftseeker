@@ -4,8 +4,8 @@ const { parse } = require("node-html-parser");
 const clearHtmlTags = require("../utils/clear-html-tags");
 
 class IndieGala extends BaseService {
-  constructor() {
-    super({
+  constructor(settingsStorage) {
+    super(settingsStorage, {
       websiteUrl: "https://www.indiegala.com",
       authPageUrl: "https://www.indiegala.com/login",
       winsPageUrl: "https://www.indiegala.com/profile",

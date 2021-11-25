@@ -2,74 +2,81 @@ const storage = require("./json-storage");
 const events = require("events");
 const fs = require("fs");
 
-const eventEmitter = new events.EventEmitter();
-const storageFilename = "settings";
+const storageWriteDelayMs = 1000;
 
-let settings = {};
-let saveToStorageTimeout = null;
+class Settings {
+  constructor(initialSettings, storageFilename) {
+    this.settings = initialSettings;
+    this.storageFilename = storageFilename;
 
-/**
- * Get stored settings
- * @param key
- * @param defaultValue
- * @returns {any}
- */
-const get = (key, defaultValue) => {
-  if (settings[key] !== undefined) {
-    return settings[key];
+    this.eventEmitter = new events.EventEmitter();
+    this.saveToStorageTimeout = null;
   }
 
-  if (defaultValue !== undefined) {
-    return defaultValue;
+  static async build(defaultSettings, storageFilename = "settings") {
+    if (!fs.existsSync(storage.getDataPath())) {
+      throw new Error(`Could not find storage directory`);
+    }
+
+    const storedSettings = await storage
+      .loadFile(storageFilename)
+      .catch(() => ({}));
+
+    for (const configKey in defaultSettings) {
+      if (!storedSettings[configKey]) {
+        storedSettings[configKey] = defaultSettings[configKey];
+      }
+    }
+
+    const settingsInstance = new Settings(storedSettings, storageFilename);
+
+    settingsInstance.set("inits", settingsInstance.get("inits", 0) + 1);
+
+    return settingsInstance;
   }
 
-  return false;
-};
+  /**
+   * Set setting and store to db
+   * @param key
+   * @param newValue
+   */
+  set(key, newValue) {
+    const oldValue = this.get(key);
 
-/**
- * Set setting and store to db
- * @param key
- * @param newValue
- */
-const set = (key, newValue) => {
-  const oldValue = get(key);
+    this.settings[key] = newValue;
 
-  settings[key] = newValue;
+    clearTimeout(this.saveToStorageTimeout);
 
-  clearTimeout(saveToStorageTimeout);
+    this.saveToStorageTimeout = setTimeout(() => {
+      storage.saveFile(this.storageFilename, this.settings);
+    }, storageWriteDelayMs);
 
-  saveToStorageTimeout = setTimeout(() => {
-    storage.saveFile(storageFilename, settings);
-  }, 500);
-
-  if (oldValue !== newValue) {
-    eventEmitter.emit("change" + key, newValue);
-  }
-};
-
-const on = (eventName, key, callback) => {
-  eventEmitter.on(eventName + key, callback);
-};
-
-const init = async defaultSettings => {
-  if (!fs.existsSync(storage.getDataPath())) {
-    throw new Error(`Could not find storage directory`);
-  }
-
-  settings = await storage.loadFile(storageFilename).catch(() => ({}));
-
-  for (const configKey in defaultSettings) {
-    if (!settings[configKey]) {
-      settings[configKey] = defaultSettings[configKey];
+    if (oldValue !== newValue) {
+      this.eventEmitter.emit("change" + key, newValue);
     }
   }
 
-  set("inits", get("inits", 0) + 1);
-};
+  /**
+   * Get stored settings
+   * @param key
+   * @param defaultValue
+   * @returns {any}
+   */
+  get(key, defaultValue) {
+    if (this.settings[key] !== undefined) {
+      return this.settings[key];
+    }
 
-module.exports = {
-  init,
-  get,
-  set,
-  on,
-};
+    if (defaultValue !== undefined) {
+      return defaultValue;
+    }
+
+    return false;
+  }
+
+  on(eventName, key, callback) {
+    this.eventEmitter.on(eventName + key, callback);
+  }
+}
+
+module.exports = Settings;

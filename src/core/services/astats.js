@@ -4,8 +4,8 @@ const translation = require("../../modules/translation");
 const { parse: parseHtml } = require("node-html-parser");
 
 class Astats extends BaseService {
-  constructor() {
-    super({
+  constructor(settingsStorage) {
+    super(settingsStorage, {
       websiteUrl: "https://astats.astats.nl/astats/",
       authPageUrl: "https://astats.astats.nl/astats/profile/Login.php",
       authContent: "Log out",

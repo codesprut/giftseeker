@@ -2,12 +2,11 @@ const { BrowserWindow } = require("electron");
 const { create: createSession } = require("./session");
 const ENV = require("../environment");
 const { appName, appIcon, window: windowConfig } = require("./config");
-const settings = require("../modules/settings");
 
 const windows = {};
 
-const init = () => {
-  const session = createSession();
+const init = settings => {
+  const session = createSession(settings, appName);
 
   const authWindow = new BrowserWindow({
     width: 280,

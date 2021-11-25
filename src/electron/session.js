@@ -1,10 +1,7 @@
 const { session } = require("electron");
 
-const { appName } = require("./config");
-const settings = require("../modules/settings");
-
-const create = () => {
-  const _session = session.fromPartition(`persist:${appName}`);
+const create = (settings, sessionName) => {
+  const _session = session.fromPartition(`persist:${sessionName}`);
   _session.setUserAgent(settings.get("user_agent"));
 
   settings.on("change", "user_agent", newUserAgent => {

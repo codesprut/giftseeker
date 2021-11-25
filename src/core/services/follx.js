@@ -3,8 +3,8 @@ const translation = require("../../modules/translation");
 const { parse } = require("node-html-parser");
 
 class Follx extends BaseService {
-  constructor() {
-    super({
+  constructor(settingsStorage) {
+    super(settingsStorage, {
       websiteUrl: "https://follx.com",
       authPageUrl: "https://follx.com/logIn",
       winsPageUrl: "https://follx.com/giveaways/won",
