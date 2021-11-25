@@ -10,14 +10,14 @@ const {
 } = require("electron");
 const { autoUpdater } = require("electron-updater");
 
-const ENV = require("./environment");
-const config = require("./electron/config");
-const storage = require("./modules/json-storage");
-const settings = require("./modules/settings");
-const autoStart = require("./electron/auto-start");
+const ENV = require("../environment");
+const config = require("./config");
+const storage = require("../modules/json-storage");
+const settings = require("../modules/settings");
+const autoStart = require("./auto-start");
 
-const translation = require("./modules/translation");
-const windows = require("./electron/windows");
+const translation = require("../modules/translation");
+const windows = require("./windows");
 
 const isSecondAppInstance = app.requestSingleInstanceLock();
 
@@ -63,7 +63,7 @@ app.disableHardwareAcceleration();
     settings.set("start_with_os", autoStart.isEnabled());
     settings.on("change", "start_with_os", autoStart.set);
 
-    const services = require("./core/services");
+    const services = require("../core/services");
 
     const {
       auth: authWindow,

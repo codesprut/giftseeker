@@ -5,7 +5,7 @@
   "license": "MIT",
   "description": "Automatically join giveaways",
   "homepage": "https://giftseeker.ru/",
-  "main": "src/electron-app.js",
+  "main": "src/electron/main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/CodeSprut/GiftSeeker.git"
@@ -14,7 +14,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "start": "electron .",
-    "start:console": "node src/console-app.js",
+    "start:console": "node src/console/main.js",
     "dist": "cross-env ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true node build.js",
     "dist:win": "npm run dist -- WINDOWS",
     "dist:mac": "npm run dist -- MAC",
