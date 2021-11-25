@@ -1,6 +1,6 @@
 const settings = require("../../modules/settings");
 const translation = require("../../modules/translation");
-const states = require("../states.enum");
+const runningState = require("../running-state.enum");
 const events = require("events");
 const axios = require("axios");
 const https = require("https");
@@ -20,7 +20,7 @@ module.exports = class BaseService {
 
     this.events = new events.EventEmitter();
 
-    this.setState(states.PAUSED);
+    this.setState(runningState.PAUSED);
 
     this.settings = {
       timer: {
@@ -143,7 +143,7 @@ module.exports = class BaseService {
   async start(autostart) {
     if (this.isStarted()) return false;
 
-    this.setState(states.PROCESS);
+    this.setState(runningState.PROCESS);
     const authState = await this.authCheck();
 
     switch (authState) {
@@ -152,12 +152,12 @@ module.exports = class BaseService {
         break;
       case 0:
         if (autostart) {
-          this.setState(states.ERROR);
+          this.setState(runningState.ERROR);
           this.log(translation.get("service.cant_start"), true);
-        } else this.setState(states.PAUSED);
+        } else this.setState(runningState.PAUSED);
         break;
       case -1:
-        this.setState(states.ERROR);
+        this.setState(runningState.ERROR);
         this.log(translation.get("service.connection_error"), true);
         if (autostart) this.runReconnectTimeout();
         break;
@@ -167,7 +167,7 @@ module.exports = class BaseService {
   }
 
   async stop(withError, reconnect) {
-    const state = withError ? states.ERROR : states.PAUSED;
+    const state = withError ? runningState.ERROR : runningState.PAUSED;
     if (!this.isStarted()) return false;
 
     this.setState(state);
@@ -187,7 +187,7 @@ module.exports = class BaseService {
 
   async setStateStarted() {
     this.totalTicks = 0;
-    this.setState(states.STARTED);
+    this.setState(runningState.STARTED);
     this.log(translation.get("service.started"));
   }
 
@@ -278,7 +278,7 @@ module.exports = class BaseService {
   }
 
   isStarted() {
-    return this.state === states.STARTED;
+    return this.state === runningState.STARTED;
   }
 
   setValue(newValue) {

@@ -1,7 +1,7 @@
 const BaseService = require("./base-service");
 const translation = require("../../modules/translation");
 const { parse } = require("node-html-parser");
-const states = require("../states.enum");
+const runningState = require("../running-state.enum");
 
 class OpiumPulses extends BaseService {
   constructor() {
@@ -16,7 +16,7 @@ class OpiumPulses extends BaseService {
     delete this.settings.pages;
 
     this.events.on("state.changed", newState => {
-      if (newState === states.STARTED)
+      if (newState === runningState.STARTED)
         this.log(translation.get(this.translationKey("on_start_reminder")));
     });
   }
