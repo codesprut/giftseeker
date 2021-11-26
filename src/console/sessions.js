@@ -47,7 +47,7 @@ const init = async settings => {
 };
 
 const initSession = async name => {
-  const settings = await Settings.build(`${name}-session`);
+  const settings = await Settings.build(`session-${name}`);
   const services = Services.map(service => new service(settings));
 
   sessionsList.push({
