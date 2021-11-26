@@ -1,18 +1,27 @@
-const { createInterface } = require("readline");
+const Settings = require("../modules/settings");
 
-const cli = createInterface(process.stdin, process.stdout);
+const translation = require("../modules/translation");
+const storage = require("../modules/json-storage");
+const config = require("../config");
+const sessions = require("./sessions");
 
-cli.setPrompt("");
-cli.prompt();
+const commands = require("./commands");
 
-cli
-  .on("line", input => {
-    if (input === "exit") {
-      cli.close();
+storage.setDataPath(config.storageDataPath);
+
+(async () => {
+  const settings = await Settings.build("cli", config.defaultSettings);
+
+  translation.init(settings, config.websiteUrl).then(async () => {
+    await sessions.init(settings);
+
+    if (!sessions.current()) {
+      console.log("No sessions found");
+      await commands.createSession();
     }
 
-    console.error(`No '${input}' command found;`);
+    console.log(`Current session name is '${sessions.current().name}'`);
 
-    cli.prompt();
-  })
-  .on("close", () => process.exit(0));
+    commands.listen();
+  });
+})();
