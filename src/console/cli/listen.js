@@ -1,9 +1,9 @@
-const sessions = require("../sessions");
+const session = require("../session");
 const inquirer = require("inquirer");
 
 module.exports = commands => {
   const listen = () => {
-    const sessionName = sessions.current().name;
+    const sessionName = session.current().name;
 
     return inquirer
       .prompt([

@@ -1,5 +1,5 @@
 const os = require("os");
-const sessions = require("../../sessions");
+const session = require("../../session");
 const baseCommand = require("../base-command");
 
 module.exports = baseCommand(
@@ -7,7 +7,7 @@ module.exports = baseCommand(
   "List all available sessions",
   () => {
     console.log(
-      sessions
+      session
         .list()
         .reduce(
           (result, session, index) =>

@@ -1,5 +1,5 @@
 const inquirer = require("inquirer");
-const sessions = require("../../sessions");
+const session = require("../../session");
 const baseCommand = require("../base-command");
 
 module.exports = baseCommand(
@@ -18,7 +18,7 @@ module.exports = baseCommand(
       ])
       .then(async ({ input }) => {
         // todo: validate name - may be use inquirer filter?
-        await sessions.create(input);
+        await session.create(input);
       });
   },
 );
