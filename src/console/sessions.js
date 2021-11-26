@@ -18,23 +18,33 @@ const select = name => {
     throw new Error("session doesn't exists");
   }
 
-  currentSession = session;
+  const { name: currentName } = current() ?? {};
 
-  if (current().name !== name) {
+  if (currentName !== name) {
+    currentSession = session;
     eventEmitter.emit("session:changed");
   }
 };
 
 const init = async settings => {
   const storedSessions = settings.get("sessions", []);
+  const lastSession = settings.get("last-session");
 
   const promises = storedSessions.map(name => initSession(name));
 
   await Promise.all(promises);
 
-  if (sessions.length) {
-    select(sessions[0].name);
+  try {
+    select(lastSession);
+  } catch (ex) {
+    if (sessions.length) {
+      select(sessions[0].name);
+    }
   }
+
+  eventEmitter.on("session:changed", () => {
+    settings.set("last-session", current().name);
+  });
 
   eventEmitter.on("sessions.list:changed", () => {
     if (sessions.length) {
