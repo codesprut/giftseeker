@@ -3,7 +3,7 @@ const Settings = require("../modules/settings");
 const Services = require("../core/services");
 
 let currentSession = null;
-let sessionsList = [];
+let sessions = [];
 
 const eventEmitter = new events.EventEmitter();
 
@@ -12,7 +12,7 @@ const current = () => {
 };
 
 const select = name => {
-  const session = sessionsList.find(it => it.name === name);
+  const session = sessions.find(it => it.name === name);
 
   if (!session) {
     throw new Error("session doesn't exists");
@@ -29,18 +29,18 @@ const init = async settings => {
 
   await Promise.all(promises);
 
-  if (sessionsList.length) {
-    select(sessionsList[0].name);
+  if (sessions.length) {
+    select(sessions[0].name);
   }
 
   eventEmitter.on("sessions.list:changed", () => {
-    if (sessionsList.length) {
-      select(sessionsList[0].name);
+    if (sessions.length) {
+      select(sessions[0].name);
     } else {
       currentSession = null;
     }
 
-    const sessionNames = sessionsList.map(it => it.name);
+    const sessionNames = sessions.map(it => it.name);
 
     settings.set("sessions", sessionNames);
   });
@@ -50,7 +50,7 @@ const initSession = async name => {
   const settings = await Settings.build(`session-${name}`);
   const services = Services.map(service => new service(settings));
 
-  sessionsList.push({
+  sessions.push({
     name,
     settings,
     services,
@@ -58,7 +58,7 @@ const initSession = async name => {
 };
 
 const destroy = name => {
-  sessionsList = sessionsList.filter(it => it.name !== name);
+  sessions = sessions.filter(it => it.name !== name);
 
   eventEmitter.emit("sessions.list:changed");
 };
@@ -70,7 +70,7 @@ const create = name => {
 };
 
 const list = () => {
-  return sessionsList;
+  return sessions;
 };
 
 module.exports = {
