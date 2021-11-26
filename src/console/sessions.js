@@ -1,6 +1,7 @@
 const events = require("events");
 const Settings = require("../modules/settings");
 const Services = require("../core/services");
+const config = require("../config");
 
 let currentSession = null;
 let sessions = [];
@@ -60,7 +61,9 @@ const init = async settings => {
 };
 
 const initSession = async name => {
-  const settings = await Settings.build(`session-${name}`);
+  const settings = await Settings.build(`session-${name}`, {
+    user_agent: config.defaultSettings.user_agent,
+  });
   const services = Services.map(service => new service(settings));
 
   sessions.push({
