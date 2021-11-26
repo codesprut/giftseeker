@@ -4,8 +4,8 @@ const help = require("./help");
 
 const commands = [...Object.values(session)];
 
-commands.push(exit);
 commands.push(help(commands));
+commands.push(exit);
 
 module.exports = {
   sessionCreate: session.sessionCreate.action,
