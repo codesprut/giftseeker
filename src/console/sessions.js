@@ -17,9 +17,12 @@ const select = name => {
   if (!session) {
     throw new Error("session doesn't exists");
   }
+
   currentSession = session;
 
-  eventEmitter.emit("session:changed");
+  if (current().name !== name) {
+    eventEmitter.emit("session:changed");
+  }
 };
 
 const init = async settings => {
