@@ -5,7 +5,7 @@ const fs = require("fs");
 const storageWriteDelayMs = 1000;
 
 class Settings {
-  constructor(initialSettings, storageFilename) {
+  constructor(storageFilename, initialSettings) {
     this.settings = initialSettings;
     this.storageFilename = storageFilename;
 
@@ -13,7 +13,7 @@ class Settings {
     this.saveToStorageTimeout = null;
   }
 
-  static async build(defaultSettings, filenamePrefix = "settings") {
+  static async build(filenamePrefix = "settings", defaultSettings = {}) {
     if (!fs.existsSync(storage.getDataPath())) {
       throw new Error(`Could not find storage directory`);
     }
@@ -30,7 +30,7 @@ class Settings {
       }
     }
 
-    const settingsInstance = new Settings(storedSettings, storageFilename);
+    const settingsInstance = new Settings(storageFilename, storedSettings);
 
     settingsInstance.set("inits", settingsInstance.get("inits", 0) + 1);
 

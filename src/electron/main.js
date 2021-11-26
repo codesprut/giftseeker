@@ -68,7 +68,7 @@ app.disableHardwareAcceleration();
   });
 
   app.on("ready", async () => {
-    const settings = await Settings.build(config.defaultSettings, "electron");
+    const settings = await Settings.build("electron", config.defaultSettings);
 
     settings.set("start_with_os", autoStart.isEnabled());
     settings.on("change", "start_with_os", autoStart.set);
