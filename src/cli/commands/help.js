@@ -10,12 +10,20 @@ module.exports = commands =>
         columns: [{ name: "signature", alignment: "left", color: "green" }],
       });
 
-      commands
-        .filter(command => (args[0] ? command.signature.match(args[0]) : true))
-        .forEach(({ signature, description }) => {
-          table.addRow({ signature, description });
-        });
+      const commandsToPrint = commands.filter(command =>
+        args[0] ? command.signature.match(args[0]) : true,
+      );
+
+      if (!commandsToPrint.length) {
+        return false;
+      }
+
+      commandsToPrint.forEach(({ signature, description }) => {
+        table.addRow({ signature, description });
+      });
 
       table.printTable();
+
+      return true;
     },
   );

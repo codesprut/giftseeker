@@ -1,6 +1,21 @@
 const session = require("../session");
 const inquirer = require("inquirer");
 
+const printHelpInfo = (commandsList, input) => {
+  const sameCommandsFound = commandsList
+    .find(it => it.signature === "help|list")
+    .action([input]);
+
+  console.info("Command not found");
+
+  if (sameCommandsFound) {
+    console.info(`Check out same commands or try 'help'`);
+    return;
+  }
+
+  console.info("Try 'help' or 'list'");
+};
+
 module.exports = commands => {
   const listen = () => {
     const sessionName = session.current().name;
@@ -25,7 +40,7 @@ module.exports = commands => {
         if (command) {
           await command.action(args);
         } else {
-          console.log(`command not found. Try 'help' or 'list'`);
+          printHelpInfo(commands, inputCommand);
         }
 
         listen();
