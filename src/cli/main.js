@@ -5,7 +5,7 @@ const storage = require("../modules/json-storage");
 const config = require("../config");
 const session = require("./session");
 
-const cli = require("./cli");
+const commands = require("./commands");
 
 storage.setDataPath(config.storageDataPath);
 
@@ -17,9 +17,9 @@ storage.setDataPath(config.storageDataPath);
 
     if (!session.current()) {
       console.log(translation.get("cli.session-not-found"));
-      await cli.sessionCreate();
+      await commands.sessionCreate();
     }
 
-    cli.listen();
+    commands.listen();
   });
 })();

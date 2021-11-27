@@ -14,7 +14,7 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "start:ui": "electron .",
-    "start:cli": "node src/console/main.js",
+    "start:cli": "node src/cli/main.js",
     "dist": "cross-env ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true node build.js",
     "dist:win": "npm run dist -- WINDOWS",
     "dist:mac": "npm run dist -- MAC",
