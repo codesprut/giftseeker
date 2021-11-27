@@ -108,7 +108,7 @@ const get = (translationKey, ...replacers) => {
   const keysTree = `${current()}.${translationKey}`.split(".");
 
   const translation = keysTree.reduce(
-    (searchLevel, key) => searchLevel[key] ?? undefined,
+    (searchLevel, key) => (searchLevel ? searchLevel[key] : undefined),
     translations,
   );
 
