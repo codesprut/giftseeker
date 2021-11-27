@@ -20,6 +20,6 @@ storage.setDataPath(config.storageDataPath);
       await commands.sessionCreate();
     }
 
-    commands.listen();
+    commands.listen(session.current().services);
   });
 })();

@@ -1,5 +1,5 @@
 module.exports = (signature, description, action) => ({
-  signature,
+  signature: signature.toLowerCase(),
   description,
   action,
 });

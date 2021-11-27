@@ -30,5 +30,5 @@ module.exports = commands => {
       });
   };
 
-  return listen;
+  listen();
 };
