@@ -16,12 +16,14 @@ module.exports = commands => {
         },
       ])
       .then(async ({ input }) => {
+        const [inputCommand, ...args] = input.split(" ");
+
         const command = commands.find(it =>
-          it.signature.split("|").includes(input),
+          it.signature.split("|").includes(inputCommand),
         );
 
         if (command) {
-          await command.action();
+          await command.action(args);
         } else {
           console.log(`command not found. Try 'help' or 'list'`);
         }
