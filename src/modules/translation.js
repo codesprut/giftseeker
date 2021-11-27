@@ -100,22 +100,26 @@ const init = async (settingsInstance, downloadHost) => {
 
 /**
  *
- * @param key of translation string
+ * @param translationKey of translation string
+ * @param replacers for substitute values into message
  * @returns {string}
  */
-const get = key => {
-  let response = translations;
-  const keysTree = `${current()}.${key}`.split(".");
+const get = (translationKey, ...replacers) => {
+  const keysTree = `${current()}.${translationKey}`.split(".");
 
-  for (const treeLevel of keysTree) {
-    if (response[treeLevel] === undefined) {
-      return key;
-    }
+  const translation = keysTree.reduce(
+    (searchLevel, key) => searchLevel[key] ?? undefined,
+    translations,
+  );
 
-    response = response[treeLevel];
+  if (!translation) {
+    return translationKey;
   }
 
-  return response;
+  return replacers.reduce(
+    (message, value, index) => message.replace(`{${index}}`, value),
+    translation,
+  );
 };
 
 const change = newTranslation => {

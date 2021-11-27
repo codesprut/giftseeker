@@ -4,7 +4,7 @@ const baseCommand = require("../base-command");
 module.exports = service =>
   baseCommand(
     `${service.name}:start`,
-    translation.get("cli.start-service", service.name),
+    translation.get("cli.services.start", service.name),
     async () => {
       const authState = await service.start();
 
