@@ -1,6 +1,5 @@
 const storage = require("./json-storage");
 const events = require("events");
-const fs = require("fs");
 
 const storageWriteDelayMs = 1000;
 
@@ -14,10 +13,6 @@ class Settings {
   }
 
   static async build(filenamePrefix = "settings", defaultSettings = {}) {
-    if (!fs.existsSync(storage.getDataPath())) {
-      throw new Error(`Could not find storage directory`);
-    }
-
     const storageFilename = `${filenamePrefix}.settings`;
 
     const storedSettings = await storage

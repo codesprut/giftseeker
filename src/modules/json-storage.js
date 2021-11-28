@@ -76,18 +76,23 @@ const loadMany = filenames => {
  * @returns {Promise<Record<any, any>>}
  */
 const loadFile = filename => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(resolveFilePath(filename), "utf8", (error, data) => {
-      if (error) {
-        reject(`File loading error: ${error}`);
-        return;
-      }
+  const filepath = resolveFilePath(filename);
+  const dirpath = path.dirname(filepath);
 
-      try {
-        resolve(JSON.parse(data));
-      } catch (e) {
-        reject(`File parsing error: ${e}`);
-      }
+  return new Promise((resolve, reject) => {
+    fs.mkdir(dirpath, { recursive: true }, () => {
+      fs.readFile(filepath, "utf8", (error, data) => {
+        if (error) {
+          reject(`File loading error: ${error}`);
+          return;
+        }
+
+        try {
+          resolve(JSON.parse(data));
+        } catch (e) {
+          reject(`File parsing error: ${e}`);
+        }
+      });
     });
   });
 };

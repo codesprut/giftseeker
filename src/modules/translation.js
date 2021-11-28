@@ -80,10 +80,6 @@ const loadTranslations = async () => {
 };
 
 const init = async (settingsInstance, downloadHost) => {
-  if (!fs.existsSync(storage.getDataPath())) {
-    throw new Error(`Could not find storage directory`);
-  }
-
   settings = settingsInstance;
   axiosConfig.baseURL = downloadHost;
 
