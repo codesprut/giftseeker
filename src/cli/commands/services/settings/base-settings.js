@@ -9,16 +9,22 @@ const getCommand = (settingName, description, service) =>
 const setCommand = (settingName, description, service, action) =>
   baseCommand(`${service.name}:${settingName}:set`, description, action);
 
-module.exports = (settingsName, service, setAction) => {
-  const setting = translation
-    .get(service.settings[settingsName].trans)
-    .toLowerCase();
+const getSettingDescription = (settingName, service) => {
+  if (!service.settings[settingName]) {
+    return settingName;
+  }
 
-  const getDescription = translation.get("cli.services.setting-get", setting);
-  const setDescription = translation.get("cli.services.setting-set", setting);
+  return translation.get(service.settings[settingName].trans).toLowerCase();
+};
+
+module.exports = (settingName, service, setAction) => {
+  const description = getSettingDescription(settingName, service);
+
+  const getDesc = translation.get("cli.services.setting-get", description);
+  const setDesc = translation.get("cli.services.setting-set", description);
 
   return [
-    getCommand(settingsName, getDescription, service),
-    setCommand(settingsName, setDescription, service, setAction),
+    getCommand(settingName, getDesc, service),
+    setCommand(settingName, setDesc, service, setAction),
   ];
 };
