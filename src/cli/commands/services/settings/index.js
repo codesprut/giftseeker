@@ -1,9 +1,8 @@
 const numberCommands = require("./number-settings");
-const dataType = require("./data-type.enum");
 
 const commandsByType = {
-  number: numberCommands(dataType.INT),
-  float_number: numberCommands(dataType.FLOAT),
+  number: numberCommands,
+  float_number: numberCommands,
 };
 
 module.exports = service => {

@@ -10,12 +10,15 @@ const setCommand = (settingName, description, service, action) =>
   baseCommand(`${service.name}:${settingName}:set`, description, action);
 
 module.exports = (settingsName, service, setAction) => {
-  const description = translation
+  const setting = translation
     .get(service.settings[settingsName].trans)
     .toLowerCase();
 
+  const getDescription = translation.get("cli.services.setting-get", setting);
+  const setDescription = translation.get("cli.services.setting-set", setting);
+
   return [
-    getCommand(settingsName, `Get ${description} setting`, service),
-    setCommand(settingsName, `Set ${description} setting`, service, setAction),
+    getCommand(settingsName, getDescription, service),
+    setCommand(settingsName, setDescription, service, setAction),
   ];
 };

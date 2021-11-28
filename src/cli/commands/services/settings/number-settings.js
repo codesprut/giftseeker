@@ -1,21 +1,39 @@
 const baseSettings = require("./base-settings");
-const dataType = require("./data-type.enum");
+const dataTypeValidator = require("./data-type-validator");
+const inquirer = require("inquirer");
 
-function isInt(n) {
-  return Number(n) === n && n % 1 === 0;
-}
+module.exports = (settingName, service) => {
+  const setting = service.settings[settingName];
 
-function isFloat(n) {
-  return Number(n) === n && n % 1 !== 0;
-}
+  const validate = input => {
+    const newValue = Number(input);
+    const validator = dataTypeValidator[setting.type];
 
-module.exports = requiredType => {
-  // eslint-disable-next-line no-unused-vars
-  const validator = input =>
-    requiredType === dataType.INT ? isInt(input) : isFloat(input);
+    if (!validator.validate(newValue)) {
+      return validator.message;
+    }
+    if (newValue < setting.min) {
+      return `Cannot enter value lesser than ${setting.min}`;
+    }
+    if (newValue > setting.max) {
+      return `Cannot enter value greater than ${setting.min}`;
+    }
 
-  return (settingName, service) =>
-    baseSettings(settingName, service, () => {
-      // todo: use validator
-    });
+    return true;
+  };
+
+  return baseSettings(settingName, service, () => {
+    return inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "input",
+          prefix: "",
+          suffix: ":",
+          message: `Enter new ${settingName} value`,
+          validate,
+        },
+      ])
+      .then(async ({ input }) => service.setConfig(settingName, Number(input)));
+  });
 };
