@@ -3,6 +3,7 @@ const axios = require("axios");
 const https = require("https");
 
 const translation = require("../../modules/translation");
+const authState = require("../auth-state.enum");
 const runningState = require("../running-state.enum");
 const logSeverity = require("../log-severity.enum");
 const settingType = require("./settings/setting-type.enum");
@@ -105,8 +106,16 @@ module.exports = class BaseService {
   async authCheck() {
     return this.http
       .get(this.authCheckUrl ?? this.websiteUrl)
-      .then(res => (res.data.indexOf(this.authContent) >= 0 ? 1 : 0))
-      .catch(err => (err.status === 200 ? 0 : -1));
+      .then(res =>
+        res.data.indexOf(this.authContent) >= 0
+          ? authState.AUTHORIZED
+          : authState.NOT_AUTHORIZED,
+      )
+      .catch(err =>
+        err.status === 200
+          ? authState.NOT_AUTHORIZED
+          : authState.CONNECTION_REFUSED,
+      );
   }
 
   parseSetCookieHeader(header) {
@@ -147,17 +156,17 @@ module.exports = class BaseService {
 
   async start(autostart) {
     if (this.isStarted()) {
-      return false;
+      return authState.AUTHORIZED;
     }
 
     this.setState(runningState.PROCESS);
-    const authState = await this.authCheck();
+    const authResult = await this.authCheck();
 
-    switch (authState) {
-      case 1:
+    switch (authResult) {
+      case authState.AUTHORIZED:
         this.setStateStarted();
         break;
-      case 0:
+      case authState.NOT_AUTHORIZED:
         if (autostart) {
           this.setState(runningState.ERROR);
           this.log(translation.get("service.cant_start"), logSeverity.ERROR);
@@ -165,7 +174,7 @@ module.exports = class BaseService {
           this.setState(runningState.PAUSED);
         }
         break;
-      case -1:
+      case authState.CONNECTION_REFUSED:
         this.setState(runningState.ERROR);
         this.log(
           translation.get("service.connection_error"),
@@ -177,7 +186,7 @@ module.exports = class BaseService {
         break;
     }
 
-    return authState;
+    return authResult;
   }
 
   async stop(withError, reconnect) {
@@ -242,20 +251,20 @@ module.exports = class BaseService {
 
     if (serviceStarted) {
       if (currentTick % this.workerInterval() === 0) {
-        const authState = await this.authCheck();
+        const currentAuthState = await this.authCheck();
 
-        switch (authState) {
-          case 1:
+        switch (currentAuthState) {
+          case authState.AUTHORIZED:
             this.seekService();
             break;
-          case 0:
+          case authState.NOT_AUTHORIZED:
             this.log(
               translation.get("service.session_expired"),
               logSeverity.ERROR,
             );
             this.stop(true);
             break;
-          case -1:
+          case authState.CONNECTION_REFUSED:
             this.log(
               translation.get("service.connection_lost"),
               logSeverity.ERROR,
@@ -268,9 +277,9 @@ module.exports = class BaseService {
   }
 
   async updateUserInfo() {
-    const authState = await this.authCheck();
+    const currentAuthState = await this.authCheck();
 
-    if (authState === 1) {
+    if (currentAuthState === authState.AUTHORIZED) {
       const userInfo = await this.getUserInfo().catch(() => ({
         avatar: `${this.websiteUrl}/favicon.ico`,
         username: `${this.name} user`,
