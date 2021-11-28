@@ -1,7 +1,10 @@
 const events = require("events");
+const path = require("path");
+
 const Settings = require("../modules/settings");
 const Services = require("../core/services");
 const config = require("../config");
+const logger = require("./service-logger");
 
 let currentSession = null;
 let sessions = [];
@@ -60,14 +63,21 @@ const init = async settings => {
   });
 };
 
-const initSession = async name => {
-  const settings = await Settings.build(`session-${name}`, {
+const initSession = async sessionName => {
+  const sessionStoragePath = path.resolve(config.storageDataPath, sessionName);
+
+  const settings = await Settings.build(`${sessionName}/session`, {
     user_agent: config.defaultSettings.user_agent,
   });
+
   const services = Services.map(service => new service(settings));
 
+  for (const service of services) {
+    logger.attach(sessionStoragePath, service);
+  }
+
   sessions.push({
-    name,
+    name: sessionName,
     settings,
     services,
   });

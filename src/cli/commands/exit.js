@@ -1,7 +1,7 @@
 const baseCommand = require("./base-command");
 
 module.exports = baseCommand(
-  "exit",
+  "exit|quit",
   "Save settings and close application",
   () => {
     console.log("Bye!");

@@ -39,7 +39,7 @@ module.exports = commands => {
 
         if (command) {
           await command.action(args);
-        } else {
+        } else if (inputCommand) {
           printHelpInfo(commands, inputCommand);
         }
 
