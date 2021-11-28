@@ -38,8 +38,11 @@ The application located in the `src` directory which consists of the following m
 
 ## Testing
 
-Run all tests:  
-`npm run test`
+Run all tests:
+
+```shell
+npm run test
+```
 
 ## Build
 
@@ -49,7 +52,7 @@ We use [electron-builder](https://github.com/electron-userland/electron-builder)
 
 Package in a distributable format (e.g. dmg, Windows installer, deb package)
 
-```
+```shell
 npm run dist:mac
 npm run dist:win
 npm run dist:linux
