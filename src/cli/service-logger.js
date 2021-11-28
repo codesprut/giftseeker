@@ -12,21 +12,31 @@ const currentDate = () => {
   const minutes = ("0" + date.getMinutes()).slice(-2);
 
   return {
-    fileSuffix: `${day}-${month}-${year}`,
-    rowTime: `${hours}:${minutes}`,
+    date: `${day}-${month}-${year}`,
+    time: `${hours}:${minutes}`,
   };
+};
+
+const prepareMessage = message => {
+  if (typeof message === "object") {
+    return message.text.replace("#link#", message.anchor);
+  }
+
+  return message;
 };
 
 const attach = (storagePath, service) => {
   const serviceName = service.name.toLowerCase();
 
   service.on("log", (message, severity) => {
-    const { fileSuffix, rowTime } = currentDate();
+    const { date, time } = currentDate();
 
-    const filename = `${serviceName}-${fileSuffix}.log`;
+    const filename = `${serviceName}-${date}.log`;
     const filepath = path.resolve(storagePath, filename);
 
-    fs.appendFileSync(filepath, `[${severity}]${rowTime} ${message}` + os.EOL);
+    const appendText = `[${severity}]${time} ${prepareMessage(message)}`;
+
+    fs.appendFileSync(filepath, appendText + os.EOL);
   });
 };
 
