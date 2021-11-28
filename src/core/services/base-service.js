@@ -193,6 +193,8 @@ module.exports = class BaseService {
     if (reconnect) {
       this.runReconnectTimeout();
     }
+
+    return true;
   }
 
   runReconnectTimeout() {
