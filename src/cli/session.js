@@ -74,6 +74,7 @@ const initSession = async sessionName => {
 
   for (const service of services) {
     logger.attach(sessionStoragePath, service);
+    service.runWorker();
   }
 
   sessions.push({
