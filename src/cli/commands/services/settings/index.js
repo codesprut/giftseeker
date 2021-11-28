@@ -1,8 +1,9 @@
 const numberCommands = require("./number-settings");
+const settingType = require("../../../../core/services/settings/setting-type.enum");
 
 const commandsByType = {
-  number: numberCommands,
-  float_number: numberCommands,
+  [settingType.INTEGER]: numberCommands,
+  [settingType.FLOAT]: numberCommands,
 };
 
 module.exports = service => {

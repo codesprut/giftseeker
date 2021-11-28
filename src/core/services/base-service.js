@@ -1,9 +1,11 @@
-const translation = require("../../modules/translation");
-const runningState = require("../running-state.enum");
-const logSeverity = require("../log-severity.enum");
 const events = require("events");
 const axios = require("axios");
 const https = require("https");
+
+const translation = require("../../modules/translation");
+const runningState = require("../running-state.enum");
+const logSeverity = require("../log-severity.enum");
+const settingType = require("./settings/setting-type.enum");
 
 module.exports = class BaseService {
   constructor(settingsStorage, { withValue = true, ...params }) {
@@ -26,14 +28,14 @@ module.exports = class BaseService {
 
     this.settings = {
       timer: {
-        type: "number",
+        type: settingType.INTEGER,
         trans: "service.timer",
         min: 5,
         max: 999,
         default: this.getConfig("timer", 10),
       },
       interval_from: {
-        type: "number",
+        type: settingType.INTEGER,
         range: true,
         rangeType: "min",
         rangePart: "interval_to",
@@ -43,7 +45,7 @@ module.exports = class BaseService {
         default: this.getConfig("interval_from", 3),
       },
       interval_to: {
-        type: "number",
+        type: settingType.INTEGER,
         range: true,
         rangeType: "max",
         rangePart: "interval_from",
@@ -53,7 +55,7 @@ module.exports = class BaseService {
         default: this.getConfig("interval_to", 5),
       },
       pages: {
-        type: "number",
+        type: settingType.INTEGER,
         trans: "service.pages",
         min: 1,
         max: 99,

@@ -1,6 +1,7 @@
+const { parse } = require("node-html-parser");
+
 const BaseService = require("./base-service");
 const translation = require("../../modules/translation");
-const { parse } = require("node-html-parser");
 const clearHtmlTags = require("../utils/clear-html-tags");
 
 class IndieGala extends BaseService {

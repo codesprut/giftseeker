@@ -1,6 +1,6 @@
+const inquirer = require("inquirer");
 const baseSettings = require("./base-settings");
 const dataTypeValidator = require("./data-type-validator");
-const inquirer = require("inquirer");
 
 module.exports = (settingName, service) => {
   const setting = service.settings[settingName];
