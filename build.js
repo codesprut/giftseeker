@@ -24,7 +24,7 @@ builder
     config: {
       appId: "com.giftseeker.app",
       productName: "GiftSeeker",
-      artifactName: "${productName}Setup.${ext}",
+      artifactName: "giftseeker.${ext}",
       copyright: "Copyright © 2016-2021 Alexander Pinashin",
       files: ["src", "node_modules", "LICENSE"],
       icon: "./src/resources/images/icon.ico",
@@ -38,20 +38,19 @@ builder
         ],
       },
       nsisWeb: {
+        artifactName: "giftseeker-setup.${ext}",
         oneClick: false,
         perMachine: false,
         allowElevation: true,
         allowToChangeInstallationDirectory: true,
-      },
-      portable: {
-        artifactName: "${productName}.${ext}",
       },
       mac: {
         target: "dmg",
         category: "public.app-category.games",
       },
       linux: {
-        target: "AppImage",
+        target: ["AppImage", "deb"],
+        icon: "./src/resources/images/icon.256x256.png",
         maintainer: "Codesprut",
         vendor: "Codesprut",
         synopsis: "Public giveaways helper",
