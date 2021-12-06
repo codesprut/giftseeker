@@ -21,7 +21,7 @@ const services = require("../core/services");
 const translation = require("../modules/translation");
 const windows = require("./windows");
 
-const isSecondAppInstance = app.requestSingleInstanceLock();
+const isPrimaryAppInstance = app.requestSingleInstanceLock();
 
 const currentBuild = app.getVersion();
 
@@ -32,7 +32,7 @@ let preventReadyWindowHiding = false;
 app.disableHardwareAcceleration();
 
 (() => {
-  if (!isSecondAppInstance) {
+  if (!isPrimaryAppInstance) {
     return app.quit();
   }
 
