@@ -21,8 +21,8 @@ If you are an end user, you can download and install application directly from o
 Make sure you have [Node.js](https://nodejs.org/) **>= 14.15.3** installed, then type the following commands.
 
 ```
-git clone https://github.com/CodeSprut/GiftSeeker.git
-cd GiftSeeker
+git clone https://github.com/codesprut/giftseeker.git
+cd giftseeker
 npm install
 npm start:ui
 ```
@@ -71,7 +71,7 @@ The build process compiles the content of the `src` and `node_modules` directori
 
 I want your feedback! Here's a list of different ways to me and request help:
 
-- Report bugs and submit feature requests to [GitHub issues](https://github.com/CodeSprut/GiftSeeker/issues).
+- Report bugs and submit feature requests to [GitHub issues](https://github.com/codesprut/giftseeker/issues).
 - And do not forget to join our [Discord server](https://discord.gg/SKYr8z5)!
 
 ### Code of Conduct

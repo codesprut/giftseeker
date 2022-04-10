@@ -8,7 +8,7 @@
   "main": "src/electron/main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CodeSprut/GiftSeeker.git"
+    "url": "https://github.com/codesprut/giftseeker.git"
   },
   "scripts": {
     "test": "jest",
