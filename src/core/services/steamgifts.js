@@ -1,7 +1,9 @@
-const BaseService = require("./base-service");
 const query = require("querystring");
-const translation = require("../../modules/translation");
 const { parse } = require("node-html-parser");
+
+const BaseService = require("./base-service");
+const translation = require("../../modules/translation");
+const settingType = require("./settings/setting-type.enum");
 
 class SteamGifts extends BaseService {
   constructor(settingsStorage) {
@@ -13,35 +15,35 @@ class SteamGifts extends BaseService {
     });
 
     this.settings.points_reserve = {
-      type: "number",
+      type: settingType.INTEGER,
       trans: this.translationKey("points_reserve"),
       min: 0,
       max: 500,
       default: this.getConfig("points_reserve", 0),
     };
     this.settings.ending = {
-      type: "number",
+      type: settingType.INTEGER,
       trans: this.translationKey("ending"),
       min: 0,
       max: 500,
       default: this.getConfig("ending", 0),
     };
     this.settings.min_chance = {
-      type: "float_number",
+      type: settingType.FLOAT,
       trans: this.translationKey("min_chance"),
       min: 0,
       max: 100,
       default: this.getConfig("min_chance", 0),
     };
     this.settings.min_level = {
-      type: "number",
+      type: settingType.INTEGER,
       trans: this.translationKey("min_level"),
       min: 0,
       max: 10,
       default: this.getConfig("min_level", 0),
     };
     this.settings.min_cost = {
-      type: "number",
+      type: settingType.INTEGER,
       range: true,
       rangeType: "min",
       rangePart: "max_cost",
@@ -51,7 +53,7 @@ class SteamGifts extends BaseService {
       default: this.getConfig("min_cost", 0),
     };
     this.settings.max_cost = {
-      type: "number",
+      type: settingType.INTEGER,
       range: true,
       rangeType: "max",
       rangePart: "min_cost",
@@ -62,22 +64,22 @@ class SteamGifts extends BaseService {
     };
 
     this.settings.sort_by_chance = {
-      type: "checkbox",
+      type: settingType.CHECKBOX,
       trans: this.translationKey("sort_by_chance"),
       default: this.getConfig("sort_by_chance", false),
     };
     this.settings.wishlist_only = {
-      type: "checkbox",
+      type: settingType.CHECKBOX,
       trans: this.translationKey("wishlist_only"),
       default: this.getConfig("wishlist_only", false),
     };
     this.settings.reserve_on_wish = {
-      type: "checkbox",
+      type: settingType.CHECKBOX,
       trans: this.translationKey("reserve_on_wish"),
       default: this.getConfig("reserve_on_wish", false),
     };
     this.settings.ignore_on_wish = {
-      type: "checkbox",
+      type: settingType.CHECKBOX,
       trans: this.translationKey("ignore_on_wish"),
       default: this.getConfig("ignore_on_wish", false),
     };

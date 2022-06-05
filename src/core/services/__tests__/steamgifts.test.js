@@ -21,7 +21,7 @@ const createGiveaway = (number, fields = {}) => {
 };
 
 const defaultValue = 300;
-const settings = new Settings({});
+const settings = new Settings("settings", {});
 const steamgifts = new SteamGifts(settings);
 
 const commonGiveaways = [
