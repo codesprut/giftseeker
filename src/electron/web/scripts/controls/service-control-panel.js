@@ -1,8 +1,7 @@
-import language from "../language.js";
-
 export default class ServiceControlPanel {
-  constructor(websiteUrl, value) {
-    this.value = value;
+  constructor(websiteUrl, currency) {
+    this.currency = currency;
+
     this.panel = document.createElement("div");
     this.panel.classList.add("service-control-panel");
 
@@ -16,7 +15,7 @@ export default class ServiceControlPanel {
 
     this.mainButton = document.createElement("button");
     this.mainButton.classList.add("seeker-button", "start-button");
-    this.mainButton.innerText = language.get("service.btn_start");
+    this.mainButton.dataset.lang = "service.btn_start";
 
     const buttonWrap = document.createElement("div");
     buttonWrap.appendChild(this.mainButton);
@@ -28,19 +27,17 @@ export default class ServiceControlPanel {
 
     this.panel.appendChild(this.userInfo);
 
-    if (value.enabled) {
+    if (currency.enabled) {
       const delimeter = document.createElement("span");
       delimeter.innerHTML = "&bull;";
       this.userInfo.appendChild(delimeter);
 
       const valueWrap = document.createElement("span");
       valueWrap.classList.add("value");
-      valueWrap.innerHTML = `<span data-lang="${
-        value.translationKey
-      }">${language.get(value.translationKey)}</span>: `;
+      valueWrap.innerHTML = `<span data-lang="${currency.translationKey}"></span>: `;
 
       this.valueLabel = document.createElement("span");
-      this.valueLabel.innerText = value.current;
+      this.valueLabel.innerText = currency.current;
 
       this.userInfo.appendChild(valueWrap);
       valueWrap.appendChild(this.valueLabel);
@@ -61,7 +58,6 @@ export default class ServiceControlPanel {
 
   appendButton(button) {
     button.classList.add("service-control-button");
-    language.updateNode(button);
 
     this.buttons.appendChild(button);
   }
@@ -72,11 +68,11 @@ export default class ServiceControlPanel {
     this.avatar.style.backgroundImage = `url('${data.avatar}')`;
     this.username.innerText = data.username;
 
-    this.setValue(data.value);
+    this.updateCurrencyValue(data.value);
   }
 
-  setValue(newValue) {
-    if (newValue && this.value.enabled) {
+  updateCurrencyValue(newValue) {
+    if (newValue && this.currency.enabled) {
       this.valueLabel.innerText = newValue;
     }
   }

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GiftSeeker</title>
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="styles/main.css" />
     <link
       href="https://use.fontawesome.com/releases/v5.0.8/css/all.css"
       rel="stylesheet"
@@ -27,10 +27,13 @@
       </div>
       <div class="window-buttons">
         <span
-          class="minimizer fa fa-window-minimize"
-          onclick="minimizeWindow()"
+          class="minimizer fa fa-window-minimize window-action-button"
+          data-action="minimize"
         ></span>
-        <span class="closer fa fa-times" onclick="closeWindow()"></span>
+        <span
+          class="closer fa fa-times window-action-button"
+          data-action="close"
+        ></span>
       </div>
       <div class="user-bar">
         <div class="avatar"></div>
@@ -104,20 +107,24 @@
         </div>
       </div>
     </div>
-    <script type="module" src="js/windows/main.js"></script>
-    <script type="module" src="js/services.js"></script>
+    <script type="module" src="scripts/windows/main.js"></script>
+    <script type="module" src="scripts/services.js"></script>
     <script type="module">
-      import browser from "./js/browser.js";
+      const { ipcRenderer } = require("electron");
+      import { updatePagePhrases } from "./scripts/language.js";
+      import browser from "./scripts/browser.js";
       document.addEventListener(
         "click",
-        ev => {
-          const clicked = ev.target;
-          if (!clicked.matches(".open-website")) return;
-
-          if (clicked.dataset.link) browser.openUrl(clicked.dataset.link);
+        ({ target }) => {
+          if (!target.matches(".open-website")) return;
+          if (target.dataset.link) browser.openUrl(target.dataset.link);
         },
         false,
       );
+
+      ipcRenderer.on("window-initial-data", async (event, { translations }) => {
+        updatePagePhrases(translations.phrases);
+      });
     </script>
   </body>
 </html>

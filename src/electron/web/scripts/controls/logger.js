@@ -1,13 +1,13 @@
-import time from "../utlis/time.js";
-import language from "../language.js";
-
 export default class Logger {
-  constructor() {
+  constructor(getTranslation, timeFormat) {
+    this.getTranslation = getTranslation;
+    this.timeFormat = timeFormat;
+
     this.logField = document.createElement("div");
 
     this.clearButton = document.createElement("span");
     this.clearButton.classList.add("clear-log");
-    this.clearButton.innerText = language.get("service.clear_log");
+    this.clearButton.innerText = this.getTranslation("service.clear_log");
     this.clearButton.dataset.lang = "service.clear_log";
     this.clearButton.onclick = () => this.clear();
   }
@@ -22,7 +22,7 @@ export default class Logger {
     const logText = this.parseLog(message);
     const logRow = document.createElement("div");
     logRow.classList.add(severity);
-    logRow.innerHTML = `<span class="time">${time.format(
+    logRow.innerHTML = `<span class="time">${this.timeFormat(
       "hh:mm:ss",
     )}</span>${logText}`;
     this.logField.appendChild(logRow);
@@ -45,6 +45,6 @@ export default class Logger {
 
   clear() {
     this.logField.innerHTML = "";
-    this.add(language.get("service.log_cleared"));
+    this.add(this.getTranslation("service.log_cleared"));
   }
 }

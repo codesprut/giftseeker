@@ -23,9 +23,9 @@
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.16.0",
     "cross-env": "^7.0.3",
-    "electron": "^11.5.0",
-    "electron-builder": "^22.14.5",
-    "eslint": "^7.32.0",
+    "electron": "^21.0.1",
+    "electron-builder": "^23.6.0",
+    "eslint": "^8.17.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.24.1",
@@ -34,16 +34,16 @@
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-standard": "^4.1.0",
     "husky": "^4.3.8",
-    "jest": "^27.3.1",
+    "jest": "^28.1.0",
     "lint-staged": "^12.0.3",
-    "prettier": "^2.3.2"
+    "prettier": "^2.7.1"
   },
   "dependencies": {
     "auto-launch": "^5.0.5",
-    "axios": "^0.21.4",
-    "chalk": "^4.1.2",
+    "axios": "^0.27.2",
+    "chalk": "^5.0.1",
     "console-table-printer": "^2.10.0",
-    "electron-updater": "^4.3.9",
+    "electron-updater": "^5.3.0",
     "inquirer": "^8.2.0",
     "node-html-parser": "1.2.19",
     "tippy.js": "^5.2.1"

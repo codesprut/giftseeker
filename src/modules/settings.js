@@ -71,6 +71,14 @@ class Settings {
     return false;
   }
 
+  /**
+   *
+   * @returns {*} all stored settings
+   */
+  getAll() {
+    return this.settings;
+  }
+
   on(eventName, key, callback) {
     this.eventEmitter.on(eventName + key, callback);
   }

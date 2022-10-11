@@ -313,8 +313,8 @@ module.exports = class BaseService {
       return;
     }
 
-    this.events.emit("state.changed", state);
     this.state = state;
+    this.events.emit("state.changed", state);
   }
 
   isStarted() {
@@ -326,7 +326,7 @@ module.exports = class BaseService {
       return;
     }
 
-    this.events.emit("value.changed", newValue);
+    this.events.emit("currency.changed", newValue);
     this.currentValue = parseInt(newValue);
   }
 

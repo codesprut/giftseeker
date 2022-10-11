@@ -1,4 +1,4 @@
-import time from "../time";
+import { elapsed } from "../time";
 
 describe("Elapsed method", () => {
   const cases = [
@@ -25,8 +25,8 @@ describe("Elapsed method", () => {
   ];
 
   test.each(cases)("%s", async caseData => {
-    const elapsed = time.elapsed(caseData.timestamp);
+    const actual = elapsed(caseData.timestamp);
 
-    expect(elapsed).toBe(caseData.expected);
+    expect(actual).toBe(caseData.expected);
   });
 });

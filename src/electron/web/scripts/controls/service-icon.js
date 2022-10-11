@@ -1,5 +1,3 @@
-import language from "../language.js";
-
 export default class ServiceIcon {
   constructor(serviceName, defaultState) {
     this.icon = document.createElement("div");
@@ -24,8 +22,6 @@ export default class ServiceIcon {
     this.icon.appendChild(this.nameLabel);
 
     this.setState(defaultState);
-
-    language.updateNode(this.icon);
   }
 
   appendTo(element) {

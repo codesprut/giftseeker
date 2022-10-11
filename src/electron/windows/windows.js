@@ -1,13 +1,10 @@
 const { BrowserWindow } = require("electron");
-const { create: createSession } = require("./session");
-const ENV = require("../environment");
-const { appName, appIcon, window: windowConfig } = require("./config");
+const ENV = require("../../environment");
+const { appName, appIcon, window: windowConfig } = require("../config");
 
 const windows = {};
 
 const init = settings => {
-  const session = createSession(settings, appName);
-
   const authWindow = new BrowserWindow({
     width: 280,
     height: 340,
@@ -18,8 +15,7 @@ const init = settings => {
     resizable: false,
     frame: false,
     webPreferences: {
-      session: session,
-      enableRemoteModule: true,
+      webSecurity: false,
       devTools: ENV.devMode,
       contextIsolation: false,
       nodeIntegration: true,
@@ -67,9 +63,7 @@ const init = settings => {
     maximizable: false,
     frame: false,
     webPreferences: {
-      session: session,
       contextIsolation: false,
-      enableRemoteModule: true,
       devTools: ENV.devMode,
       nodeIntegration: true,
       backgroundThrottling: false,
@@ -84,44 +78,6 @@ const init = settings => {
     mainWindow.webContents.openDevTools({ mode: "detach" });
   }
 
-  const browserWindow = new BrowserWindow({
-    parent: mainWindow,
-    icon: appIcon,
-    title: "GS Browser",
-    width: 1024,
-    height: 700,
-    minWidth: 600,
-    minHeight: 500,
-    modal: true,
-    show: false,
-    center: true,
-    webPreferences: {
-      session: session,
-      nodeIntegration: false,
-      contextIsolation: false,
-      devTools: false,
-      webSecurity: false,
-      webviewTag: true,
-    },
-  });
-
-  browserWindow.loadFile("./src/electron/web/blank.html");
-
-  browserWindow.setMenu(null);
-
-  browserWindow.on("close", e => {
-    e.preventDefault();
-    browserWindow.loadFile("./src/electron/web/blank.html");
-    browserWindow.hide();
-
-    if (mainWindow.hidden) {
-      authWindow.focus();
-    } else {
-      mainWindow.focus();
-    }
-  });
-
-  // ### end browser for websites
   mainWindow.on("resize", () => {
     const [newWidth, newHeight] = mainWindow.getContentSize();
 
@@ -144,7 +100,6 @@ const init = settings => {
 
   windows.auth = authWindow;
   windows.main = mainWindow;
-  windows.browser = browserWindow;
 
   return windows;
 };
@@ -161,4 +116,6 @@ const active = userIsAuthorized => {
 module.exports = {
   init,
   active,
+  auth: () => windows.auth,
+  main: () => windows.main,
 };

@@ -8,8 +8,8 @@
       href="https://use.fontawesome.com/releases/v5.0.8/css/all.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/auth.css" />
+    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/auth.css" />
   </head>
   <body id="auth_window">
     <div id="head_decor"></div>
@@ -17,7 +17,7 @@
       <div class="logo">GiftSeeker</div>
       <div class="window-buttons">
         <span
-          onclick="document.querySelector('#choice-lang').classList.add('visible')"
+          onclick="document.querySelector('#choice-lang').classList.toggle('visible')"
           class="language fa fa-globe"
           data-tippy-translate="auth.lng_choice_title"
         ></span>
@@ -56,6 +56,10 @@
         onclick="document.querySelector('#choice-lang').classList.remove('visible')"
       ></button>
     </div>
-    <script type="module" src="js/windows/auth.js"></script>
+    <script>
+      import("./scripts/windows/auth.js").then(module => {
+        window.setLogoutState = () => module.setLogoutState();
+      });
+    </script>
   </body>
 </html>

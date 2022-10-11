@@ -4,7 +4,7 @@ const AutoLaunch = require("auto-launch");
 
 const autoStart = new AutoLaunch({ name: config.appName });
 
-const isEnabled = () => autoStart.isEnabled;
+const isEnabled = () => autoStart.isEnabled();
 
 const set = enabled => {
   if (enabled && !ENV.devMode) {

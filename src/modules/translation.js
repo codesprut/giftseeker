@@ -128,18 +128,18 @@ const change = newTranslation => {
 
 /**
  *
- * @returns {string} current translation
+ * @returns {string} current translation name
  */
 const current = () => {
   return settings.get(settingsKey);
 };
 
 /**
- * Program translation quantity
- * @returns {number}
+ *
+ * @returns {Object} current translation phrases tree
  */
-const quantity = () => {
-  return Object.keys(translations).length;
+const currentPhrases = () => {
+  return translations[current()];
 };
 
 const listAvailable = () => {
@@ -153,10 +153,10 @@ const listAvailable = () => {
 };
 
 module.exports = {
-  quantity,
-  current,
-  change,
-  init,
   get,
+  init,
+  change,
+  current,
   listAvailable,
+  currentPhrases,
 };
