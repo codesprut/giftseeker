@@ -45,7 +45,7 @@ class Settings {
     clearTimeout(this.saveToStorageTimeout);
 
     this.saveToStorageTimeout = setTimeout(() => {
-      storage.saveFile(this.storageFilename, this.settings);
+      storage.saveFile(this.storageFilename, this.settings, true);
     }, storageWriteDelayMs);
 
     if (oldValue !== newValue) {

@@ -1,7 +1,6 @@
 const storage = require("./json-storage");
 const https = require("https");
 const axios = require("axios");
-const fs = require("fs");
 
 const settingsKey = "translation";
 const axiosConfig = {
@@ -13,45 +12,37 @@ const axiosConfig = {
 let settings;
 let translations = {};
 
-const downloadTranslation = async name => {
-  return axios.get(`/trans/${name}`, axiosConfig).then(({ data }) => {
-    return new Promise(resolve => {
-      fs.writeFile(
-        storage.getDataPath() + "/" + name,
-        JSON.stringify(data),
-        resolve,
-      );
-    });
-  });
+const downloadTranslation = async filename => {
+  return axios
+    .get(`/trans/${filename}`, axiosConfig)
+    .then(({ data }) => storage.saveFile(filename, data));
 };
 
 const updateTranslations = async () => {
   const translations = await axios
-    .get(`/api/langs_new`, axiosConfig)
-    .then(res => JSON.parse(res.data.response).langs)
+    .get(`/api/translations`, axiosConfig)
+    .then(res => res.data.translations)
     .catch(() => false);
 
   if (!translations) {
     return;
   }
 
-  for (const translation of translations) {
-    const { name, cleanSize } = translation;
+  return Promise.allSettled(translations.map(it => updateTranslation(it)));
+};
 
-    if (!fs.existsSync(storage.getDataPath() + "/" + name)) {
-      await downloadTranslation(name);
-      continue;
-    }
+const updateTranslation = async translation => {
+  const { name, contentLength } = translation;
 
-    await new Promise(resolve => {
-      fs.stat(storage.getDataPath() + "/" + name, async (err, stats) => {
-        if (!err && stats.size !== cleanSize) {
-          await downloadTranslation(name);
-        }
+  if (!storage.filesExists(name)) {
+    return downloadTranslation(name);
+  }
 
-        resolve();
-      });
-    });
+  const fileContent = await storage.loadFile(name);
+  const localContentLength = JSON.stringify(fileContent).length;
+
+  if (localContentLength !== contentLength) {
+    return downloadTranslation(name);
   }
 };
 
@@ -60,7 +51,7 @@ const loadTranslations = async () => {
   const storageFiles = await storage.filesList();
 
   for (const filename of storageFiles) {
-    if (filename.indexOf("lang.") >= 0) {
+    if (filename.indexOf("locale.") >= 0) {
       translationsList.push(filename.replace(".json", ""));
     }
   }

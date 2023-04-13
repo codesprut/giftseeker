@@ -16,17 +16,22 @@ const getDataPath = () => {
 };
 
 const resolveFilePath = filename => {
-  return path.resolve(currentDataPath, filename + ".json");
+  const filenameExtended = filename.endsWith(".json")
+    ? filename
+    : `${filename}.json`;
+
+  return path.resolve(currentDataPath, filenameExtended);
 };
 
 /**
  *
  * @param filename
  * @param data
+ * @param sortData
  * @returns {Promise<boolean>}
  */
-const saveFile = (filename, data) => {
-  const dataToSave = isObject(data) ? sortObject(data) : data;
+const saveFile = (filename, data, sortData = false) => {
+  const dataToSave = sortData && isObject(data) ? sortObject(data) : data;
 
   return new Promise(resolve => {
     fs.mkdir(currentDataPath, { recursive: true }, error => {
@@ -109,6 +114,15 @@ const filesList = () => {
   });
 };
 
+/**
+ * Check file is exists
+ * @param filename
+ * @returns {boolean}
+ */
+const filesExists = filename => {
+  return fs.existsSync(resolveFilePath(filename));
+};
+
 module.exports = {
   setDataPath,
   getDataPath,
@@ -116,4 +130,5 @@ module.exports = {
   loadMany,
   saveFile,
   filesList,
+  filesExists,
 };
