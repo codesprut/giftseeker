@@ -7,7 +7,6 @@
 
 - steamgifts.com
 - indiegala.com
-- follx.com
 - opiumpulses.com
 - astats.nl
 
