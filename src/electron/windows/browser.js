@@ -18,7 +18,6 @@ const create = (session, parentWindow, onClose) => {
       nodeIntegration: false,
       contextIsolation: false,
       devTools: false,
-      webSecurity: false,
       webviewTag: true,
     },
   });
