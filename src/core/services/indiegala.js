@@ -1,5 +1,6 @@
 const { parse } = require("node-html-parser");
 
+const authState = require("../auth-state.enum");
 const BaseService = require("./base-service");
 const translation = require("../../modules/translation");
 const clearHtmlTags = require("../utils/clear-html-tags");
@@ -10,20 +11,26 @@ class IndieGala extends BaseService {
       websiteUrl: "https://www.indiegala.com",
       authPageUrl: "https://www.indiegala.com/login",
       winsPageUrl: "https://www.indiegala.com/profile",
-      authContent: "My library",
       requestTimeout: 15000,
     });
   }
 
   async authCheck() {
-    return this.http
-      .get(this.websiteUrl)
-      .then(res => (res.data.indexOf(this.authContent) >= 0 ? 1 : 0))
-      .catch(err => {
-        if (err.code === "HPE_INVALID_HEADER_TOKEN") {
-          return 0;
+    return this.http(`${this.websiteUrl}/giveaways`)
+      .then(res => {
+        const document = parse(res.data);
+        const usernameNode = document.querySelector(".username-text");
+
+        return usernameNode ? authState.AUTHORIZED : authState.NOT_AUTHORIZED;
+      })
+      .catch(ex => {
+        if (ex.code === "HPE_INVALID_HEADER_TOKEN") {
+          return authState.NOT_AUTHORIZED;
         }
-        return err.status === 200 ? 0 : -1;
+
+        return ex.status === 200
+          ? authState.NOT_AUTHORIZED
+          : authState.CONNECTION_REFUSED;
       });
   }
 
@@ -51,14 +58,31 @@ class IndieGala extends BaseService {
   }
 
   async getUserLevel() {
-    return this.http(
-      `${this.websiteUrl}/library/giveaways/user-level-and-coins`,
-    )
-      .then(res => Number(res.data.current_level))
+    return this.http
+      .get(`${this.websiteUrl}/library/giveaways/user-level-and-coins`, {
+        transformResponse: this.jsonResponseTransformer,
+      })
+      .then(res => {
+        return Number(res.data.current_level);
+      })
       .catch(() => 0);
   }
 
+  async getCsrfToken() {
+    return this.http.get(`${this.websiteUrl}/giveaways`).then(({ data }) => {
+      const document = parse(data);
+      const tokenInput = document.querySelector(
+        "input[name=csrfmiddlewaretoken]",
+      );
+
+      return tokenInput.getAttribute("value");
+    });
+  }
+
   async enterOnPage(page, userLevel) {
+    const csrfToken = await this.getCsrfToken();
+    const enteredGiveawayIds = await this.getEnteredGiveawayIds();
+
     const document = await this.http
       .get(`${this.websiteUrl}/giveaways/ajax/${page}/expiry/asc/level/all`, {
         transformResponse: this.clearResponse,
@@ -67,8 +91,8 @@ class IndieGala extends BaseService {
 
     const giveaways = document
       .querySelectorAll(".items-list-item")
-      .map(this.parseGiveaway)
-      .filter(ga => ga.requiredLevel <= userLevel && !ga.entered && ga.single)
+      .map(it => this.parseGiveaway(it, enteredGiveawayIds))
+      .filter(it => it.requiredLevel <= userLevel && !it.entered && it.single)
       .reduce((distinct, current) => {
         if (distinct.filter(it => it.id === current.id).length === 0) {
           distinct.push(current);
@@ -81,7 +105,11 @@ class IndieGala extends BaseService {
         return;
       }
 
-      const entry = await this.enterGiveaway(giveaway.id);
+      const entry = await this.enterGiveaway(
+        giveaway.id,
+        giveaway.token,
+        csrfToken,
+      );
 
       if (entry.status === "ok") {
         this.log({
@@ -95,17 +123,31 @@ class IndieGala extends BaseService {
     }
   }
 
-  parseGiveaway(htmlNode) {
+  async getEnteredGiveawayIds() {
+    const document = await this.http
+      .get(
+        `${this.websiteUrl}/library/giveaways/giveaways-in-progress/entries`,
+        {
+          transformResponse: this.clearResponse,
+        },
+      )
+      .then(res => parse(res.data.html));
+
+    return document
+      .querySelectorAll("a:not([href='#'])")
+      .map(it => it.getAttribute("href").match(/[0-9]+$/)[0]);
+  }
+
+  parseGiveaway(htmlNode, enteredIds) {
     const linkNode = htmlNode.querySelector("h5 a");
     const typeNode = htmlNode.querySelector(".items-list-item-type");
-    const entered = !htmlNode.querySelector(".items-list-item-ticket");
-    const price = entered
-      ? 0
-      : Number(
-          htmlNode
-            .querySelector(".items-list-item-data-button a")
-            .getAttribute("data-price"),
-        );
+    const actionNode = htmlNode.querySelector("a.items-list-item-ticket-click");
+    const price = Number(
+      htmlNode
+        .querySelector(".items-list-item-data-button a")
+        ?.getAttribute("data-price") ?? 0,
+    );
+    const giveawayId = linkNode.getAttribute("href").match(/\d+/)[0];
     const single = typeNode.structuredText.indexOf("single") === 0;
     const requiredLevel = (() => {
       const levelSpan = typeNode.querySelector("span");
@@ -116,20 +158,22 @@ class IndieGala extends BaseService {
     })();
 
     return {
-      id: linkNode.getAttribute("href").match(/\d+/)[0],
+      id: giveawayId,
       url: linkNode.getAttribute("href"),
       name: linkNode.structuredText,
-      entered,
+      token: actionNode.getAttribute("onclick").match(/[0-9], '(.*)'\)/)[1],
+      entered: enteredIds.some(it => it === giveawayId),
       price,
       single,
       requiredLevel,
     };
   }
 
-  async enterGiveaway(giveawayId) {
+  async enterGiveaway(giveawayId, giveawayToken, csrfToken) {
     return this.http({
+      transformResponse: this.jsonResponseTransformer,
       url: `${this.websiteUrl}/giveaways/join`,
-      data: { id: giveawayId },
+      data: { id: giveawayId, token: giveawayToken },
       method: "post",
       headers: {
         authority: "www.indiegala.com",
@@ -139,10 +183,18 @@ class IndieGala extends BaseService {
         "sec-fetch-site": "same-origin",
         "sec-fetch-mode": "cors",
         "x-requested-with": "XMLHttpRequest",
+        "x-csrf-token": csrfToken,
+        "x-csrftoken": csrfToken,
       },
     })
       .then(res => res.data)
-      .catch(() => ({ status: "error" }));
+      .catch(() => ({
+        status: "error",
+      }));
+  }
+
+  jsonResponseTransformer(data) {
+    return typeof data === "string" ? JSON.parse(data) : data;
   }
 
   clearResponse(data) {
