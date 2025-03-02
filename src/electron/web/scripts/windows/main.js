@@ -4,9 +4,8 @@ const { ipcRenderer } = require("electron");
 const logoutButton = document.querySelector(".logout-button");
 
 const renderUserInfo = userInfo => {
-  document.querySelector(
-    "#head .user-bar .avatar",
-  ).style.backgroundImage = `url("${userInfo.avatar}")`;
+  document.querySelector("#head .user-bar .avatar").style.backgroundImage =
+    `url("${userInfo.avatar}")`;
   document.querySelector("#head .user-bar .username").innerText =
     userInfo.username;
 };
