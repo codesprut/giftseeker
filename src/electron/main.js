@@ -127,6 +127,7 @@ app.disableHardwareAcceleration();
 
     ipcMain.on("window-loaded", ({ sender }, windowName) => {
       sender.send("window-initial-data", {
+        steamUrl: config.steamUrl,
         websiteUrl: config.websiteUrl,
         userAgent: {
           default: config.defaultSettings.user_agent,

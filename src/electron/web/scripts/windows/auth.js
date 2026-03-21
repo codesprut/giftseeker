@@ -23,7 +23,7 @@ const setLogoutState = () => {
 ipcRenderer.send("window-loaded", "auth-window");
 
 ipcRenderer.on("window-initial-data", async (event, data) => {
-  const { websiteUrl, translations } = data;
+  const { steamUrl, translations } = data;
 
   updatePagePhrases(translations.phrases);
   initTranslationSelector(translations);
@@ -36,9 +36,9 @@ ipcRenderer.on("window-initial-data", async (event, data) => {
     setAuthStatus("auth.check");
 
     await browser.authorizationWindow(
-      websiteUrl,
-      `${websiteUrl}logIn`,
-      "/account",
+      steamUrl,
+      `${steamUrl}login/home`,
+      "account_name",
     );
 
     ipcRenderer.send("authorization-window-closed");
