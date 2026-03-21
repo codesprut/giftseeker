@@ -78,7 +78,7 @@ app.disableHardwareAcceleration();
 
     // prevent the tray icon from being destroyed by the GC
     // eslint-disable-next-line no-unused-vars
-    const trayIcon = createTrayIcon(browser);
+    const trayIcon = createTrayIcon();
 
     startApp(authWindow, settings);
 
@@ -305,7 +305,7 @@ const checkSessionIsAlive = async (session, ipcRenderer) => {
 
 const startApp = (authWindow, settings) => {
   translation
-    .init(settings, config.websiteUrl)
+    .init(settings)
     .then(() => {
       authWindow.loadFile("./src/electron/web/auth.html");
 
@@ -336,18 +336,9 @@ const startApp = (authWindow, settings) => {
     });
 };
 
-const createTrayIcon = browser => {
+const createTrayIcon = () => {
   const trayIcon = new Tray(nativeImage.createFromPath(config.appIcon));
-  const trayMenu = Menu.buildFromTemplate([
-    {
-      label: "Open Website",
-      click: () => {
-        browser.openUrl(config.websiteUrl);
-      },
-    },
-    { type: "separator" },
-    { role: "quit" },
-  ]);
+  const trayMenu = Menu.buildFromTemplate([{ role: "quit" }]);
 
   trayIcon.setToolTip(`${config.appName} ${currentBuild}`);
   trayIcon.setContextMenu(trayMenu);

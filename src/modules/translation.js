@@ -1,81 +1,14 @@
-const storage = require("./json-storage");
-const https = require("https");
-const axios = require("axios");
+const translationFiles = require("../resources/translations");
 
 const settingsKey = "translation";
-const axiosConfig = {
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: false,
-  }),
-};
 
 let settings;
-let translations = {};
+let translations = Object.fromEntries(
+  translationFiles.map(file => [file.lang.culture, file]),
+);
 
-const downloadTranslation = async filename => {
-  return axios
-    .get(`/trans/${filename}`, axiosConfig)
-    .then(({ data }) => storage.saveFile(filename, data));
-};
-
-const updateTranslations = async () => {
-  const translations = await axios
-    .get(`/api/translations`, axiosConfig)
-    .then(res => res.data.translations)
-    .catch(() => false);
-
-  if (!translations) {
-    return;
-  }
-
-  return Promise.allSettled(translations.map(it => updateTranslation(it)));
-};
-
-const updateTranslation = async translation => {
-  const { name, contentLength } = translation;
-
-  if (!storage.filesExists(name)) {
-    return downloadTranslation(name);
-  }
-
-  const fileContent = await storage.loadFile(name);
-  const localContentLength = JSON.stringify(fileContent).length;
-
-  if (localContentLength !== contentLength) {
-    return downloadTranslation(name);
-  }
-};
-
-const loadTranslations = async () => {
-  const translationsList = [];
-  const storageFiles = await storage.filesList();
-
-  for (const filename of storageFiles) {
-    if (filename.indexOf("locale.") >= 0) {
-      translationsList.push(filename.replace(".json", ""));
-    }
-  }
-
-  if (!translationsList.length) {
-    throw new Error(`No translations found on storage`);
-  }
-
-  const loadedTranslations = await storage.loadMany(translationsList);
-
-  return Object.fromEntries(
-    loadedTranslations.map(translation => [
-      translation.lang.culture,
-      translation,
-    ]),
-  );
-};
-
-const init = async (settingsInstance, downloadHost) => {
+const init = async settingsInstance => {
   settings = settingsInstance;
-  axiosConfig.baseURL = downloadHost;
-
-  await updateTranslations();
-  translations = await loadTranslations();
 
   let selectedTranslation = current();
 

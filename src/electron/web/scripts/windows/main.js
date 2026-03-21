@@ -11,7 +11,7 @@ const renderUserInfo = userData => {
 };
 
 const initSettingsSection = initialData => {
-  const { currentBuild, websiteUrl, translations, settings } = initialData;
+  const { currentBuild, translations, settings } = initialData;
 
   initTranslationSelector(translations);
 
