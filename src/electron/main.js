@@ -68,17 +68,17 @@ app.disableHardwareAcceleration();
       }
     });
 
-    const logout = () => {
-      session.flush();
+    const logout = async () => {
+      await session.flush();
       windows.main().hide();
       windows.auth().show();
 
-      windows.auth().webContents.executeJavaScript("setLogoutState()");
+      windows.auth().webContents.send("user-logout");
     };
 
     // prevent the tray icon from being destroyed by the GC
     // eslint-disable-next-line no-unused-vars
-    const trayIcon = createTrayIcon(browser);
+    const trayIcon = createTrayIcon();
 
     startApp(authWindow, settings);
 
@@ -127,7 +127,7 @@ app.disableHardwareAcceleration();
 
     ipcMain.on("window-loaded", ({ sender }, windowName) => {
       sender.send("window-initial-data", {
-        websiteUrl: config.websiteUrl,
+        steamUrl: config.steamUrl,
         userAgent: {
           default: config.defaultSettings.user_agent,
           initial: session.getSessionInstance().getUserAgent(),
@@ -304,7 +304,7 @@ const checkSessionIsAlive = async (session, ipcRenderer) => {
 
 const startApp = (authWindow, settings) => {
   translation
-    .init(settings, config.websiteUrl)
+    .init(settings)
     .then(() => {
       authWindow.loadFile("./src/electron/web/auth.html");
 
@@ -335,18 +335,9 @@ const startApp = (authWindow, settings) => {
     });
 };
 
-const createTrayIcon = browser => {
+const createTrayIcon = () => {
   const trayIcon = new Tray(nativeImage.createFromPath(config.appIcon));
-  const trayMenu = Menu.buildFromTemplate([
-    {
-      label: "Open Website",
-      click: () => {
-        browser.openUrl(config.websiteUrl);
-      },
-    },
-    { type: "separator" },
-    { role: "quit" },
-  ]);
+  const trayMenu = Menu.buildFromTemplate([{ role: "quit" }]);
 
   trayIcon.setToolTip(`${config.appName} ${currentBuild}`);
   trayIcon.setContextMenu(trayMenu);

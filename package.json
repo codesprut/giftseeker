@@ -28,7 +28,7 @@
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.26.3",
     "cross-env": "^7.0.3",
-    "electron": "^34.2.0",
+    "electron": "^41.0.3",
     "electron-builder": "^25.1.8",
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^10.0.1",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "auto-launch": "^5.0.5",
-    "axios": "^1.7.9",
+    "axios": "^1.13.6",
     "chalk": "^4.1.2",
     "console-table-printer": "^2.10.0",
     "electron-updater": "^6.3.9",

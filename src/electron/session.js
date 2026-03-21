@@ -1,6 +1,6 @@
 const { session } = require("electron");
 const axios = require("axios");
-const { websiteUrl } = require("../config");
+const { steamUrl } = require("../config");
 
 const create = (settings, sessionName) => {
   let accountInfo = { loggedIn: false };
@@ -11,33 +11,37 @@ const create = (settings, sessionName) => {
     _session.setUserAgent(newUserAgent);
   });
 
-  const extractCookiesByDomain = url => {
+  const extractCookiesByUrl = async url => {
     const domain = new URL(url).hostname.replace("www.", "");
 
-    return _session.cookies
-      .get({ domain })
+    return _session.cookies.get({ domain });
+  };
+
+  const extractCookiesStringByUrl = url => {
+    return extractCookiesByUrl(url)
       .then(cookies =>
         cookies.map(cookie => cookie.name + "=" + cookie.value).join("; "),
       )
       .catch(() => "");
   };
 
-  const checkUserIsLoggedIn = async currentBuild => {
-    const cookies = await extractCookiesByDomain(websiteUrl);
+  const checkUserIsLoggedIn = async () => {
+    const cookieString = await extractCookiesStringByUrl(steamUrl);
+
     accountInfo = await axios
-      .get(`${websiteUrl}api/userData?ver=${currentBuild}`, {
-        headers: { Cookie: cookies },
+      .get(steamUrl, {
+        headers: { Cookie: cookieString },
       })
       .then(({ data }) => {
-        if (data.response) {
+        if (!checkSteamLoggedIn(data)) {
           return {
-            loggedIn: true,
-            userData: data.response,
+            loggedIn: false,
           };
         }
 
         return {
-          loggedIn: false,
+          loggedIn: true,
+          userData: extractSteamData(data),
         };
       })
       .catch(() => ({
@@ -48,20 +52,29 @@ const create = (settings, sessionName) => {
     return accountInfo;
   };
 
-  const flush = async () => {
-    accountInfo = { loggedIn: false };
-    const cookies = await extractCookiesByDomain(websiteUrl);
+  const checkSteamLoggedIn = html => html.indexOf("login/home/?goto=") === -1;
 
-    return axios.get(`${websiteUrl}logout`, {
-      headers: { Cookie: cookies },
-    });
+  const extractSteamData = html => {
+    const [, avatar, username] = html.match(
+      /(https:\/\/avatars.*jpg).*alt=.(.*)"/,
+    );
+
+    return {
+      avatar,
+      username,
+    };
+  };
+
+  const flush = async () => {
+    await _session.clearStorageData();
   };
 
   return {
     flush,
     getSessionInstance: () => _session,
     checkUserIsLoggedIn,
-    extractCookiesByDomain,
+    extractCookiesByUrl,
+    extractCookiesStringByUrl,
     getAccountInfo: () => accountInfo,
   };
 };
