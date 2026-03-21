@@ -30,10 +30,13 @@ const initSettingsSection = initialData => {
 
   const infoLinks = document.querySelector(".content-item .info-links");
 
-  const websiteLink = document.createElement("button");
-  websiteLink.classList.add("open-website");
-  websiteLink.dataset.link = websiteUrl;
-  websiteLink.innerText = "GiftSeeker.RU";
+  const githubLink = document.createElement("button");
+  githubLink.classList.add("open-website");
+  githubLink.dataset.link = "https://github.com/codesprut/giftseeker";
+  githubLink.dataset.lang = "settings.source_code";
+  githubLink.style.marginLeft = "7px";
+
+  infoLinks.appendChild(githubLink);
 
   const steamLink = document.createElement("button");
   steamLink.classList.add("open-website");
@@ -41,15 +44,7 @@ const initSettingsSection = initialData => {
   steamLink.dataset.lang = "settings.steam_group";
   steamLink.style.marginLeft = "7px";
 
-  const donationLink = document.createElement("button");
-  donationLink.classList.add("open-website");
-  donationLink.dataset.link = new URL("/donation", websiteUrl).href;
-  donationLink.dataset.lang = "settings.donation";
-  donationLink.style.marginLeft = "7px";
-
-  infoLinks.appendChild(websiteLink);
   infoLinks.appendChild(steamLink);
-  infoLinks.appendChild(donationLink);
 
   document
     .querySelectorAll("[data-menu-id=settings] .setter:not(select)")
@@ -127,8 +122,6 @@ const initServicesSwitcher = settings => {
   servicesSwitcher.onmousewheel = ev =>
     servicesSwitcherScroll(ev.wheelDelta > 0 ? 20 : -20);
 };
-
-ipcRenderer.send("window-loaded", "main-window");
 
 setInterval(() => {
   ipcRenderer.send("check-session-is-alive");

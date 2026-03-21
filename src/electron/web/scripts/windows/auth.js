@@ -20,8 +20,6 @@ ipcRenderer.on("user-logout", () => {
   setAuthStatus("auth.ses_not_found");
 });
 
-ipcRenderer.send("window-loaded", "auth-window");
-
 ipcRenderer.on("window-initial-data", async (event, data) => {
   const { steamUrl, translations } = data;
 

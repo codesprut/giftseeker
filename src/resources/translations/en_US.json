@@ -1,133 +1,134 @@
 {
-	"lang": {
-		"culture": "en_US",
-		"name": "English"
-	},
-	"auth": {
-		"check": "Looking for a session...",
-		"session": "Session - ",
-		"ses_not_found": "Session not found",
-		"connection_error": "Connection error",
-		"browser_loading": "loading",
-		"or": "or",
-		"steam_login": "Login via Steam",
-		"enter_cookies": "Enter Cookies",
-		"lng_choice_title": "Change translation",
-		"choose_lang": "Select a language",
-		"no_avail_trans": "Other translations are not available",
-		"go_back": "Back"
-	},
-	"ui": {
-		"menu": {
-			"services": "Services",
-			"settings": "Settings"
-		},
-		"logout": "Sign out",
-		"upd_progress": "Updating",
-		"upd_downloaded": "The update is downloaded and will be installed after you close the app"
-	},
-	"service": {
-		"started": "Bot is running",
-		"stopped": "Bot is stopped",
-		"loaded": "Service is loaded",
-		"logs": "Log",
-		"settings": "Settings",
-		"clear_log": "Clear the log",
-		"log_cleared": "Log is cleared",
-		"open_website": "Go to the site",
-		"btn_start": "Start",
-		"btn_stop": "Stop",
-		"btn_checking": "Checking",
-		"btn_awaiting": "Awaiting",
-		"connection_error": "Unable to get established connection with the service...",
-		"session_expired": "Session expired",
-		"connection_lost": "Connection is lost",
-		"timer": "Timer (minutes)",
-		"timer_title": "Frequency of visits in minutes",
-		"interval": "Interval (seconds)",
-		"interval_title": "Interval between giveaway joinings",
-		"interval_from": "Min interval (seconds)",
-		"interval_from_title": "Minimum interval between giveaway joinings",
-		"interval_to": "Max interval (seconds)",
-		"interval_to_title": "Maximum interval between giveaway joinings",
-		"entered_in": "Entered in",
-		"pages": "Pages",
-		"pages_title": "How many first pages should be checked for the available giveaways",
-		"cant_start": "Couldn't autostart - session not found",
-		"reconnect_in_5_min": "Auto reconnect after 5 minutes",
-		"follx": {
-			"value_label": "Energy"
-		},
-		"indiegala": {
-			"value_label": "GalaCoins"
-		},
-		"opiumpulses": {
-			"on_start_reminder": "The current version of the program only joins free giveaways",
-			"value_label": "Points"
-		},
-		"steamgifts": {
-			"value_label": "Points",
-			"cost": "Cost",
-			"ending": "GA ending (minutes)",
-			"ending_title": "Don't join giveaways before the end of which more than the specified time. 0 - without any restrictions",
-			"chance": "Chance",
-			"sort_by_chance": "Sort by winning chance",
-			"sort_by_chance_title": "Sort by winning chance",
-			"min_chance": "Min. chance(%)",
-			"min_chance_title": "Min. chance to join giveaways. 0 - ignore a chance",
-			"min_level": "Min. level",
-			"min_level_title": "Don't join giveaways where required level less than the selected",
-			"points_reserve": "Reserve of points",
-			"points_reserve_title": "Reserve of points. 0 - without reserve",
-			"min_cost": "Min. Cost",
-			"min_cost_title": "Don't join giveaways with a cost lower than your set min.cost.",
-			"max_cost": "Max. Cost",
-			"max_cost_title": "Don't join giveaways with a cost higher than your set max.cost. 0 - without any restrictions",
-			"ignore_on_wish": "Ignore settings for wishlist",
-			"ignore_on_wish_title": "Ignore level and max cost settings for games in the wishlist",
-			"reserve_on_wish": "Spend reserve on wishlist",
-			"reserve_on_wish_title": "Spend reserved points on games in the wishlist",
-			"wishlist_only": "Wishlist only",
-			"wishlist_only_title": "Join giveaways only from the wishlist"
-		},
-		"magicdrop": {
-			"free_case_entered": "Joined free case giveaway"
-		},
-		"justcase": {
-			"free_case_entered": "Joined free case giveaway"
-		},
-		"ggplayers": {
-			"value_label": "GG Points"
-		}
-	},
-	"profile": {
-		"logout_btn": "Logout",
-		"start_with_os": "Run at startup",
-		"start_minimized": "Minimize at startup",
-		"minimize_on_close": "Minimize on close",
-		"autostart": "Autostart of services",
-		"donation": "Donation",
-		"forum": "Forum",
-		"steam_group": "Steam group",
-		"build_version": "Build ver."
-	},
-	"settings": {
-		"start_with_os": "Run at startup",
-		"start_minimized": "Minimize at startup",
-		"minimize_on_close": "Minimize on close",
-		"autostart": "Autostart of services",
-		"donation": "Donation",
-		"forum": "Forum",
-		"steam_group": "Steam group",
-		"use_system_browser": "Open links through system browser",
-		"build_version": "Build ver."
-	},
-	"cli": {
-		"services": {
-			"setting-get": "Get {0} setting value",
-			"setting-set": "Set {0} setting value",
-			"start": "Start {0} service in current session",
-			"stop": "Stop {0} service in current session"
-		}
-	}
+  "lang": {
+    "culture": "en_US",
+    "name": "English"
+  },
+  "auth": {
+    "check": "Looking for a session...",
+    "session": "Session - ",
+    "ses_not_found": "Session not found",
+    "connection_error": "Connection error",
+    "browser_loading": "loading",
+    "or": "or",
+    "steam_login": "Login via Steam",
+    "enter_cookies": "Enter Cookies",
+    "lng_choice_title": "Change translation",
+    "choose_lang": "Select a language",
+    "no_avail_trans": "Other translations are not available",
+    "go_back": "Back"
+  },
+  "ui": {
+    "menu": {
+      "services": "Services",
+      "settings": "Settings"
+    },
+    "logout": "Sign out",
+    "upd_progress": "Updating",
+    "upd_downloaded": "The update is downloaded and will be installed after you close the app"
+  },
+  "service": {
+    "started": "Bot is running",
+    "stopped": "Bot is stopped",
+    "loaded": "Service is loaded",
+    "logs": "Log",
+    "settings": "Settings",
+    "clear_log": "Clear the log",
+    "log_cleared": "Log is cleared",
+    "open_website": "Go to the site",
+    "btn_start": "Start",
+    "btn_stop": "Stop",
+    "btn_checking": "Checking",
+    "btn_awaiting": "Awaiting",
+    "connection_error": "Unable to get established connection with the service...",
+    "session_expired": "Session expired",
+    "connection_lost": "Connection is lost",
+    "timer": "Timer (minutes)",
+    "timer_title": "Frequency of visits in minutes",
+    "interval": "Interval (seconds)",
+    "interval_title": "Interval between giveaway joinings",
+    "interval_from": "Min interval (seconds)",
+    "interval_from_title": "Minimum interval between giveaway joinings",
+    "interval_to": "Max interval (seconds)",
+    "interval_to_title": "Maximum interval between giveaway joinings",
+    "entered_in": "Entered in",
+    "pages": "Pages",
+    "pages_title": "How many first pages should be checked for the available giveaways",
+    "cant_start": "Couldn't autostart - session not found",
+    "reconnect_in_5_min": "Auto reconnect after 5 minutes",
+    "follx": {
+      "value_label": "Energy"
+    },
+    "indiegala": {
+      "value_label": "GalaCoins"
+    },
+    "opiumpulses": {
+      "on_start_reminder": "The current version of the program only joins free giveaways",
+      "value_label": "Points"
+    },
+    "steamgifts": {
+      "value_label": "Points",
+      "cost": "Cost",
+      "ending": "GA ending (minutes)",
+      "ending_title": "Don't join giveaways before the end of which more than the specified time. 0 - without any restrictions",
+      "chance": "Chance",
+      "sort_by_chance": "Sort by winning chance",
+      "sort_by_chance_title": "Sort by winning chance",
+      "min_chance": "Min. chance(%)",
+      "min_chance_title": "Min. chance to join giveaways. 0 - ignore a chance",
+      "min_level": "Min. level",
+      "min_level_title": "Don't join giveaways where required level less than the selected",
+      "points_reserve": "Reserve of points",
+      "points_reserve_title": "Reserve of points. 0 - without reserve",
+      "min_cost": "Min. Cost",
+      "min_cost_title": "Don't join giveaways with a cost lower than your set min.cost.",
+      "max_cost": "Max. Cost",
+      "max_cost_title": "Don't join giveaways with a cost higher than your set max.cost. 0 - without any restrictions",
+      "ignore_on_wish": "Ignore settings for wishlist",
+      "ignore_on_wish_title": "Ignore level and max cost settings for games in the wishlist",
+      "reserve_on_wish": "Spend reserve on wishlist",
+      "reserve_on_wish_title": "Spend reserved points on games in the wishlist",
+      "wishlist_only": "Wishlist only",
+      "wishlist_only_title": "Join giveaways only from the wishlist"
+    },
+    "magicdrop": {
+      "free_case_entered": "Joined free case giveaway"
+    },
+    "justcase": {
+      "free_case_entered": "Joined free case giveaway"
+    },
+    "ggplayers": {
+      "value_label": "GG Points"
+    }
+  },
+  "profile": {
+    "logout_btn": "Logout",
+    "start_with_os": "Run at startup",
+    "start_minimized": "Minimize at startup",
+    "minimize_on_close": "Minimize on close",
+    "autostart": "Autostart of services",
+    "donation": "Donation",
+    "forum": "Forum",
+    "steam_group": "Steam group",
+    "build_version": "Build ver."
+  },
+  "settings": {
+    "start_with_os": "Run at startup",
+    "start_minimized": "Minimize at startup",
+    "minimize_on_close": "Minimize on close",
+    "autostart": "Autostart of services",
+    "donation": "Donation",
+    "forum": "Forum",
+    "source_code": "Source code",
+    "steam_group": "Steam group",
+    "use_system_browser": "Open links through system browser",
+    "build_version": "Build ver."
+  },
+  "cli": {
+    "services": {
+      "setting-get": "Get {0} setting value",
+      "setting-set": "Set {0} setting value",
+      "start": "Start {0} service in current session",
+      "stop": "Stop {0} service in current session"
+    }
+  }
 }
