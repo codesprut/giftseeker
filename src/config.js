@@ -10,6 +10,7 @@ const storageDataPath = env.isPortable ? portableStorage : installationStorage;
 
 module.exports = {
   appName,
+  steamUrl: "https://steamcommunity.com/",
   websiteUrl: "https://giftseeker.ru/",
   storageDataPath,
   defaultSettings: {
