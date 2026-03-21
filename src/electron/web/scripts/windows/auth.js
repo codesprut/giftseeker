@@ -15,10 +15,10 @@ const setAuthStatus = (phraseKey, suffix) => {
     (suffix ?? "");
 };
 
-const setLogoutState = () => {
+ipcRenderer.on("user-logout", () => {
   authButton.classList.remove("disabled");
   setAuthStatus("auth.ses_not_found");
-};
+});
 
 ipcRenderer.send("window-loaded", "auth-window");
 
@@ -61,5 +61,3 @@ ipcRenderer.on("authorization-check-result", (event, authCheckResult) => {
 ipcRenderer.on("translation-changed", async (event, translations) => {
   updatePagePhrases(translations.phrases);
 });
-
-export { setLogoutState };

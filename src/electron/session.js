@@ -66,11 +66,7 @@ const create = (settings, sessionName) => {
   };
 
   const flush = async () => {
-    const cookies = await extractCookiesByUrl(steamUrl);
-
-    cookies.forEach(cookie => {
-      _session.cookies.remove(steamUrl, cookie.name);
-    });
+    await _session.clearStorageData();
   };
 
   return {

@@ -68,12 +68,12 @@ app.disableHardwareAcceleration();
       }
     });
 
-    const logout = () => {
-      session.flush();
+    const logout = async () => {
+      await session.flush();
       windows.main().hide();
       windows.auth().show();
 
-      windows.auth().webContents.executeJavaScript("setLogoutState()");
+      windows.auth().webContents.send("user-logout");
     };
 
     // prevent the tray icon from being destroyed by the GC
