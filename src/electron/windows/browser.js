@@ -65,7 +65,7 @@ const create = (session, parentWindow, onClose) => {
       window.once("close", () => {
         window.webContents.removeAllListeners("did-finish-load");
 
-        const cookies = session.extractCookiesByDomain(websiteUrl);
+        const cookies = session.extractCookiesStringByUrl(websiteUrl);
 
         resolve(cookies);
       });

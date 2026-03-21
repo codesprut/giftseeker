@@ -3,11 +3,11 @@ const { ipcRenderer } = require("electron");
 
 const logoutButton = document.querySelector(".logout-button");
 
-const renderUserInfo = userInfo => {
+const renderUserInfo = userData => {
   document.querySelector("#head .user-bar .avatar").style.backgroundImage =
-    `url("${userInfo.avatar}")`;
+    `url("${userData.avatar}")`;
   document.querySelector("#head .user-bar .username").innerText =
-    userInfo.username;
+    userData.username;
 };
 
 const initSettingsSection = initialData => {
